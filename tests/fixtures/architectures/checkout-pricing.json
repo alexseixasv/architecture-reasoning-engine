@@ -1,0 +1,90 @@
+{
+  "document": {
+    "schemaVersion": "1.0.0",
+    "name": "checkout-pricing",
+    "nodes": [
+      {
+        "id": "checkout",
+        "kind": "service",
+        "name": "Checkout API",
+        "replicas": { "state": "known", "value": 6, "unit": "count", "provenance": "declared" },
+        "capacityPerReplica": { "state": "known", "value": 80, "unit": "rps", "provenance": "declared" },
+        "capacityAggregation": "sum_replicas"
+      },
+      {
+        "id": "pricing",
+        "kind": "service",
+        "name": "Pricing",
+        "replicas": { "state": "known", "value": 4, "unit": "count", "provenance": "declared" },
+        "capacityPerReplica": { "state": "known", "value": 80, "unit": "rps", "provenance": "declared" },
+        "capacityAggregation": "sum_replicas",
+        "fieldConflicts": [
+          {
+            "field": "replicas",
+            "candidates": [
+              { "state": "known", "value": 4, "unit": "count", "provenance": "declared", "note": "Pricing has 4 replicas" },
+              { "state": "known", "value": 6, "unit": "count", "provenance": "declared", "note": "Pricing runs on 6 instances" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "postgres",
+        "kind": "datastore",
+        "name": "Postgres primary",
+        "replicas": { "state": "known", "value": 1, "unit": "count", "provenance": "declared" },
+        "capacityPerReplica": { "state": "known", "value": 200, "unit": "rps", "provenance": "declared" },
+        "capacityAggregation": "primary_only",
+        "declaredLatency": { "state": "known", "value": 50, "unit": "ms", "provenance": "declared" }
+      },
+      { "id": "invoice-queue", "kind": "queue", "name": "Invoice events" },
+      {
+        "id": "invoicing",
+        "kind": "service",
+        "name": "Invoicing worker",
+        "replicas": { "state": "known", "value": 2, "unit": "count", "provenance": "declared" },
+        "capacityPerReplica": { "state": "known", "value": 40, "unit": "rps", "provenance": "assumed" },
+        "capacityAggregation": "sum_replicas"
+      }
+    ],
+    "dependencies": [
+      {
+        "id": "checkout-pricing",
+        "from": "checkout",
+        "to": "pricing",
+        "communication": "sync",
+        "timeout": { "state": "known", "value": 2000, "unit": "ms", "provenance": "declared" },
+        "retry": {
+          "additionalAttempts": { "state": "known", "value": 3, "unit": "count", "provenance": "declared" },
+          "backoff": { "type": "none" }
+        }
+      },
+      {
+        "id": "pricing-postgres",
+        "from": "pricing",
+        "to": "postgres",
+        "communication": "sync",
+        "timeout": { "state": "known", "value": 1000, "unit": "ms", "provenance": "declared" }
+      },
+      { "id": "checkout-queue", "from": "checkout", "to": "invoice-queue", "communication": "async" },
+      { "id": "queue-invoicing", "from": "invoice-queue", "to": "invoicing", "communication": "async" }
+    ],
+    "system": {
+      "incomingTraffic": { "state": "known", "value": 200, "unit": "rps", "provenance": "declared" },
+      "availabilityTarget": { "state": "known", "value": 99.9, "unit": "percent", "provenance": "declared" }
+    },
+    "assumptions": [],
+    "conflicts": [
+      {
+        "id": "pricing-replica-conflict",
+        "description": "Conflicting replica counts for pricing",
+        "nodeIds": ["pricing"],
+        "field": "replicas",
+        "candidates": [
+          { "state": "known", "value": 4, "unit": "count", "provenance": "declared" },
+          { "state": "known", "value": 6, "unit": "count", "provenance": "declared" }
+        ]
+      }
+    ]
+  }
+}

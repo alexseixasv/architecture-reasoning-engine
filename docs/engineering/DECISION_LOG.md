@@ -33,3 +33,38 @@ Append-only record of meaningful engineering decisions. Final submission also co
 - **Context:** PDF lives outside the repo; agents need durable requirement IDs.
 - **Decision:** Extract PDF into `docs/specification/TECHNICAL_REQUIREMENTS.md` with REQ-IDs and phase mapping.
 - **Consequences:** Compound Engineering can cite requirements without inventing scope.
+
+## D-006 — Persistence validity ≠ simulation readiness (2026-11-14)
+
+- **Context:** Anti-patterns (sync cycles, missing timeouts, SPOF) are important but still useful as stored models for correction and partial analysis.
+- **Decision:** Only schema/referential ERRORs block persist. Semantic findings are WARNING; readiness gaps are MISSING_INFORMATION. Phase 3 decides scenario answerability.
+- **Alternatives rejected:** Rejecting persist on any WARNING (too strict for incomplete real descriptions).
+- **Consequences:** Incomplete/anti-pattern models remain inspectable; engine must not treat stored ≈ answerable.
+
+## D-007 — Preserve contradictory candidate values (2026-11-14)
+
+- **Context:** Real prose often conflicts (“4 replicas” vs “6 instances”).
+- **Decision:** `fieldConflicts` / `document.conflicts` store multiple `Quantity` candidates with provenance; never auto-pick.
+- **Alternatives rejected:** Last-write-wins; knowledge-graph reconciliation.
+- **Consequences:** Manual correction is required before trusting that field in Phase 3.
+
+## D-008 — Explicit capacityAggregation (2026-11-14)
+
+- **Context:** DB read replicas must not inflate write capacity.
+- **Decision:** Node field `capacityAggregation: sum_replicas | primary_only | unknown`. Helper `nominalCapacityRps` refuses when unspecified/unknown.
+- **Alternatives rejected:** Always `replicas × capacityPerReplica`.
+- **Consequences:** Phase 3 must gate capacity math on this policy.
+
+## D-009 — Optimistic concurrency on architecture updates (2026-11-14)
+
+- **Context:** Concurrent manual corrections could clobber versions.
+- **Decision:** `PUT` requires `expectedVersion`; transactional compare-and-set on `architectures.latest_version`; unique `(architecture_id, version)`; HTTP 409 on conflict.
+- **Alternatives rejected:** Last-write-wins without version check.
+- **Consequences:** Clients must re-read after 409.
+
+## D-010 — Deterministic identity-based diffs (2026-11-14)
+
+- **Context:** JSONB array order is not semantic.
+- **Decision:** Diff by stable entity ids; ignore reorder; sort changes by `(entityType, id, path, kind)`.
+- **Alternatives rejected:** Index-based array diffs; third-party deep-diff dependency.
+- **Consequences:** Reorders produce empty diffs; field edits remain visible.

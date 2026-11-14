@@ -1,8 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { createDb } from './persistence/db';
+import { runMigrations } from './persistence/migrate';
 
 async function bootstrap(): Promise<void> {
+  await runMigrations();
+  createDb();
+
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn'],
   });

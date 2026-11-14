@@ -4,8 +4,8 @@ Eight stop-gated phases. Mark requirements complete only with implementation + v
 
 | Phase | Name | Status |
 | --- | --- | --- |
-| 1 | Foundation and engineering rules | complete (pending human review) |
-| 2 | Formal model and persistence | pending |
+| 1 | Foundation and engineering rules | complete |
+| 2 | Formal model and persistence | complete (pending human review) |
 | 3 | Deterministic simulation engine | pending |
 | 4 | Golden tests | pending |
 | 5 | LLM integration | pending |
@@ -70,7 +70,57 @@ Notes:
 
 ## Phase 2 — Formal model and persistence
 
-Pending. Primary REQs: REQ-022, REQ-030–031, REQ-040–042, REQ-070, REQ-161.
+### Goals
+
+- Versioned `ArchitectureDocument` with units, provenance, conflicts, capacity aggregation.
+- Schema + referential ERROR vs semantic WARNING vs simulation-readiness MISSING_INFORMATION.
+- Immutable Postgres versions (Drizzle JSONB), OCC via `expectedVersion`, deterministic diffs.
+- Manual create/update/validate/inspect/diff APIs without LLM.
+
+### Requirement IDs
+
+| ID | Intent in Phase 2 | Complete? |
+| --- | --- | --- |
+| REQ-022 / REQ-031 | Manual structured create/update without NL extraction | yes — evidence below |
+| REQ-030 | Persist, version, inspect, diff | yes |
+| REQ-040–042 | Schema + semantic + missing-info findings | yes |
+| REQ-070 | Max 15 nodes | yes — ERROR `GRAPH_TOO_LARGE` |
+| REQ-050 (partial) | Completeness gaps ASK hints; scenario answerability deferred | yes (partial) |
+| REQ-161 | Typed abstraction with provenance/units | yes |
+
+### Acceptance criteria
+
+1. Malformed schema / duplicate IDs / bad refs / >15 nodes reject persist.
+2. Sync cycle, missing timeout, retry without backoff, SPOF are WARNING and still persist.
+3. Field/document conflicts preserved without auto-resolution.
+4. `capacityAggregation` explicit; `nominalCapacityRps` respects `primary_only` vs `sum_replicas`.
+5. Updates require `expectedVersion`; conflicts return HTTP 409 / `VersionConflictError`.
+6. Diffs ignore array reorder; field changes deterministic.
+7. Unit + Postgres integration tests green; Compose create curl succeeds.
+
+### Verification evidence
+
+Recorded 2026-11-14:
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | exit 0 |
+| `npm run lint` | exit 0 (0 errors) |
+| `npm test` (unit) | 17 passed |
+| `DATABASE_URL=... npm run test:integration` | 3 passed (immutability, semantic persist, concurrent OCC) |
+| `npm run build` | exit 0 |
+| `docker compose up --build -d` | api Up, postgres healthy |
+| `POST /architectures` with checkout-pricing fixture | HTTP 201; findings include CONTRADICTION_PRESENT, RETRY_WITHOUT_BACKOFF, SPOF |
+
+### Suggested commit
+
+`feat: add versioned architecture model with validation and drizzle persistence`
+
+### Limitations carried forward
+
+- Scenario-specific answerability (Phase 3).
+- No availability formula yet (OQ-001).
+- Extraction change_source arrives in Phase 5.
 
 ## Phase 3 — Deterministic simulation engine
 
