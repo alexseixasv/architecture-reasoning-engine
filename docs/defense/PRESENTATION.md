@@ -1,0 +1,134 @@
+# PRESENTATION.md — 30-minute technical defense script
+
+**Audience:** senior/architect interview panel · **Mode:** screen share · **Slides:** optional (REQ-154)  
+**Runtime:** Compose Fake demo at http://127.0.0.1:8080 (see [`DEMO.md`](DEMO.md))
+
+---
+
+## 1. Problem and constraints — 2 min
+
+**Explain**
+
+- Architecture reviews stall on intuition (“will it hold at 3×?”).
+- Case non-negotiable: **no LLM-produced architecture numbers** (REQ-010–012).
+- Budget ~15h; prefer narrow correct engine over broad inaccurate one (REQ-073/165).
+- Explicit OUT_OF_SCOPE: auth, multi-tenant, diagrams, K8s (REQ-140–145).
+
+**Show:** README opening + `NOT_DONE.md` one-pager.
+
+**Refs:** `docs/specification/TECHNICAL_REQUIREMENTS.md` §1–2, §7; `NOT_DONE.md`.
+
+**Transition:** “Here is the boundary architecture that enforces that rule.”
+
+---
+
+## 2. Architecture overview — 4 min
+
+**Explain**
+
+- Nest API + Postgres/Drizzle + pure `src/simulation` + LLM adapters + Vue thin client.
+- Compose: postgres → api → nginx web; same-origin `/api` proxy.
+- Extract never persists; analyze pins exact version.
+
+**Show:** README mermaid; `docker compose ps`; open SPA header.
+
+**Refs:** `README.md`; `docker-compose.yml`; `frontend/nginx.conf`; `src/main.ts`.
+
+**Transition:** “Where does the LLM stop and the calculator start?”
+
+---
+
+## 3. LLM / deterministic boundary — 3 min
+
+**Explain**
+
+- LLM: extract DTO, classify scenario, explain with citations.
+- Code: Zod/provenance, `simulate()`, refusals, usage/timings.
+- Structured Outputs + grounded explanation validator → fallback on bad claims.
+- Fake proves wiring; OpenAI accuracy is a separate measured class.
+
+**Show:** `src/simulation/simulate.ts` import graph (no Nest); `src/llm/extraction/*` vs `src/analysis/analysis.service.ts` orchestration.
+
+**Refs:** `DECISIONS.md` §2; `AGENTS.md` invariants; `src/llm/explain/*` grounding.
+
+**Transition:** “The shared language is the typed formal model.”
+
+---
+
+## 4. Formal model, versioning, OCC — 4 min
+
+**Explain**
+
+- Known/unknown quantities, units, provenance, conflicts kept as candidates.
+- Persist = new immutable version; `expectedVersion` → 409.
+- Semantic diff by entity id.
+
+**Show:** Zod schema snippet; Version panel in UI; mention PUT body.
+
+**Refs:** `MODEL.md`; `src/architecture/domain/schema.ts`; `architecture.repository.ts` OCC; `frontend` VersionPanel.
+
+**Transition:** “Given a version + scenario, what math do we actually trust?”
+
+---
+
+## 5. Simulation formulas and refusals — 5 min
+
+**Explain**
+
+- Steady-state; ≤15 nodes; core three scenarios only.
+- Walk F-LOAD-001 → F-UTIL-001 (\(U=\lambda/C\)); saturation boolean.
+- Retry rate only with backoff=`none`; timeout \(L>T\).
+- Always refuse availability %, throughput, p95/p99.
+- Blast radius = exposure labels, not invented %.
+
+**Show:** `MODEL.md` formula table; a golden `DERIVATION.md` (e.g. G04); standing refusals in a prior analyze result if already on screen.
+
+**Refs:** `MODEL.md`; `src/simulation/load_graph.ts`; `capacity.ts`; `retries.ts`; `unavailability.ts`.
+
+**Transition:** “Now we prove the running system with Fake LLM — not OpenAI spend.”
+
+---
+
+## 6. Live browser demonstration — 8 min
+
+**Follow [`DEMO.md`](DEMO.md) exactly.**
+
+Emphasize verbally: Fake handlers are regex/deterministic — **not** evidence of OpenAI generalization. For measured OpenAI numbers, point to VALIDATION later.
+
+**Show:** extract non-persist → validate → save v1 → util@1x → availability% refuse → edit save v2 → diff → force 409 → usage panel → SPA refresh.
+
+**Refs:** `frontend/src/lib/demoFixtures.ts`; `src/llm/provider/fake-demo-handlers.ts`.
+
+**Transition:** “How do we know the math and the LLM path are honest?”
+
+---
+
+## 7. Validation evidence and limitations — 3 min
+
+**Explain**
+
+- Goldens 12/12; adversarial 8/8; Fake Compose green.
+- Live OpenAI: baseline + remediation; latest 141/244 directional, F1 0.86/0.84, scenarios 10/10, unsupported 2/2, explain 9/10.
+- Caveats: denom change, same dataset, formal-context scenarios, DTO omissions, N=12 latency.
+
+**Show:** `VALIDATION.md` caveats + side-by-side table; `REQUIREMENTS_COVERAGE.md` PARTIAL rows (REQ-003, REQ-110).
+
+**Refs:** `VALIDATION.md` D–G; `docs/engineering/REQUIREMENTS_COVERAGE.md`.
+
+**Transition:** “Close with the tradeoffs we would defend under pressure.”
+
+---
+
+## 8. Final tradeoffs — 1 min
+
+**Explain**
+
+- Chose closed-form + refuse over stochastic theater.
+- Chose OCC + immutable versions over last-write-wins.
+- Chose Fake default + measured OpenAI opt-in over always-on spend.
+- Chose Vue thin UI after API correctness — presentation only.
+- At 10×: missing fan-out and availability questions still refuse; extraction quality remains the hard problem.
+
+**Show:** `DECISIONS.md` §9–10; `NOT_DONE.md`.
+
+**Stop.** Invite questions / live code change ([`QA.md`](QA.md), [`LIVE_CHANGES.md`](LIVE_CHANGES.md)).

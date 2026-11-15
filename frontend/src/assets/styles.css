@@ -1,0 +1,49 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --color-canvas: #f7f8fa;
+  --color-panel: #ffffff;
+  --color-panel-muted: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+  --color-header: #0b1220;
+  --color-ink: #0f172a;
+  --color-ink-muted: #475569;
+  --color-ink-subtle: #64748b;
+  --color-accent: #0f766e;
+  --color-accent-hover: #0d9488;
+  --color-accent-tint: #ccfbf1;
+  --color-success: #047857;
+  --color-success-tint: #d1fae5;
+  --color-warning: #b45309;
+  --color-warning-tint: #fef3c7;
+  --color-danger: #b91c1c;
+  --color-danger-tint: #fee2e2;
+  --color-info: #1d4ed8;
+  --color-info-tint: #dbeafe;
+}
+
+@layer base {
+  html,
+  body,
+  #app {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-canvas);
+  }
+
+  button:focus-visible,
+  textarea:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}

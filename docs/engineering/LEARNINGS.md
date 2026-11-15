@@ -134,3 +134,10 @@ Discoveries, mistakes, fixes, and reusable patterns. Update after each phase.
 - Mixed-intent prompt fixed V10 (unsupported **2/2**); V12 fieldConflicts preserved **1/1**.
 - Residual ID extras are slug variants (`api-service` / `api-svc` vs fixture `api`) — prompt guidance helps but does not guarantee fixture id equality without hardcoding.
 - V07 fallback was `CLAIM_KIND_MISSING_REFS`, not a numeric invention — codes make the next fix targeted.
+
+## L-026 — Frontend OCC and nginx path must match Nest contracts (2026-11-15)
+
+- Capture `isUpdate` / `expectedVersion` before async persist; post-success `isUpdate` already reflects the new version.
+- HTTP 409 bodies expose `expectedVersion` + `actualVersion` — surface them; never bump and retry.
+- Compose acceptance must hit `:8080/api/...` (nginx strip), not only `:3000`, or proxy regressions stay invisible.
+- Unit tests with an injected `ApiClient` stay Fake/deterministic; browser verification is separate from HTTP acceptance.

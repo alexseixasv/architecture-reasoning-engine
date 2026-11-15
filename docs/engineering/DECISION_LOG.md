@@ -199,3 +199,24 @@ Append-only record of meaningful engineering decisions. Final submission also co
 - **Decision:** Rewrite root README from implemented controllers/Compose/env/eval evidence only. Link existing docs (`DECISION_LOG`, not a missing `DECISIONS.md`). Do not invent `NOT_DONE.md`. Mark Phase 7 complete after Fake Compose smoke + offline suite green.
 - **Alternatives rejected:** Marketing accuracy claims; dead doc links; starting Phase 8 without approval.
 - **Consequences:** Evaluators can run Fake Compose and understand measured live caveats from README → VALIDATION.md.
+
+## D-030 — Compose web via nginx same-origin /api (2026-11-15)
+
+- **Context:** Phase 8.2 needs a browser-served SPA without enabling broad Nest CORS or baking LLM secrets into the frontend image.
+- **Decision:** Multi-stage `frontend/Dockerfile` (Vite build → nginx). nginx serves the SPA (`try_files`), proxies `/api/` → `api:3000/` (strip prefix), and forwards `/health`. Default `WEB_PORT=8080`. Demo remains `LLM_PROVIDER=fake`.
+- **Alternatives rejected:** Browser CORS to `:3000`; embedding OpenAI keys in the web image; client-side metric math.
+- **Consequences:** Acceptance can exercise the real nginx path; Vite keeps a matching `/api` rewrite for local dev.
+
+## D-031 — OCC 409 never auto-retries (2026-11-15)
+
+- **Context:** Optimistic concurrency must preserve reviewer edits and never silently overwrite.
+- **Decision:** UI tracks `expectedVersion` as the version the user began editing. On HTTP 409, keep the editor draft, surface conflict metadata (`expectedVersion` / `actualVersion`), and offer an explicit “reload latest” that discards the draft. Never retry PUT with a bumped `expectedVersion`.
+- **Alternatives rejected:** Auto-merge; silent overwrite; automatic retry with latest version.
+- **Consequences:** Stale saves fail loudly; immutable prior versions remain intact.
+
+## D-032 — Phase 8.3 closes with honest PARTIAL REQs (2026-11-15)
+
+- **Context:** Final docs must not pretend availability % or OTel collectors exist.
+- **Decision:** Ship root `DECISIONS.md` / `MODEL.md` / `VALIDATION.md` / `NOT_DONE.md` + defense pack. Mark REQ-003 and REQ-110 as PARTIAL in the coverage matrix. Preserve both live OpenAI artifacts’ numbers without new paid runs. Canonical formulas live only in root `MODEL.md`.
+- **Alternatives rejected:** Inventing availability math to green REQ-003; re-running live eval for prettier tables; duplicate conflicting MODEL drafts.
+- **Consequences:** Phase 8 can close for defense readiness while remaining honest about limits.

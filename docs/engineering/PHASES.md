@@ -394,5 +394,64 @@ REQ-090–098 and REQ-113–114 have measured evidence. Residual limitations (ID
 
 ## Phase 8 — Documentation and interview preparation
 
-Pending. Primary REQs: REQ-131–135, REQ-150–153, REQ-172.
-Do not start without explicit approval.
+Primary REQs: REQ-099, REQ-131–135, REQ-150–153, REQ-160–165, REQ-172.
+
+### Phase 8.1 — Frontend foundation
+
+Vue 3 + Vite workspace: extract → review/validate → explicit persist → analyze. Fake demo fixtures. No client-side metric math. Vite `/api` proxy.
+
+### Phase 8.2 — Integration, versioning, Compose web (2026-11-15)
+
+| Check | Result |
+| --- | --- |
+| Frontend typecheck / lint / build | exit 0 |
+| Frontend unit tests | exit 0 — **12** |
+| Backend typecheck / lint / build | exit 0 |
+| Backend `npm test` | exit 0 — **157** |
+| Backend `npm run test:integration` | exit 0 — **12** |
+| Compose + nginx Fake acceptance | **PASS** (`compose-frontend-acceptance.ts`) |
+| Browser Fake acceptance | **verified** |
+| Live OpenAI | **NOT RUN** |
+
+### Phase 8.3 — Final documentation & defense (2026-11-15)
+
+| Deliverable | Status |
+| --- | --- |
+| Root `DECISIONS.md` | created (≤4 pages intent) |
+| Root `MODEL.md` | finalized vs Zod + `simulate()` |
+| Root `VALIDATION.md` | restructured A–H; live evidence preserved |
+| Root `NOT_DONE.md` | created (≤1 page intent) |
+| Root `README.md` | complete app + Compose web |
+| Coverage matrix | `docs/engineering/REQUIREMENTS_COVERAGE.md` |
+| Defense pack | `docs/defense/{PRESENTATION,DEMO,QA,LIVE_CHANGES}.md` |
+| Live OpenAI this phase | **NOT RUN** |
+
+#### Critical REQ honesty
+
+- **REQ-003 PARTIAL** (availability % + quantitative blast radius refused by design) — documented, not silently “fixed.”
+- **REQ-110 PARTIAL** (timings/usage without OTel collector) — documented.
+- No mandatory deliverable missing; no critical blocker for defense readiness.
+
+### Final verification (Phase 8.3)
+
+| Check | Result |
+| --- | --- |
+| Backend typecheck / lint / build | exit 0 |
+| Backend `npm test` | exit 0 — **157** |
+| Backend `npm run test:integration` | exit 0 — **12** |
+| Frontend typecheck / lint / build | exit 0 |
+| Frontend `npm test` | exit 0 — **12** |
+| Compose rebuild + frontend acceptance | **PASS** (nginx `/api`, OCC 409, UNSUPPORTED, diff) |
+| Compose API Fake acceptance | **PASS** |
+| Live OpenAI | **NOT RUN** |
+| Starbucks leftovers | **0** |
+| Secrets / `dist` / `node_modules` staged? | **no** (gitignored; `.env` local only) |
+| Page-limit intent | `DECISIONS.md` ~802 words (~1.6 pp @500 w/pp); `NOT_DONE.md` ~259 words (~0.5 pp) |
+
+### Phase 8 closed
+
+Mandatory docs + defense scripts verified; Compose Fake path remains the live-demo baseline. Residual PARTIAL requirements are intentional and recorded in coverage / NOT_DONE.
+
+#### Suggested commit (when human requests)
+
+`docs: finalize Phase 8 defense pack and mandatory deliverables`

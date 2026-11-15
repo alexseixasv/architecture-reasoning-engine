@@ -25,6 +25,8 @@
     "test:watch": "vitest",
     "llm:live-eval": "tsx scripts/live-validation-eval.ts",
     "llm:live-smoke": "tsx scripts/live-smoke.ts",
+    "compose:frontend-acceptance": "tsx scripts/compose-frontend-acceptance.ts",
+    "compose:http-acceptance": "tsx scripts/compose-http-acceptance.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/persistence/migrate.ts"
   },
