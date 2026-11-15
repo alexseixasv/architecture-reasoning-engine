@@ -30,4 +30,17 @@ export {
 export { estimateCostUsd, lookupPricing } from './usage/pricing';
 export { LLM_CONFIG, LLM_PROVIDER } from './llm.tokens';
 export { LlmModule } from './llm.module';
+export { compareArchitectures } from './eval/compare-architecture';
+export { compareScenarioExtraction } from './eval/compare-scenario';
+export { projectEvaluationCosts } from './eval/cost-projections';
+export { summarizeLatencies, percentile } from './eval/percentiles';
+export { buildArchitectureExtractionDiagnostics } from './eval/extraction-diagnostics';
+export {
+  checkLiveEvalGate,
+  LIVE_EVAL_MAX_PROVIDER_REQUESTS,
+} from './eval/live-eval-guards';
+export {
+  classifyCaseFailureCategories,
+  classifyPipelineFailure,
+} from './eval/score-report';
 

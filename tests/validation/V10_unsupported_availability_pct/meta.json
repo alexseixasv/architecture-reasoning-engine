@@ -1,7 +1,7 @@
 {
   "id": "V10",
   "tags": ["unsupported-nl", "availability", "refusal"],
-  "requirementIds": ["REQ-083", "REQ-090", "REQ-091"],
+  "requirementIds": ["REQ-083", "REQ-090", "REQ-094"],
   "execution": "schema_only",
   "extractionAccuracy": "NOT_MEASURED",
   "unsupportedNlOutcome": "NL asks for availability percentage / nines. No failure-probability model exists. Expected engine stance after extraction (Phase 5+): refuse with NO_AVAILABILITY_MODEL; do not invent a structured scenario type for availability%. Related supported question would be component_unavailable exposure taxonomy without inventing availability numbers."

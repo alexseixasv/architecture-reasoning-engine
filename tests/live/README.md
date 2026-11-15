@@ -6,23 +6,28 @@ These scripts call the real OpenAI API and **must not** run in ordinary `npm tes
 
 ```powershell
 $env:RUN_LIVE_OPENAI='1'
-# loads OPENAI_* from .env if you use:
 node --env-file=.env --import tsx scripts/live-smoke.ts
-# or with key already in the shell:
-npm run llm:live-smoke
 ```
 
-Hard cap: **3** OpenAI requests (extract architecture + extract scenario + explain).  
-Fixture: `tests/validation/V01_capacity_sum`. No persistence.
+Hard cap: **3** OpenAI requests. Fixture: `V01_capacity_sum`. No persistence.
 
-E2E success requires live A=PROPOSED and B=OK; simulation/explanation then use those artifacts.  
-If B fails, the script sets `e2eSuccess=false` (exit 3) and may run a clearly labeled independent baseline explain for diagnostics only.
-
-## Full V01–V12 eval (many calls — expensive)
+## Full V01–V12 eval (≤34 calls) — requires explicit approval
 
 ```powershell
 $env:RUN_LIVE_OPENAI='1'
-npm run llm:live-eval
+$env:LLM_PROVIDER='openai'
+node --env-file=.env --import tsx scripts/live-validation-eval.ts
 ```
 
-Extraction accuracy remains **NOT MEASURED** until a live run is executed and recorded in `VALIDATION.md`.
+Controls:
+
+- Gate: `RUN_LIVE_OPENAI=1` + `OPENAI_API_KEY`
+- Cap: **34** provider requests (12 extract + 12 scenario + ≤10 explain)
+- Model: `gpt-4.1` · timeout `60000` · `maxRetries: 0`
+- Preflight prints estimated tokens/USD before calls
+- Artifact: `artifacts/eval/run-<ISO>.json` (gitignored)
+- No persistence; no silent fixture substitution
+
+**Status:** one approved pass executed 2026-11-15 — results recorded in `VALIDATION.md`. Do not re-run without new approval.
+
+Measured one-pass estimated API charges: **~$0.186** (published pricing; not invoice).

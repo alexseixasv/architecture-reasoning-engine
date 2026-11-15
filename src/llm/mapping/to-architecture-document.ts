@@ -10,6 +10,7 @@ import type {
   Unit,
   ValidationFinding,
 } from '../../architecture/domain/types';
+import { finding } from '../../architecture/domain/findings';
 import { SCHEMA_VERSION } from '../../architecture/domain/types';
 import type {
   ArchitectureExtractionDto,
@@ -49,10 +50,13 @@ function mapQuantity<U extends Unit>(
   // declared
   if (q.unit !== expectedUnit) {
     findings.push(
-      provenanceFinding(
+      finding({
+        code: 'UNIT_MISMATCH',
+        severity: 'WARNING',
+        findingClass: 'semantic',
         path,
-        `unit mismatch: extracted ${q.unit}, expected ${expectedUnit}`,
-      ),
+        message: `unit mismatch: extracted ${q.unit}, expected ${expectedUnit}`,
+      }),
     );
     return {
       state: 'unknown',

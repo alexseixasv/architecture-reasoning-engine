@@ -80,6 +80,7 @@ describe('explanation validation regressions (live smoke)', () => {
       expect(
         result.reasons.some((r) => r.includes('invented_percentile')),
       ).toBe(true);
+      expect(result.errorCodes).toContain('UNSUPPORTED_QUALITATIVE_CLAIM');
     }
   });
 
@@ -104,6 +105,29 @@ describe('explanation validation regressions (live smoke)', () => {
       expect(
         result.reasons.some((r) => r.includes('invented_numeric_result')),
       ).toBe(true);
+      expect(result.errorCodes).toContain('UNSUPPORTED_QUALITATIVE_CLAIM');
+    }
+  });
+
+  it('records REFUSED_AS_METRIC_ID when refused metrics are cited as calculated', () => {
+    const dto: ExplanationDto = {
+      summary: 'Availability was discussed.',
+      acknowledgedStatus: 'ANSWERED',
+      statements: [
+        {
+          text: 'Availability remains refused by the engine.',
+          metricIds: ['availability_percent'],
+          refusedMetricIds: [],
+          componentIds: [],
+          refusalCodes: [],
+          claimKind: 'refusal_preserved',
+        },
+      ],
+    };
+    const result = validateExplanationDto(dto, packet);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errorCodes).toContain('REFUSED_AS_METRIC_ID');
     }
   });
 });

@@ -9,8 +9,8 @@ Eight stop-gated phases. Mark requirements complete only with implementation + v
 | 3 | Deterministic simulation engine | complete |
 | 4 | Golden tests, validation dataset & mathematical correctness | complete |
 | 5 | OpenAI LLM integration, structured extraction & grounded reasoning | complete |
-| 6 | API and observability | complete (pending human review) |
-| 7 | Validation and benchmarking | pending |
+| 6 | API and observability | complete |
+| 7 | Validation and benchmarking | complete (pending human review of live results) |
 | 8 | Documentation and interview preparation | pending |
 
 ---
@@ -301,8 +301,98 @@ Recorded 2026-11-15:
 
 ## Phase 7 — Validation and benchmarking
 
-Pending. Primary REQs: REQ-090–098, REQ-113–114.
+**Status: COMPLETE** (closed 2026-11-15 after README modernization + regression verification).
+
+### Goals
+
+- Semantic architecture/scenario scoring with explicit denominators.
+- Golden G01–G12 consolidation report (offline).
+- Cost projections A/B/C and latency p50/p95 methodology.
+- Opt-in live OpenAI runner (cap 34) with measured baseline + remediation regression artifacts.
+
+### Requirement IDs
+
+| ID | Intent | Complete? |
+| --- | --- | --- |
+| REQ-090–095 | Dataset V01–V12 prepared + tagged | yes (offline) |
+| REQ-096 | Extraction accuracy measured | **yes (dataset)** — baseline 120/235; remediation regression 141/244 (denom. caveat); scen 10/10; unsup 2/2 |
+| REQ-097 | Answer correctness | yes offline + live sim OK when scenario OK |
+| REQ-098 | Failure analysis | yes — baseline + 2nd-pass diagnostics (DTO missing, V10 fixed, V12 fieldConflicts, V07 fallback code) |
+| REQ-113–114 | Cost/1k + p50/p95 | **measured** two passes (see VALIDATION.md) |
+
+### Verification evidence
+
+Recorded 2026-11-15:
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` / `lint` / `build` | exit 0 |
+| `npm test` | exit 0 — **138** passed (includes eval unit + golden summary) |
+| `npm run test:integration` | exit 0 — **12** |
+| Live OpenAI V01–V12 eval (1 pass) | **34/34** calls; arch field 120/235; scen 10/10 + unsup 1/2; explain 9/10 grounded; est. **~$0.186**; wall p50/p95 **7.97s/11.0s** (N=12); artifact gitignored |
+
+### Suggested commit
+
+`feat: add Phase 7 semantic eval scoring and record live V01–V12 measurements`
+
+### Limitations
+
+- Scenario live scoring used **formal** architecture context — not end-to-end extract→scenario chaining.
+- Architecture field accuracy remains weak (id extras + known→unknown).
+- p95 with N=12 is statistically weak.
+- Estimated USD ≠ invoice.
+- Live baseline frozen; second pass is remediation regression on the same dataset (not a generalization benchmark).
+
+### Remediation after live diagnosis (offline, 2026-11-15)
+
+| Check | Result |
+| --- | --- |
+| Baseline artifact overwritten? | **No** — `run-2026-11-15T13-40-00-172Z.json` preserved |
+| Live OpenAI this step | **NOT RUN** (offline only) |
+| `npm test` | exit 0 — **157** passed (Fake LLM only) |
+| Prompt / mapper / diagnostics / tests | Implemented (see VALIDATION.md) |
+
+### Second live pass — remediation regression (2026-11-15)
+
+| Check | Result |
+| --- | --- |
+| Baseline SHA256 unchanged | **yes** `2D1CA9C7…CAADBA` |
+| Provider calls | **34/34** · model `gpt-4.1` · timeout 60000 · retries 0 |
+| Arch field (directional) | **141/244** vs baseline 120/235 (denom. methodology caveat) |
+| Node / Dep F1 | **0.86 / 0.84** (baseline 0.83 / 0.74) |
+| Unsupported NL | **2/2** (baseline 1/2; V10 fixed) |
+| Supported scen | **10/10** |
+| Explain grounded | **9/10** (V07 fallback `CLAIM_KIND_MISSING_REFS`) |
+| Est. USD / wall p50/p95 | **~$0.203** / **7.6s / 19.8s** (N=12) |
+| New artifact | `run-2026-11-15T13-55-04-443Z.json` |
+| `npm test` after live | exit 0 — **157** (Fake only; no OpenAI in default tests) |
+
+#### Suggested commit (when human requests)
+
+`fix: remediate extraction prompts/diagnostics and record second live V01–V12 regression`
+
+### Final closure verification (2026-11-15)
+
+| Check | Result |
+| --- | --- |
+| Root `README.md` modernized for Phases 1–7 | **yes** |
+| Doc links / API examples / commands | verified against controllers + `.env.example` + Compose |
+| `npm run typecheck` / `lint` / `build` | exit 0 |
+| `npm test` | exit 0 — **157** (Fake LLM) |
+| `npm run test:integration` | exit 0 — **12** |
+| Live OpenAI this step | **NOT RUN** |
+| Compose Fake smoke (`compose-http-acceptance.ts`) | **PASS** — extract→persist→analyze; OCC; 404/400/UNSUPPORTED; `openaiCalls: none` |
+| Baseline + remediation eval evidence | preserved in `VALIDATION.md` + gitignored artifacts |
+
+### Phase 7 closed
+
+REQ-090–098 and REQ-113–114 have measured evidence. Residual limitations (ID slugs, DTO quantity omissions, V07 explain refs, formal-context scenario scoring, small dataset) remain documented — not reopen blockers. Phase 8 requires explicit approval.
+
+#### Suggested commit (when human requests)
+
+`docs: modernize README for Phases 1–7 and close Phase 7 validation`
 
 ## Phase 8 — Documentation and interview preparation
 
 Pending. Primary REQs: REQ-131–135, REQ-150–153, REQ-172.
+Do not start without explicit approval.

@@ -99,3 +99,38 @@ Discoveries, mistakes, fixes, and reusable patterns. Update after each phase.
 
 - A long-running Compose `api` container can stay on a pre-Phase-6 image after code lands.
 - Always `docker compose up -d --build` before claiming HTTP acceptance against Compose.
+
+## L-020 — Extra nodes must hurt the score (2026-11-15)
+
+- If hallucinated nodes/deps are omitted from the denominator, inventing extras looks “free”.
+- Presence precision/recall/F1 + explicit `extra` field comparisons keep hallucinations visible.
+
+## L-021 — Scenario JSON equality is brittle (2026-11-15)
+
+- Prefer semantic type+parameter compare; keep intent accuracy separate from parameter accuracy.
+- Invented structured scenarios on unsupported NL must score as failures.
+
+## L-022 — Live V01–V12 failure patterns (2026-11-15)
+
+- Architecture field score (~51%) dominated by known→unknown and hallucinated/renamed nodes — not by engine math.
+- Availability%-style questions can be over-mapped to `component_unavailable` (V10) instead of UNSUPPORTED.
+- Scenario eval against formal context can look strong while architecture extraction remains weak — report separately.
+
+## L-023 — Conflict headlines need field vs document split (2026-11-15)
+
+- V12 stores replica contradictions on `node.fieldConflicts` with empty `document.conflicts`.
+- Scoring only `document.conflicts.count` made “0/1 preserved” look like a missed expected conflict when the model emitted an extra/mis-leveled document conflict.
+- Report field-level preservation, document-level preservation, and extras separately.
+
+## L-024 — Eval artifacts need A/B/C/D loss causes (2026-11-15)
+
+- known→unknown alone does not say whether the LLM omitted the field, provenance failed, or the mapper transformed it.
+- Persist sanitized DTO presence + finding codes + mapped state in the live artifact (no raw secrets / unnecessary NL duplication).
+- Explanation fallbacks need `validationErrorCodes`, not only opaque string counts.
+
+## L-025 — Second-pass diagnostics: DTO omission dominates (2026-11-15)
+
+- After remediation: **0** provenance rejections on quantities; **75** `missing_in_dto`; **1** unit mismatch; unknown→known still **0**.
+- Mixed-intent prompt fixed V10 (unsupported **2/2**); V12 fieldConflicts preserved **1/1**.
+- Residual ID extras are slug variants (`api-service` / `api-svc` vs fixture `api`) — prompt guidance helps but does not guarantee fixture id equality without hardcoding.
+- V07 fallback was `CLAIM_KIND_MISSING_REFS`, not a numeric invention — codes make the next fix targeted.

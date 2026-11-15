@@ -8,6 +8,7 @@ import { loadLlmConfig } from '../config';
 import {
   ARCHITECTURE_EXTRACTION_SCHEMA_NAME,
   architectureExtractionDtoSchema,
+  type ArchitectureExtractionDto,
 } from '../dto/architecture-extraction.dto';
 import { LlmError } from '../errors';
 import { mapExtractionToArchitectureDocument } from '../mapping/to-architecture-document';
@@ -27,6 +28,8 @@ export type ArchitectureExtractionResult =
       clarificationQuestions: string[];
       notes: string[];
       canPersist: boolean;
+      /** Structured LLM DTO before mapping (for eval diagnostics). */
+      extractionDto: ArchitectureExtractionDto;
     }
   | {
       status: 'EXTRACTION_FAILED';
@@ -97,5 +100,6 @@ export async function extractArchitecture(input: {
     clarificationQuestions: parsed.data.clarificationQuestions,
     notes: parsed.data.notes,
     canPersist: validation.canPersist,
+    extractionDto: parsed.data,
   };
 }

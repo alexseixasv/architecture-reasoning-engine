@@ -25,6 +25,8 @@ export type ExplanationResult = {
   packet: EvidencePacket;
   source: 'llm+deterministic' | 'deterministic_fallback';
   validationErrors?: string[];
+  /** Stable codes for eval diagnostics (why fallback occurred). */
+  validationErrorCodes?: string[];
   errorClass?: LlmErrorClass;
 };
 
@@ -141,6 +143,7 @@ export async function explainSimulationResult(input: {
       source: 'deterministic_fallback',
       errorClass: 'EXPLANATION_INVALID',
       validationErrors: validation.reasons,
+      validationErrorCodes: validation.errorCodes,
     };
   }
 

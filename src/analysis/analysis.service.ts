@@ -47,6 +47,7 @@ export type AnalyzeHttpResponse = {
     evidenceMarkdown: string;
     qualitative?: unknown;
     validationErrors?: string[];
+    validationErrorCodes?: string[];
     errorClass?: string;
   } | null;
   usage: UsageSummary;
@@ -294,6 +295,9 @@ export class AnalysisService {
           : {}),
         ...(explained.validationErrors !== undefined
           ? { validationErrors: explained.validationErrors }
+          : {}),
+        ...(explained.validationErrorCodes !== undefined
+          ? { validationErrorCodes: explained.validationErrorCodes }
           : {}),
         ...(explained.errorClass !== undefined
           ? { errorClass: explained.errorClass }

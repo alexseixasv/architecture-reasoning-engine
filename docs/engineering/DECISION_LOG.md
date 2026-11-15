@@ -165,3 +165,37 @@ Append-only record of meaningful engineering decisions. Final submission also co
 - **Decision:** `createLlmProvider('fake')` installs deterministic demo handlers. Unit/HTTP tests that need fail-closed or custom fixtures use `new FakeLlmProvider()` / overrides.
 - **Alternatives rejected:** Requiring OpenAI for Compose smoke; changing default bare Fake to always succeed.
 - **Consequences:** Zero-cost Compose path works; offline tests remain explicit.
+
+## D-025 — Semantic eval denominators and live cap (2026-11-15)
+
+- **Context:** REQ-096/113/114 need measured evidence without JSON-equality scoring or unbounded spend.
+- **Decision:** Field-level architecture compare counts extras in the denominator; scenario scoring separates intent vs parameters (10 structured + 2 unsupported). Live eval hard-capped at **34** provider calls with preflight USD estimate. Cost buckets A (full), B (persisted), C (early-terminal). Wrong extracted scenario is classified as extraction failure, never engine defect.
+- **Alternatives rejected:** Raw document JSON equality as primary metric; running live eval without approval; inventing $0 when pricing missing.
+- **Consequences:** Offline harness ships first; live tables remain NOT MEASURED until approved run.
+
+## D-026 — Latency percentiles are request timings (2026-11-15)
+
+- **Context:** REQ-114 asks for p50/p95; architecture model also refuses p95 metrics.
+- **Decision:** Report application/provider wall-clock percentiles from `performance.now()` samples; never label them as modeled architecture latency.
+- **Consequences:** VALIDATION.md must state sample size N and linear-interpolation method.
+
+## D-027 — Post-live remediation without claiming new accuracy (2026-11-15)
+
+- **Context:** First V01–V12 live pass measured 120/235 field accuracy; diagnosis approved remediation of prompts/diagnostics only.
+- **Decision:** Keep the original live artifact and baseline numbers unchanged. Improve prompts, conflict-level scoring, and sanitized A/B/C/D diagnostics offline. Do not hardcode V01–V12 ids. Do not suppress legitimate conflicts to match fixtures. Do not run a second live pass or claim improved accuracy until explicitly approved and remeasured.
+- **Alternatives rejected:** Overwriting the baseline artifact; changing expected fixtures/denominators to raise scores; fuzzy id matching that hides invented components.
+- **Consequences:** Second controlled live evaluation is required to measure remediation impact.
+
+## D-028 — Second live pass is remediation regression, not generalization (2026-11-15)
+
+- **Context:** Offline remediation completed; one additional approved V01–V12 live pass executed (34 calls).
+- **Decision:** Treat the second artifact as a **same-dataset remediation regression**. Preserve baseline metrics and artifact forever. When conflict-scoring rows change the field-accuracy denominator, disclose the caveat and lean on P/R/F1, quantity-state, scenario/unsupported, and conflict-level metrics for comparison.
+- **Alternatives rejected:** Replacing baseline numbers; presenting the second pass as a new independent benchmark; further live retries without approval.
+- **Consequences:** VALIDATION.md carries both tables; Phase 7 can close with documented residual limitations.
+
+## D-029 — Phase 7 closed with honest README (2026-11-15)
+
+- **Context:** Closure approved subject to README modernization and regression verification.
+- **Decision:** Rewrite root README from implemented controllers/Compose/env/eval evidence only. Link existing docs (`DECISION_LOG`, not a missing `DECISIONS.md`). Do not invent `NOT_DONE.md`. Mark Phase 7 complete after Fake Compose smoke + offline suite green.
+- **Alternatives rejected:** Marketing accuracy claims; dead doc links; starting Phase 8 without approval.
+- **Consequences:** Evaluators can run Fake Compose and understand measured live caveats from README → VALIDATION.md.

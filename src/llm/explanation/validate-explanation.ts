@@ -1,9 +1,23 @@
 import type { ExplanationDto } from '../dto/explanation.dto';
 import type { EvidencePacket } from './render-evidence';
 
+export type ExplanationValidationErrorCode =
+  | 'STATUS_MISMATCH'
+  | 'UNKNOWN_METRIC_ID'
+  | 'REFUSED_AS_METRIC_ID'
+  | 'UNKNOWN_REFUSED_METRIC_ID'
+  | 'UNKNOWN_COMPONENT_ID'
+  | 'UNKNOWN_REFUSAL_CODE'
+  | 'CLAIM_KIND_MISSING_REFS'
+  | 'UNSUPPORTED_QUALITATIVE_CLAIM';
+
 export type ExplanationValidation =
   | { ok: true }
-  | { ok: false; reasons: string[] };
+  | {
+      ok: false;
+      reasons: string[];
+      errorCodes: ExplanationValidationErrorCode[];
+    };
 
 const UNSUPPORTED_TEXT_PATTERNS: { id: string; re: RegExp }[] = [
   {
@@ -49,6 +63,16 @@ function textHasUnsupportedClaim(
   return undefined;
 }
 
+function pushError(
+  reasons: string[],
+  codes: ExplanationValidationErrorCode[],
+  code: ExplanationValidationErrorCode,
+  reason: string,
+): void {
+  reasons.push(reason);
+  codes.push(code);
+}
+
 /**
  * Validates structural references and constrained claim kinds.
  * Calculated metricIds and refusedMetricIds are disjoint roles.
@@ -58,45 +82,77 @@ export function validateExplanationDto(
   packet: EvidencePacket,
 ): ExplanationValidation {
   const reasons: string[] = [];
+  const errorCodes: ExplanationValidationErrorCode[] = [];
   const metricSet = new Set(packet.metricIds);
   const refusedMetricSet = new Set(packet.refusedMetricIds);
   const componentSet = new Set(packet.componentIds);
   const refusalCodeSet = new Set(packet.refusalCodes);
 
   if (dto.acknowledgedStatus !== packet.status) {
-    reasons.push(
+    pushError(
+      reasons,
+      errorCodes,
+      'STATUS_MISMATCH',
       `acknowledgedStatus ${dto.acknowledgedStatus} != engine status ${packet.status}`,
     );
   }
 
   const summaryBad = textHasUnsupportedClaim(dto.summary);
   if (summaryBad) {
-    reasons.push(`unsupported qualitative claim (${summaryBad.id}) in summary`);
+    pushError(
+      reasons,
+      errorCodes,
+      'UNSUPPORTED_QUALITATIVE_CLAIM',
+      `unsupported qualitative claim (${summaryBad.id}) in summary`,
+    );
   }
 
   for (const [si, stmt] of dto.statements.entries()) {
     for (const id of stmt.metricIds) {
       if (refusedMetricSet.has(id)) {
-        reasons.push(
+        pushError(
+          reasons,
+          errorCodes,
+          'REFUSED_AS_METRIC_ID',
           `statement[${si}] refused metric "${id}" presented as calculated metricId`,
         );
       } else if (!metricSet.has(id)) {
-        reasons.push(`statement[${si}] unknown metricId "${id}"`);
+        pushError(
+          reasons,
+          errorCodes,
+          'UNKNOWN_METRIC_ID',
+          `statement[${si}] unknown metricId "${id}"`,
+        );
       }
     }
     for (const id of stmt.refusedMetricIds) {
       if (!refusedMetricSet.has(id)) {
-        reasons.push(`statement[${si}] unknown refusedMetricId "${id}"`);
+        pushError(
+          reasons,
+          errorCodes,
+          'UNKNOWN_REFUSED_METRIC_ID',
+          `statement[${si}] unknown refusedMetricId "${id}"`,
+        );
       }
     }
     for (const id of stmt.componentIds) {
       if (!componentSet.has(id)) {
-        reasons.push(`statement[${si}] unknown componentId "${id}"`);
+        pushError(
+          reasons,
+          errorCodes,
+          'UNKNOWN_COMPONENT_ID',
+          `statement[${si}] unknown componentId "${id}"`,
+        );
       }
     }
     for (const code of stmt.refusalCodes) {
       if (!refusalCodeSet.has(code)) {
-        reasons.push(`statement[${si}] unknown refusalCode "${code}"`);
+        pushError(
+          reasons,
+          errorCodes,
+          'UNKNOWN_REFUSAL_CODE',
+          `statement[${si}] unknown refusalCode "${code}"`,
+        );
       }
     }
 
@@ -107,21 +163,31 @@ export function validateExplanationDto(
       stmt.componentIds.length === 0 &&
       stmt.refusalCodes.length === 0
     ) {
-      reasons.push(
+      pushError(
+        reasons,
+        errorCodes,
+        'CLAIM_KIND_MISSING_REFS',
         `statement[${si}] claimKind=${stmt.claimKind} requires at least one evidence reference`,
       );
     }
 
     const bad = textHasUnsupportedClaim(stmt.text);
     if (bad) {
-      reasons.push(
+      pushError(
+        reasons,
+        errorCodes,
+        'UNSUPPORTED_QUALITATIVE_CLAIM',
         `statement[${si}] unsupported qualitative claim (${bad.id})`,
       );
     }
   }
 
   if (reasons.length > 0) {
-    return { ok: false, reasons: [...new Set(reasons)] };
+    return {
+      ok: false,
+      reasons: [...new Set(reasons)],
+      errorCodes: [...new Set(errorCodes)],
+    };
   }
   return { ok: true };
 }
