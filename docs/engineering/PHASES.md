@@ -62,9 +62,6 @@ Notes:
 - `npm audit` during image `npm ci` reported transitive advisories in the full install set; runtime image after `npm prune --omit=dev` reported 0 vulnerabilities.
 - `.env` created locally from `.env.example` for Compose; not committed.
 
-### Suggested commit
-
-`chore: bootstrap foundation with requirements spec and nestjs compose`
 
 ---
 
@@ -112,9 +109,6 @@ Recorded 2026-11-14:
 | `docker compose up --build -d` | api Up, postgres healthy |
 | `POST /architectures` with checkout-pricing fixture | HTTP 201; findings include CONTRADICTION_PRESENT, RETRY_WITHOUT_BACKOFF, SPOF |
 
-### Suggested commit
-
-`feat: add versioned architecture model with validation and drizzle persistence`
 
 ### Limitations carried forward
 
@@ -154,9 +148,6 @@ Recorded 2026-11-15:
 | `npm run test:integration` | 3 passed (Postgres) |
 | `npm run build` | exit 0 |
 
-### Suggested commit
-
-`feat: add deterministic simulation engine for unavailable latency and load scenarios`
 
 ### Limitations
 
@@ -194,9 +185,6 @@ Recorded 2026-11-15 — see root `VALIDATION.md` for full tables.
 | `npm run test:integration` | exit 0 — **3** passed (Compose Postgres) |
 | `npm run build` | exit 0 |
 
-### Suggested commit
-
-`test: add golden validation and adversarial suites for simulation correctness`
 
 ### Limitations
 
@@ -242,9 +230,6 @@ Recorded 2026-11-15:
 | Live OpenAI smoke #3 (V01, 3 calls, post D-021) | A **PROPOSED** (1 node); B **`load_multiplication`×1 OK**; sim **ANSWERED** (3 metrics, 3 refusals); explain **`llm+deterministic`**, **fallback=false**; **`e2eSuccess=true`**; est. **~$0.01422**; wall **~10.2 s**; details in `VALIDATION.md` |
 | Live full V01–V12 eval | **NOT RUN** |
 
-### Suggested commit
-
-`fix: separate refused vs calculated metric refs in grounded explanation`
 
 ### Limitations
 
@@ -288,9 +273,6 @@ Recorded 2026-11-15:
 | Live OpenAI via HTTP | **NOT RUN** (CI/default Fake only) |
 | `docker compose up -d --build` + HTTP acceptance | **PASS** — `LLM_PROVIDER=fake`, `OPENAI_API_KEY` unset in api; extract→persist→analyze v1; OCC v2 then re-analyze v1 still `architectureVersion=1`; 404/400/UNSUPPORTED domain 200; details in `VALIDATION.md` |
 
-### Suggested commit
-
-`feat: expose extract and analyze HTTP orchestration with request-scoped usage`
 
 ### Limitations
 
@@ -331,9 +313,6 @@ Recorded 2026-11-15:
 | `npm run test:integration` | exit 0 — **12** |
 | Live OpenAI V01–V12 eval (1 pass) | **34/34** calls; arch field 120/235; scen 10/10 + unsup 1/2; explain 9/10 grounded; est. **~$0.186**; wall p50/p95 **7.97s/11.0s** (N=12); artifact gitignored |
 
-### Suggested commit
-
-`feat: add Phase 7 semantic eval scoring and record live V01–V12 measurements`
 
 ### Limitations
 
@@ -367,9 +346,6 @@ Recorded 2026-11-15:
 | New artifact | `run-2026-11-15T13-55-04-443Z.json` |
 | `npm test` after live | exit 0 — **157** (Fake only; no OpenAI in default tests) |
 
-#### Suggested commit (when human requests)
-
-`fix: remediate extraction prompts/diagnostics and record second live V01–V12 regression`
 
 ### Final closure verification (2026-11-15)
 
@@ -388,9 +364,6 @@ Recorded 2026-11-15:
 
 REQ-090–098 and REQ-113–114 have measured evidence. Residual limitations (ID slugs, DTO quantity omissions, V07 explain refs, formal-context scenario scoring, small dataset) remain documented — not reopen blockers. Phase 8 requires explicit approval.
 
-#### Suggested commit (when human requests)
-
-`docs: modernize README for Phases 1–7 and close Phase 7 validation`
 
 ## Phase 8 — Documentation and interview preparation
 
@@ -452,6 +425,53 @@ Vue 3 + Vite workspace: extract → review/validate → explicit persist → ana
 
 Mandatory docs + defense scripts verified; Compose Fake path remains the live-demo baseline. Residual PARTIAL requirements are intentional and recorded in coverage / NOT_DONE.
 
-#### Suggested commit (when human requests)
 
-`docs: finalize Phase 8 defense pack and mandatory deliverables`
+## Phase 9 — Evaluation Lab (2026-11-15)
+
+Primary REQs: demonstration/validation transparency (REQ-080–098 evidence reuse; REQ-099 demo path).
+
+### Phase 9.1 — Backend deterministic runner + historical summaries
+
+| Deliverable | Status |
+| --- | --- |
+| Pure `compareGoldenResult` + Vitest delegation | done |
+| Allowlisted adapters (G12 + V12 + ADV8 = 32) | done |
+| `GET/POST /evaluation/*` gated by `EVAL_LAB_ENABLED` | done |
+| Sanitized historical summaries (baseline + remediation) | done |
+| Backend unit tests | **177** green |
+
+### Phase 9.2 — Frontend Evaluation Lab
+
+| Deliverable | Status |
+| --- | --- |
+| vue-router Workspace \| Evaluation Lab | done |
+| Real `POST /evaluation/runs` report UI | done |
+| Historical panel (disclaimer separated from run totals) | done |
+| JSON export + print CSS | done |
+| Frontend unit tests | **24** green |
+| Browser verify (Vite + Nest with Lab gate) | 32/32 passed |
+
+### Phase 9.3 — Docker packaging, acceptance, docs (2026-11-15)
+
+| Check | Result |
+| --- | --- |
+| API image copies `tests/golden|validation|adversarial` fixtures | **yes** |
+| Historical `*.summary.json` in `dist/evaluation/historical` | **yes** |
+| Raw `artifacts/eval/run-*.json` | **not** in image (dockerignore) |
+| Base `docker-compose.yml` Lab default | **off** (`EVAL_LAB_ENABLED` unset/0) |
+| Demo override `docker-compose.demo.yml` | `EVAL_LAB_ENABLED=1` + `LLM_PROVIDER=fake` |
+| Backend typecheck / lint / build | exit 0 |
+| Backend `npm test` | exit 0 — **177** |
+| Backend `npm run test:integration` | exit 0 — **12** |
+| Frontend typecheck / lint / build | exit 0 |
+| Frontend `npm test` | exit 0 — **24** |
+| Compose clean rebuild (demo override) | **PASS** |
+| `compose-http-acceptance` | **PASS** |
+| `compose-frontend-acceptance` | **PASS** |
+| `compose-evaluation-acceptance` | **PASS** (32/32; G01 `F-UTIL-001`; V10 schema; ADV-08 isolation; historical 120/235 & 141/244) |
+| Browser at http://127.0.0.1:8080/evaluation | **verified** (run 32/32, G01 evidence, Workspace nav, deep-link refresh) |
+| Live OpenAI | **NOT RUN** |
+
+### Phase 9 closed
+
+Evaluation Lab is reproducible under Compose Fake + demo override. Deterministic domain evaluation is distinct from Vitest CI and from historical OpenAI evidence.

@@ -141,3 +141,22 @@ Discoveries, mistakes, fixes, and reusable patterns. Update after each phase.
 - HTTP 409 bodies expose `expectedVersion` + `actualVersion` — surface them; never bump and retry.
 - Compose acceptance must hit `:8080/api/...` (nginx strip), not only `:3000`, or proxy regressions stay invisible.
 - Unit tests with an injected `ApiClient` stay Fake/deterministic; browser verification is separate from HTTP acceptance.
+
+## L-027 — Evaluation Lab needs fixtures in the image, not bind mounts (2026-11-15)
+
+- Local Lab worked with `tests/` on disk; Compose API previously dockerignored all of `tests/` → empty catalog in the container.
+- Copy only golden/validation/adversarial fixture trees into the runtime image; keep `*.spec.ts` and unit/integration trees out.
+- Historical evidence must be Git-tracked sanitized JSON under `src/evaluation/historical/` (nest assets → `dist`); never ship raw `artifacts/eval/run-*.json`.
+
+## L-028 — Compose env inheritance can silently select OpenAI (2026-11-15)
+
+- `${LLM_PROVIDER:-fake}` still picks up a host `.env` value of `openai`, crashing the API without a key.
+- Demo override should **force** `LLM_PROVIDER=fake` (and Lab enablement) rather than trusting ambient env for defense demos.
+- Browser Lab calls must stay same-origin `/api/...` through nginx — cross-origin `VITE_API_BASE_URL` without CORS fails fetch.
+
+## L-029 — Domain evaluation ≠ Vitest ≠ historical OpenAI (2026-11-15)
+
+- Vitest proves CI regression; Evaluation Lab proves allowlisted domain adapters via HTTP with structured evidence.
+- V10/V11 Lab status is `schema_validation`, not NL scenario classification success.
+- ADV-08 is `nl_isolation_check` — never market as LLM injection resistance.
+- Historical OpenAI metrics belong in a separately labeled panel and must not alter deterministic run totals.

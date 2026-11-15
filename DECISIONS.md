@@ -83,6 +83,14 @@ Optional relative to the PDF (REQ-146), shipped as a **thin** workspace: extract
 
 ---
 
+## 7b. Evaluation Lab (opt-in)
+
+Deterministic allowlisted G01–G12 / V01–V12 / ADV-01–08 over HTTP (`src/evaluation`), gated by `EVAL_LAB_ENABLED` (default off). Adapters call `simulate`/schema in-process — **no** Vitest spawn, **no** OpenAI, **no** DB writes. Historical OpenAI metrics are sanitized summaries only and never affect run totals. Demo Compose override forces Fake + Lab on.
+
+**Rejected:** Shelling `npm test` from the API; enabling Lab in base Compose; mixing historical LLM scores into deterministic pass/fail.
+
+---
+
 ## 8. Observability tradeoff
 
 API returns `usage` (tokens/cost when priced) and `timingsMs` per stage. Full OpenTelemetry collector/export was deferred (budget). Measured p50/p95 exist for live eval with **N=12** — request timings, not architecture latency SLOs.

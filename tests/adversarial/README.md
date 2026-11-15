@@ -1,6 +1,6 @@
 # Adversarial suite (Phase 4)
 
-Deterministic boundary tests only. **No LLM extraction or prompt-injection defenses** are implemented in this phase.
+Deterministic boundary tests only. **No LLM extraction or prompt-injection defenses** are claimed here. The Evaluation Lab reuses these fixtures via allowlisted adapters (ADV-08 = `nl_isolation_check`, not LLM injection resistance).
 
 | ID | Focus |
 | --- | --- |

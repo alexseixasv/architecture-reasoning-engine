@@ -273,22 +273,14 @@ async function onCompare(): Promise<void> {
 </script>
 
 <template>
-  <div class="min-h-screen bg-canvas text-ink">
-    <header class="border-b border-black/20 bg-header text-ink-on-dark">
-      <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4">
-        <div>
-          <p class="text-xs uppercase tracking-wide text-ink-on-dark-muted">
-            Deterministic analysis workspace
-          </p>
-          <h1 class="text-xl font-semibold">
-            Architecture Reasoning Engine
-          </h1>
-        </div>
-        <p class="max-w-md text-xs text-ink-on-dark-muted">
+  <div>
+    <div class="border-b border-border bg-panel">
+      <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+        <p class="text-sm text-ink-muted">
           LLMs extract and explain. Numbers come from the engine. Fake LLM is the default reproducible demo.
         </p>
       </div>
-    </header>
+    </div>
 
     <main class="mx-auto grid max-w-7xl gap-6 px-4 py-6 lg:grid-cols-2">
       <div class="space-y-4">

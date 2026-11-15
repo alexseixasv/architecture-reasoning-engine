@@ -13,9 +13,18 @@ docs
 !package-lock.json
 Dockerfile
 docker-compose.yml
+docker-compose.*.yml
 .cursor
 .vscode
-tests
 vitest.config.ts
 eslint.config.mjs
 **/*.spec.ts
+frontend
+scripts
+artifacts
+# Keep deterministic Evaluation Lab fixtures; exclude Vitest runners and live helpers
+tests/unit
+tests/integration
+tests/live
+tests/eval
+tests/**/*.spec.ts

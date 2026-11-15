@@ -4,7 +4,10 @@ import type {
   AnalyzeHttpResponse,
   ArchitectureEnvelope,
   DocumentDiff,
+  EvaluationRunResult,
+  EvaluationSuitesResponse,
   ExtractHttpResponse,
+  HistoricalEvaluationResponse,
   UsageSummary,
   ValidateResponse,
   VersionListItem,
@@ -302,8 +305,295 @@ export function createMockApi(overrides: Partial<ApiClient> = {}): ApiClient & {
         version: '0.1.0',
       };
     },
+    async listEvaluationSuites() {
+      calls.push('listEvaluationSuites');
+      return sampleEvaluationSuites();
+    },
+    async runEvaluation(suiteId = 'deterministic_full' as const) {
+      calls.push(`runEvaluation:${suiteId}`);
+      return sampleEvaluationRun(suiteId);
+    },
+    async getHistoricalEvaluation() {
+      calls.push('getHistoricalEvaluation');
+      return sampleHistoricalEvaluation();
+    },
     ...overrides,
   };
 
   return mock;
+}
+
+export function sampleEvaluationSuites(): EvaluationSuitesResponse {
+  return {
+    suites: [
+      {
+        id: 'deterministic_full',
+        label: 'Deterministic full (G+V+ADV)',
+        caseCount: 32,
+        requiresOpenAi: false,
+        description: 'All allowlisted deterministic cases.',
+      },
+      {
+        id: 'golden',
+        label: 'Golden G01–G12',
+        caseCount: 12,
+        requiresOpenAi: false,
+        description: 'Golden simulation fixtures.',
+      },
+    ],
+  };
+}
+
+export function sampleEvaluationRun(
+  suiteId: EvaluationRunResult['suiteId'] = 'deterministic_full',
+  opts?: { failG03?: boolean },
+): EvaluationRunResult {
+  const g01 = {
+    caseId: 'G01',
+    suiteId: 'golden' as const,
+    checkKind: 'simulation_correctness' as const,
+    description: 'capacity sum_replicas',
+    verifies: 'Simulation correctness against expected.json. No LLM.',
+    executedAt: '2026-11-15T21:00:00.000Z',
+    status: 'passed' as const,
+    durationMs: 4.2,
+    expectedOutcome: { status: 'ANSWERED' },
+    actualOutcome: { status: 'ANSWERED' },
+    mismatches: [],
+    evidence: {
+      determinismOk: true,
+      formulaIds: ['F-UTIL-001'],
+      refusedReasonCodes: ['NO_AVAILABILITY_MODEL'],
+      metricEvidence: [
+        {
+          metricId: 'utilization:api',
+          expectedValue: 0.25,
+          actualValue: 0.25,
+          unit: 'ratio',
+          formulaId: 'F-UTIL-001',
+          expectedFormulaId: 'F-UTIL-001',
+          substitutions: ['U = offered / capacity'],
+          inputPaths: ['node_offered_load:api'],
+          result: '0.25',
+        },
+      ],
+    },
+    failureReason: null,
+    input: { architecture: { name: 'g01' }, scenario: { type: 'load_multiplication' } },
+  };
+
+  const g03 = {
+    caseId: 'G03',
+    suiteId: 'golden' as const,
+    checkKind: 'simulation_correctness' as const,
+    description: 'load multiplication normal',
+    verifies: 'Simulation correctness. No LLM.',
+    executedAt: '2026-11-15T21:00:00.000Z',
+    status: (opts?.failG03 ? 'failed' : 'passed') as 'passed' | 'failed',
+    durationMs: 3.1,
+    expectedOutcome: { status: 'ANSWERED' },
+    actualOutcome: opts?.failG03
+      ? { status: 'PARTIALLY_ANSWERED' }
+      : { status: 'ANSWERED' },
+    mismatches: opts?.failG03
+      ? [
+          {
+            path: 'status',
+            expected: 'ANSWERED',
+            actual: 'PARTIALLY_ANSWERED',
+            message: 'status mismatch',
+          },
+        ]
+      : [],
+    evidence: { determinismOk: true, formulaIds: ['F-LOAD-001'] },
+    failureReason: opts?.failG03 ? 'status mismatch' : null,
+    input: { architecture: { name: 'g03' }, scenario: { type: 'load_multiplication' } },
+  };
+
+  const v10 = {
+    caseId: 'V10',
+    suiteId: 'validation_formal' as const,
+    checkKind: 'schema_validation' as const,
+    description: 'V10 schema_only (unsupported NL documented; not NL classification)',
+    verifies:
+      'Schema validation only. Does NOT claim NL scenario classification success.',
+    executedAt: '2026-11-15T21:00:00.000Z',
+    status: 'passed' as const,
+    durationMs: 0.5,
+    expectedOutcome: { execution: 'schema_only' },
+    actualOutcome: { execution: 'schema_only', schemaValid: true },
+    mismatches: [],
+    evidence: { notes: ['V10/V11: schema_only — no simulate'] },
+    failureReason: null,
+    input: { meta: { execution: 'schema_only' } },
+  };
+
+  const adv08 = {
+    caseId: 'ADV-08',
+    suiteId: 'adversarial' as const,
+    checkKind: 'nl_isolation_check' as const,
+    description:
+      'NL isolation check — injection markdown unused by simulate (NOT LLM prompt-injection resistance)',
+    verifies:
+      'Deterministic NL isolation. This does NOT prove LLM prompt-injection resistance.',
+    executedAt: '2026-11-15T21:00:00.000Z',
+    status: 'passed' as const,
+    durationMs: 0.8,
+    expectedOutcome: {
+      nlNotPassedToSimulate: true,
+      llmPromptInjectionResistance: 'NOT_CLAIMED',
+    },
+    actualOutcome: {
+      nlPassedToSimulate: false,
+      llmPromptInjectionResistance: 'NOT_TESTED',
+    },
+    mismatches: [],
+    evidence: {
+      notes: [
+        'Do not cite this case as evidence that prompt injection against a real LLM was tested.',
+      ],
+    },
+    failureReason: null,
+    input: { nlFixturePresent: true },
+  };
+
+  const failed = opts?.failG03 ? 1 : 0;
+  const passed = 4 - failed;
+
+  return {
+    runId: 'evr_test_001',
+    executedAt: '2026-11-15T21:00:00.000Z',
+    suiteId,
+    overallStatus: failed ? 'failed' : 'passed',
+    summary: {
+      total: 4,
+      passed,
+      failed,
+      skipped: 0,
+      durationMs: 12.5,
+    },
+    suites: [
+      {
+        suiteId: 'golden',
+        passed: failed ? 1 : 2,
+        failed,
+        skipped: 0,
+        durationMs: 8,
+        cases: [g01, g03],
+      },
+      {
+        suiteId: 'validation_formal',
+        passed: 1,
+        failed: 0,
+        skipped: 0,
+        durationMs: 2,
+        cases: [v10],
+      },
+      {
+        suiteId: 'adversarial',
+        passed: 1,
+        failed: 0,
+        skipped: 0,
+        durationMs: 2.5,
+        cases: [adv08],
+      },
+    ],
+  };
+}
+
+export function sampleHistoricalEvaluation(): HistoricalEvaluationResponse {
+  return {
+    disclaimer: 'Historical OpenAI evaluation — not executed in this run',
+    unavailable: [],
+    artifacts: [
+      {
+        disclaimer: 'Historical OpenAI evaluation — not executed in this run',
+        id: 'baseline-2026-11-15',
+        passLabel: 'baseline',
+        evaluationDate: '2026-11-15',
+        generatedAt: '2026-11-15T13:40:00.172Z',
+        model: 'gpt-4.1',
+        dataset: 'V01–V12',
+        maxProviderRequests: 34,
+        sourceArtifact: 'artifacts/eval/run-2026-11-15T13-40-00-172Z.json',
+        sourceArtifactSha256: '2d1ca9c7',
+        liveStatus: 'MEASURED',
+        metrics: {
+          fieldAccuracy: { matches: 120, total: 235, pct: 51.06 },
+          node: { precision: 0.8, recall: 0.86, f1: 0.83 },
+          dependency: { precision: 0.7, recall: 0.78, f1: 0.74 },
+          quantityState: { knownToUnknown: 61, unknownToKnown: 0 },
+          scenarioStructured: { overallOk: 10, denominator: 10 },
+          scenarioUnsupportedNl: { ok: 1, denominator: 2 },
+          explanation: {
+            groundedSuccess: 9,
+            deterministicFallback: 1,
+            evaluated: 10,
+          },
+          estimatedUsd: 0.186,
+          wallMs: { p50: 7972, p95: 10980, sampleSize: 12 },
+          tokens: { input: 43247, output: 12405 },
+        },
+        limitations: ['formal_context_scenario_scoring', 'small_sample_N12'],
+        cases: [
+          {
+            caseId: 'V01',
+            pipelineFailureClass: 'none',
+            fieldAccuracy: { matches: 10, total: 12 },
+            scenarioCompare: {
+              intentMatch: true,
+              parameterMatch: true,
+              overallMatch: true,
+            },
+            explanationSource: 'llm+deterministic',
+          },
+        ],
+        validationMdCrossCheck: { ok: true, discrepancies: [] },
+      },
+      {
+        disclaimer: 'Historical OpenAI evaluation — not executed in this run',
+        id: 'remediation-2026-11-15',
+        passLabel: 'remediation',
+        evaluationDate: '2026-11-15',
+        generatedAt: '2026-11-15T13:55:04.443Z',
+        model: 'gpt-4.1',
+        dataset: 'V01–V12',
+        maxProviderRequests: 34,
+        sourceArtifact: 'artifacts/eval/run-2026-11-15T13-55-04-443Z.json',
+        sourceArtifactSha256: '47a76aa3',
+        liveStatus: 'MEASURED',
+        metrics: {
+          fieldAccuracy: { matches: 141, total: 244, pct: 57.79 },
+          node: { precision: 0.83, recall: 0.89, f1: 0.86 },
+          dependency: { precision: 0.8, recall: 0.89, f1: 0.84 },
+          quantityState: { knownToUnknown: 57, unknownToKnown: 0 },
+          scenarioStructured: { overallOk: 10, denominator: 10 },
+          scenarioUnsupportedNl: { ok: 2, denominator: 2 },
+          explanation: {
+            groundedSuccess: 9,
+            deterministicFallback: 1,
+            evaluated: 10,
+          },
+          estimatedUsd: 0.203,
+          wallMs: { p50: 7575, p95: 19828, sampleSize: 12 },
+          tokens: { input: 49931, output: 12872 },
+        },
+        limitations: ['denominator_change_between_passes'],
+        cases: [
+          {
+            caseId: 'V01',
+            pipelineFailureClass: 'none',
+            fieldAccuracy: { matches: 11, total: 12 },
+            scenarioCompare: {
+              intentMatch: true,
+              parameterMatch: true,
+              overallMatch: true,
+            },
+            explanationSource: 'llm+deterministic',
+          },
+        ],
+        validationMdCrossCheck: { ok: true, discrepancies: [] },
+      },
+    ],
+  };
 }

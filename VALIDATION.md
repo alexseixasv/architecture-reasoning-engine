@@ -1,7 +1,7 @@
 # VALIDATION.md — Evidence for correctness, extraction, and operations
 
-**Date finalized:** 2026-11-15 (Phase 8.3 documentation closure)  
-**Scope:** Phases 4–8 verification. **No new paid OpenAI runs** in Phase 8.3.
+**Date finalized:** 2026-11-15 (Phase 9 Evaluation Lab closure)
+**Scope:** Phases 4–9 verification. **No new paid OpenAI runs** in Phases 8–9.
 
 ### Mandatory caveats (read first)
 
@@ -71,20 +71,20 @@ ADV-01 forced numbers ignored · ADV-02 unsupported scenario · ADV-03 malformed
 
 | Check | Result |
 | --- | --- |
-| Unit Fake extract/scenario/explain | Included in offline `npm test` (**157** as of Phase 8.2) |
-| HTTP Fake integration | `npm run test:integration` / `test:http` — OCC, version pin, UNSUPPORTED |
+| Unit Fake extract/scenario/explain | Included in offline `npm test` (Phase 8.2: **157**; Phase 9: **177** after Evaluation Lab units) |
+| HTTP Fake integration | `npm run test:integration` / `test:http` — OCC, version pin, UNSUPPORTED — **12** |
 | Compose API Fake | `scripts/compose-http-acceptance.ts` — extract non-persist → persist → analyze → OCC → 404/400/UNSUPPORTED |
 | Compose nginx Fake | `scripts/compose-frontend-acceptance.ts` — SPA + `/api` proxy + 409 + diff |
-| Frontend Vitest | **12** tests (mocked client; no network) |
+| Frontend Vitest | Phase 8.2: **12**; Phase 9: **24** (mocked client; no network) |
 | OpenAI calls in default tests/Compose Fake | **none** |
 
 ---
 
 ## D. Real OpenAI architecture extraction
 
-**Gate:** `RUN_LIVE_OPENAI=1` · Cap **34** · Model `gpt-4.1` · timeout 60000 · retries **0** · persist **none**  
-Artifacts (gitignored):  
-`artifacts/eval/run-2026-11-15T13-40-00-172Z.json` (**baseline frozen**)  
+**Gate:** `RUN_LIVE_OPENAI=1` · Cap **34** · Model `gpt-4.1` · timeout 60000 · retries **0** · persist **none**
+Artifacts (gitignored):
+`artifacts/eval/run-2026-11-15T13-40-00-172Z.json` (**baseline frozen**)
 `artifacts/eval/run-2026-11-15T13-55-04-443Z.json` (remediation regression)
 
 ### Baseline (first measured)
@@ -147,7 +147,7 @@ Smoke #2 failed validation (refused IDs cited as metrics); smoke #3 succeeded af
 
 ## G. Cost and latency measurements
 
-**Buckets** ([`src/llm/eval/cost-projections.ts`](src/llm/eval/cost-projections.ts)):  
+**Buckets** ([`src/llm/eval/cost-projections.ts`](src/llm/eval/cost-projections.ts)):
 A = extract_architecture + extract_scenario + explain · B = scenario + explain · C = scenario only.
 
 | Pass | Est. USD run | A / 1k | B / 1k | C / 1k | Wall p50/p95 | Notes |
@@ -168,11 +168,25 @@ Simulate stage remains sub-10 ms p95 when scenario OK. Production model for proj
 | SPA `http://127.0.0.1:8080` | served; deep-route refresh OK |
 | nginx `/api/*` | strip prefix → Nest |
 | Fake E2E HTTP | extract → validate path → persist v1 → analyze → UNSUPPORTED → v2 → diff → OCC **409** |
-| Browser Fake acceptance | verified in Phase 8.2 (Cursor browser) |
+| Browser Fake acceptance | verified in Phase 8.2 |
 | Live OpenAI via UI | **NOT RUN** |
+| Evaluation Lab (Phase 9) | Compose demo override; deterministic **32/32**; historical summaries served from image |
 
-Frontend: typecheck / lint / unit (**12**) / production build — exit 0.  
-Backend: typecheck / lint / unit (**157**) / integration (**12**) / build — exit 0.
+Frontend (Phase 9): typecheck / lint / unit (**24**) / production build — exit 0.
+Backend (Phase 9): typecheck / lint / unit (**177**) / integration (**12**) / build — exit 0.
+
+### I. Evaluation Lab (Phase 9) — deterministic vs historical
+
+| Concern | Lab behavior |
+| --- | --- |
+| What the Run button executes | Allowlisted G01–G12 + V01–V12 formal/schema + ADV-01–08 via `simulate`/schema — **no OpenAI** |
+| Gate | `EVAL_LAB_ENABLED=1` required; base Compose leaves Lab **off** (403) |
+| V10/V11 | `schema_validation` only — **not** NL scenario classification success |
+| ADV-08 | `nl_isolation_check` — **not** LLM prompt-injection resistance |
+| Historical panel | Sanitized summaries from Phase 7 artifacts (`src/evaluation/historical/*.summary.json`); disclaimer *Historical OpenAI evaluation — not executed in this run*; excluded from run totals |
+| Raw artifacts | Remain gitignored under `artifacts/`; regenerate summaries with `npm run eval:sanitize-historical` from local dumps only |
+
+Acceptance: `npx tsx scripts/compose-evaluation-acceptance.ts` (requires `docker-compose.demo.yml`).
 
 ---
 
@@ -185,9 +199,12 @@ cd frontend && npm ci && npm run typecheck && npm run lint && npm test && npm ru
 docker compose up -d --build
 npx tsx scripts/compose-http-acceptance.ts
 npx tsx scripts/compose-frontend-acceptance.ts
+# Evaluation Lab demo (Fake + EVAL_LAB_ENABLED=1):
+docker compose -f docker-compose.yml -f docker-compose.demo.yml up -d --build
+npx tsx scripts/compose-evaluation-acceptance.ts
 ```
 
-Live OpenAI (opt-in only; **do not run for Phase 8.3 closure**):
+Live OpenAI (opt-in only; **do not re-run for Phase 9 closure** — use historical summaries):
 
 ```powershell
 $env:RUN_LIVE_OPENAI='1'; $env:LLM_PROVIDER='openai'
@@ -216,4 +233,4 @@ node --env-file=.env --import tsx scripts/live-validation-eval.ts
 | REQ-100 | B adversarial |
 | REQ-110, 112–114 | G (+ API `timingsMs`/`usage`; no OTel collector) |
 | REQ-120, 130 | H |
-| REQ-099 | H + [`docs/defense/DEMO.md`](docs/defense/DEMO.md) |
+| REQ-099 | H–I + [`docs/defense/DEMO.md`](docs/defense/DEMO.md) |

@@ -28,6 +28,8 @@ Controls:
 - Artifact: `artifacts/eval/run-<ISO>.json` (gitignored)
 - No persistence; no silent fixture substitution
 
-**Status:** one approved pass executed 2026-11-15 — results recorded in `VALIDATION.md`. Do not re-run without new approval.
+**Status:** approved baseline + remediation passes executed 2026-11-15 — results recorded in `VALIDATION.md`. Do not re-run without new approval.
 
-Measured one-pass estimated API charges: **~$0.186** (published pricing; not invoice).
+Measured baseline estimated API charges: **~$0.186** (published pricing; not invoice). Remediation ~$0.203.
+
+Sanitized summaries for the Evaluation Lab historical panel live under `src/evaluation/historical/*.summary.json` (regenerate with `npm run eval:sanitize-historical` from local gitignored artifacts only — never invent numbers).

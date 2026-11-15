@@ -220,3 +220,17 @@ Append-only record of meaningful engineering decisions. Final submission also co
 - **Decision:** Ship root `DECISIONS.md` / `MODEL.md` / `VALIDATION.md` / `NOT_DONE.md` + defense pack. Mark REQ-003 and REQ-110 as PARTIAL in the coverage matrix. Preserve both live OpenAI artifacts’ numbers without new paid runs. Canonical formulas live only in root `MODEL.md`.
 - **Alternatives rejected:** Inventing availability math to green REQ-003; re-running live eval for prettier tables; duplicate conflicting MODEL drafts.
 - **Consequences:** Phase 8 can close for defense readiness while remaining honest about limits.
+
+## D-033 — Evaluation Lab is opt-in, in-process, allowlisted (2026-11-15)
+
+- **Context:** Interviewers need a live deterministic evaluation report without shelling out to Vitest or calling OpenAI from HTTP.
+- **Decision:** Nest `EvaluationModule` invokes `simulate`/schema adapters over a fixed suite catalog. Gate with `EVAL_LAB_ENABLED=1` (default off; Dockerfile sets `0`). Synchronous HTTP only; no DB writes, no `child_process`, no user-supplied paths. Extract Vitest-free `compareGoldenResult` for shared semantics. Ship sanitized historical summaries under `src/evaluation/historical/` (raw `artifacts/` stay gitignored).
+- **Alternatives rejected:** Running `npm test` from the API; WebSockets/queues/run persistence; enabling Lab in base Compose; mixing historical LLM metrics into run pass/fail totals; claiming ADV-08 proves LLM prompt-injection resistance.
+- **Consequences:** Demo Compose override turns Lab on safely; production images stay gated even if the SPA still shows the nav link.
+
+## D-034 — Demo Compose override forces Fake + Lab (2026-11-15)
+
+- **Context:** A local `.env` with `LLM_PROVIDER=openai` broke Compose API startup during Phase 9.3 verification.
+- **Decision:** Keep base `docker-compose.yml` without Lab and with `${LLM_PROVIDER:-fake}`. Add `docker-compose.demo.yml` that sets `EVAL_LAB_ENABLED=1` **and** `LLM_PROVIDER=fake` so demos ignore accidental OpenAI env. Document both start commands in README/DEMO.
+- **Alternatives rejected:** Enabling Lab in the base compose file; relying on operator memory to unset OpenAI; broad Nest CORS for the Lab.
+- **Consequences:** `docker compose -f docker-compose.yml -f docker-compose.demo.yml up -d --build` is the Evaluation Lab demo path; default compose remains Lab-disabled.

@@ -1,6 +1,6 @@
 # LIVE_CHANGES.md — Interview live-coding readiness
 
-**Do not implement these during Phase 8.3.** Prepare to execute under observation (~10–20 minutes each). Prefer small, testable diffs that respect the LLM/engine boundary.
+**Do not implement these unless the panel asks.** Prepare to execute under observation (~10–20 minutes each). Prefer small, testable diffs that respect the LLM/engine boundary.
 
 ---
 

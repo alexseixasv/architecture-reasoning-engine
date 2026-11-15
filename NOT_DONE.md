@@ -25,6 +25,10 @@ On the fixed V01–V12 OpenAI set (remediation pass): field accuracy **141/244 (
 
 No authz, rate limiting, multi-tenant isolation, HA Postgres, horizontal scale story, paid-provider spend guards beyond opt-in gates, or CI pipeline. OCC handles concurrent edits; it does not merge.
 
+## Delivered transparency (not a gap)
+
+Evaluation Lab (Phase 9) re-runs allowlisted deterministic G/V/ADV cases and surfaces historical OpenAI summaries — it does **not** close the extraction-generalization gap above.
+
 ## Future iteration priorities
 
 1. Reduce extraction omissions (ids + quantities) without hardcoding fixtures.  

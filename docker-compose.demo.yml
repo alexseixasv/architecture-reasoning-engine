@@ -1,0 +1,14 @@
+# Demo override — enables Evaluation Lab HTTP endpoints for local defense demos.
+# Production / default compose leaves EVAL_LAB_ENABLED unset/0 (endpoints return 403).
+#
+# Start with Lab enabled:
+#   docker compose -f docker-compose.yml -f docker-compose.demo.yml up -d --build
+#
+# Start without Lab (default):
+#   docker compose up -d --build
+services:
+  api:
+    environment:
+      EVAL_LAB_ENABLED: '1'
+      # Demo stack is Fake LLM only — ignore a local .env that sets LLM_PROVIDER=openai
+      LLM_PROVIDER: fake

@@ -1,0 +1,2224 @@
+{
+  "disclaimer": "Historical OpenAI evaluation — not executed in this run",
+  "id": "remediation-2026-11-15",
+  "passLabel": "remediation",
+  "evaluationDate": "2026-11-15",
+  "generatedAt": "2026-11-15T13:55:04.443Z",
+  "model": "gpt-4.1",
+  "dataset": "V01–V12",
+  "maxProviderRequests": 34,
+  "sourceArtifact": "artifacts/eval/run-2026-11-15T13-55-04-443Z.json",
+  "sourceArtifactSha256": "47a76aa353257291afebd69a03e9c263d8dc8b9e2089f36c2dd4004079b750a4",
+  "liveStatus": "MEASURED",
+  "metrics": {
+    "fieldAccuracy": {
+      "matches": 141,
+      "total": 244,
+      "pct": 57.79
+    },
+    "node": {
+      "precision": 0.8333333333333334,
+      "recall": 0.8928571428571429,
+      "f1": 0.8620689655172413
+    },
+    "dependency": {
+      "precision": 0.8,
+      "recall": 0.8888888888888888,
+      "f1": 0.8421052631578948
+    },
+    "quantityState": {
+      "knownToUnknown": 57,
+      "unknownToKnown": 0
+    },
+    "scenarioStructured": {
+      "overallOk": 10,
+      "denominator": 10
+    },
+    "scenarioUnsupportedNl": {
+      "ok": 2,
+      "denominator": 2
+    },
+    "explanation": {
+      "groundedSuccess": 9,
+      "deterministicFallback": 1,
+      "evaluated": 10
+    },
+    "estimatedUsd": 0.20284,
+    "wallMs": {
+      "p50": 7575,
+      "p95": 19828,
+      "sampleSize": 12
+    },
+    "tokens": {
+      "input": 49931,
+      "output": 12872
+    },
+    "costProjectionsPer1000Usd": {
+      "A": 17.786299999999997,
+      "B": 7.347133333333334,
+      "C": 2.0483333333333333
+    }
+  },
+  "limitations": [
+    "denominator_change_between_passes",
+    "formal_context_scenario_scoring",
+    "small_sample_N12",
+    "not_independent_generalization",
+    "estimated_usd_not_invoice",
+    "fake_llm_not_openai_accuracy"
+  ],
+  "cases": [
+    {
+      "caseId": "V01_capacity_sum",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "simulationStatus": "ANSWERED",
+      "fieldAccuracy": {
+        "matches": 1,
+        "total": 4
+      },
+      "nodePresence": {
+        "precision": 0,
+        "recall": 0,
+        "f1": null
+      },
+      "dependencyPresence": {
+        "precision": null,
+        "recall": null,
+        "f1": null
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "load_multiplication",
+        "actualIntent": "load_multiplication"
+      },
+      "explanationSource": "llm+deterministic",
+      "explanationValidationOk": true,
+      "failureCategories": [
+        "arch_id_or_extra_nodes"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 3369.3954999999996,
+        "extractScenario": 1634.4816999999994,
+        "simulate": 16.514100000000326,
+        "explain": 2712.822,
+        "totalWall": 7735.119699999999
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:api",
+          "match": false,
+          "expected": "present",
+          "actual": "missing",
+          "kind": "presence"
+        },
+        {
+          "path": "node:api-service",
+          "match": false,
+          "expected": "absent",
+          "actual": "extra",
+          "kind": "extra"
+        },
+        {
+          "path": "system.incomingTraffic",
+          "match": true,
+          "expected": "known:80:rps:declared",
+          "actual": "known:80:rps:declared",
+          "kind": "ingress"
+        },
+        {
+          "path": "system.ingressNodeIds",
+          "match": false,
+          "expected": "api",
+          "actual": "api-service",
+          "kind": "ingress"
+        }
+      ]
+    },
+    {
+      "caseId": "V02_primary_only",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "simulationStatus": "ANSWERED",
+      "fieldAccuracy": {
+        "matches": 6,
+        "total": 11
+      },
+      "nodePresence": {
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1": 0.5
+      },
+      "dependencyPresence": {
+        "precision": 0,
+        "recall": 0,
+        "f1": null
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "load_multiplication",
+        "actualIntent": "load_multiplication"
+      },
+      "explanationSource": "llm+deterministic",
+      "explanationValidationOk": true,
+      "failureCategories": [
+        "arch_comparator_mismatch",
+        "arch_id_or_extra_nodes",
+        "arch_missing_in_dto"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 4038.0043000000005,
+        "extractScenario": 1593.3472000000002,
+        "simulate": 1.0838999999996304,
+        "explain": 2335.305800000002,
+        "totalWall": 7968.604500000001
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:api.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:api.replicas",
+          "match": true,
+          "expected": "known:2:count:declared",
+          "actual": "known:2:count:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:api.capacityPerReplica",
+          "match": true,
+          "expected": "known:100:rps:declared",
+          "actual": "known:100:rps:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:api.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:api.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:db",
+          "match": false,
+          "expected": "present",
+          "actual": "missing",
+          "kind": "presence"
+        },
+        {
+          "path": "node:postgres",
+          "match": false,
+          "expected": "absent",
+          "actual": "extra",
+          "kind": "extra"
+        },
+        {
+          "path": "dep:api-db",
+          "match": false,
+          "expected": "present",
+          "actual": "missing",
+          "kind": "presence"
+        },
+        {
+          "path": "dep:api-postgres|api->postgres:sync",
+          "match": false,
+          "expected": "absent",
+          "actual": "extra",
+          "kind": "extra"
+        },
+        {
+          "path": "system.incomingTraffic",
+          "match": true,
+          "expected": "known:40:rps:declared",
+          "actual": "known:40:rps:declared",
+          "kind": "ingress"
+        },
+        {
+          "path": "system.ingressNodeIds",
+          "match": true,
+          "expected": "api",
+          "actual": "api",
+          "kind": "ingress"
+        }
+      ]
+    },
+    {
+      "caseId": "V03_load_normal",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "simulationStatus": "ANSWERED",
+      "fieldAccuracy": {
+        "matches": 1,
+        "total": 4
+      },
+      "nodePresence": {
+        "precision": 0,
+        "recall": 0,
+        "f1": null
+      },
+      "dependencyPresence": {
+        "precision": null,
+        "recall": null,
+        "f1": null
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "load_multiplication",
+        "actualIntent": "load_multiplication"
+      },
+      "explanationSource": "llm+deterministic",
+      "explanationValidationOk": true,
+      "failureCategories": [
+        "arch_id_or_extra_nodes"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 2610.2536,
+        "extractScenario": 1597.9455000000016,
+        "simulate": 0.25,
+        "explain": 2407.9160999999986,
+        "totalWall": 6616.9511999999995
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:api",
+          "match": false,
+          "expected": "present",
+          "actual": "missing",
+          "kind": "presence"
+        },
+        {
+          "path": "node:api-svc",
+          "match": false,
+          "expected": "absent",
+          "actual": "extra",
+          "kind": "extra"
+        },
+        {
+          "path": "system.incomingTraffic",
+          "match": true,
+          "expected": "known:100:rps:declared",
+          "actual": "known:100:rps:declared",
+          "kind": "ingress"
+        },
+        {
+          "path": "system.ingressNodeIds",
+          "match": false,
+          "expected": "api",
+          "actual": "api-svc",
+          "kind": "ingress"
+        }
+      ]
+    },
+    {
+      "caseId": "V04_load_saturated",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "simulationStatus": "ANSWERED",
+      "fieldAccuracy": {
+        "matches": 12,
+        "total": 17
+      },
+      "nodePresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "dependencyPresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "load_multiplication",
+        "actualIntent": "load_multiplication"
+      },
+      "explanationSource": "llm+deterministic",
+      "explanationValidationOk": true,
+      "failureCategories": [
+        "arch_comparator_mismatch",
+        "arch_missing_in_dto"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 4225.522699999998,
+        "extractScenario": 1330.6503000000012,
+        "simulate": 0.6592999999993481,
+        "explain": 1857.0602,
+        "totalWall": 7414.588499999998
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:checkout.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:checkout.replicas",
+          "match": false,
+          "expected": "known:10:count:declared",
+          "actual": "unknown:count",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:checkout.capacityPerReplica",
+          "match": false,
+          "expected": "known:100:rps:declared",
+          "actual": "unknown:rps",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:checkout.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:checkout.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:pricing.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:pricing.replicas",
+          "match": true,
+          "expected": "known:4:count:declared",
+          "actual": "known:4:count:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:pricing.capacityPerReplica",
+          "match": true,
+          "expected": "known:80:rps:declared",
+          "actual": "known:80:rps:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:pricing.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:pricing.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "dep:checkout-pricing.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.from",
+          "match": true,
+          "expected": "checkout",
+          "actual": "checkout",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.to",
+          "match": true,
+          "expected": "pricing",
+          "actual": "pricing",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.timeout",
+          "match": false,
+          "expected": "known:1000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:checkout-pricing.requestsPerParent",
+          "match": true,
+          "expected": "known:1:ratio:declared",
+          "actual": "known:1:ratio:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "system.incomingTraffic",
+          "match": true,
+          "expected": "known:200:rps:declared",
+          "actual": "known:200:rps:declared",
+          "kind": "ingress"
+        },
+        {
+          "path": "system.ingressNodeIds",
+          "match": true,
+          "expected": "checkout",
+          "actual": "checkout",
+          "kind": "ingress"
+        }
+      ]
+    },
+    {
+      "caseId": "V05_shared_downstream",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "simulationStatus": "ANSWERED",
+      "fieldAccuracy": {
+        "matches": 28,
+        "total": 42
+      },
+      "nodePresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "dependencyPresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "load_multiplication",
+        "actualIntent": "load_multiplication"
+      },
+      "explanationSource": "llm+deterministic",
+      "explanationValidationOk": true,
+      "failureCategories": [
+        "arch_comparator_mismatch",
+        "arch_missing_in_dto"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 23655.5768,
+        "extractScenario": 1513.474500000004,
+        "simulate": 0.8866999999954714,
+        "explain": 4043.7433999999994,
+        "totalWall": 29214.5314
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:gateway.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:gateway.replicas",
+          "match": false,
+          "expected": "known:2:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:gateway.capacityPerReplica",
+          "match": false,
+          "expected": "known:200:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:gateway.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:gateway.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:orders.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:orders.replicas",
+          "match": false,
+          "expected": "known:4:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:orders.capacityPerReplica",
+          "match": false,
+          "expected": "known:100:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:orders.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:orders.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:catalog.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:catalog.replicas",
+          "match": false,
+          "expected": "known:4:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:catalog.capacityPerReplica",
+          "match": false,
+          "expected": "known:100:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:catalog.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:catalog.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:inventory.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:inventory.replicas",
+          "match": true,
+          "expected": "known:2:count:declared",
+          "actual": "known:2:count:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:inventory.capacityPerReplica",
+          "match": true,
+          "expected": "known:100:rps:declared",
+          "actual": "known:100:rps:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:inventory.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:inventory.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "dep:gateway-orders.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-orders.from",
+          "match": true,
+          "expected": "gateway",
+          "actual": "gateway",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-orders.to",
+          "match": true,
+          "expected": "orders",
+          "actual": "orders",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-orders.timeout",
+          "match": false,
+          "expected": "known:1000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:gateway-orders.requestsPerParent",
+          "match": true,
+          "expected": "known:2:ratio:declared",
+          "actual": "known:2:ratio:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:gateway-catalog.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-catalog.from",
+          "match": true,
+          "expected": "gateway",
+          "actual": "gateway",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-catalog.to",
+          "match": true,
+          "expected": "catalog",
+          "actual": "catalog",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-catalog.timeout",
+          "match": false,
+          "expected": "known:1000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:gateway-catalog.requestsPerParent",
+          "match": true,
+          "expected": "known:1:ratio:declared",
+          "actual": "known:1:ratio:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:orders-inventory.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:orders-inventory.from",
+          "match": true,
+          "expected": "orders",
+          "actual": "orders",
+          "kind": "field"
+        },
+        {
+          "path": "dep:orders-inventory.to",
+          "match": true,
+          "expected": "inventory",
+          "actual": "inventory",
+          "kind": "field"
+        },
+        {
+          "path": "dep:orders-inventory.timeout",
+          "match": false,
+          "expected": "known:1000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:orders-inventory.requestsPerParent",
+          "match": true,
+          "expected": "known:1:ratio:declared",
+          "actual": "known:1:ratio:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:catalog-inventory.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:catalog-inventory.from",
+          "match": true,
+          "expected": "catalog",
+          "actual": "catalog",
+          "kind": "field"
+        },
+        {
+          "path": "dep:catalog-inventory.to",
+          "match": true,
+          "expected": "inventory",
+          "actual": "inventory",
+          "kind": "field"
+        },
+        {
+          "path": "dep:catalog-inventory.timeout",
+          "match": false,
+          "expected": "known:1000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:catalog-inventory.requestsPerParent",
+          "match": true,
+          "expected": "known:1:ratio:declared",
+          "actual": "known:1:ratio:declared",
+          "kind": "quantity_state"
+        }
+      ]
+    },
+    {
+      "caseId": "V06_failure_exposure",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "simulationStatus": "ANSWERED",
+      "fieldAccuracy": {
+        "matches": 28,
+        "total": 44
+      },
+      "nodePresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "dependencyPresence": {
+        "precision": 0.75,
+        "recall": 0.75,
+        "f1": 0.75
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "component_unavailable",
+        "actualIntent": "component_unavailable"
+      },
+      "explanationSource": "llm+deterministic",
+      "explanationValidationOk": true,
+      "failureCategories": [
+        "arch_comparator_mismatch",
+        "arch_missing_in_dto"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 8123.389600000002,
+        "extractScenario": 1335.9611999999906,
+        "simulate": 1.4800999999861233,
+        "explain": 2686.1205000000045,
+        "totalWall": 12147.845700000005
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:checkout.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:checkout.replicas",
+          "match": false,
+          "expected": "known:2:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:checkout.capacityPerReplica",
+          "match": false,
+          "expected": "known:100:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:checkout.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:checkout.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:pricing.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:pricing.replicas",
+          "match": false,
+          "expected": "known:2:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:pricing.capacityPerReplica",
+          "match": false,
+          "expected": "known:100:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:pricing.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:pricing.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:postgres.kind",
+          "match": true,
+          "expected": "datastore",
+          "actual": "datastore",
+          "kind": "field"
+        },
+        {
+          "path": "node:postgres.replicas",
+          "match": false,
+          "expected": "known:1:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:postgres.capacityPerReplica",
+          "match": false,
+          "expected": "known:200:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:postgres.capacityAggregation",
+          "match": false,
+          "expected": "primary_only",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:postgres.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:queue.kind",
+          "match": true,
+          "expected": "queue",
+          "actual": "queue",
+          "kind": "field"
+        },
+        {
+          "path": "node:queue.replicas",
+          "match": true,
+          "expected": "omitted",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:queue.capacityPerReplica",
+          "match": true,
+          "expected": "omitted",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:queue.capacityAggregation",
+          "match": true,
+          "expected": "omitted",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:queue.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:invoicing.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:invoicing.replicas",
+          "match": false,
+          "expected": "known:1:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:invoicing.capacityPerReplica",
+          "match": false,
+          "expected": "known:40:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:invoicing.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:invoicing.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "dep:checkout-pricing.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.from",
+          "match": true,
+          "expected": "checkout",
+          "actual": "checkout",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.to",
+          "match": true,
+          "expected": "pricing",
+          "actual": "pricing",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.timeout",
+          "match": false,
+          "expected": "known:2000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:checkout-pricing.requestsPerParent",
+          "match": false,
+          "expected": "known:1:ratio:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:pricing-postgres",
+          "match": false,
+          "expected": "present",
+          "actual": "missing",
+          "kind": "presence"
+        },
+        {
+          "path": "dep:checkout-queue.communication",
+          "match": true,
+          "expected": "async",
+          "actual": "async",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-queue.from",
+          "match": true,
+          "expected": "checkout",
+          "actual": "checkout",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-queue.to",
+          "match": true,
+          "expected": "queue",
+          "actual": "queue",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-queue.timeout",
+          "match": true,
+          "expected": "omitted",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:checkout-queue.requestsPerParent",
+          "match": true,
+          "expected": "omitted",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:queue-invoicing.communication",
+          "match": true,
+          "expected": "async",
+          "actual": "async",
+          "kind": "field"
+        },
+        {
+          "path": "dep:queue-invoicing.from",
+          "match": true,
+          "expected": "queue",
+          "actual": "queue",
+          "kind": "field"
+        },
+        {
+          "path": "dep:queue-invoicing.to",
+          "match": true,
+          "expected": "invoicing",
+          "actual": "invoicing",
+          "kind": "field"
+        },
+        {
+          "path": "dep:queue-invoicing.timeout",
+          "match": true,
+          "expected": "omitted",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        }
+      ]
+    },
+    {
+      "caseId": "V07_timeout_retry",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "simulationStatus": "ANSWERED",
+      "fieldAccuracy": {
+        "matches": 9,
+        "total": 17
+      },
+      "nodePresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "dependencyPresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "latency_degradation",
+        "actualIntent": "latency_degradation"
+      },
+      "explanationSource": "deterministic_fallback",
+      "explanationValidationOk": false,
+      "failureCategories": [
+        "arch_comparator_mismatch",
+        "arch_missing_in_dto",
+        "explanation_fallback"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 4860.425499999998,
+        "extractScenario": 1631.3404999999912,
+        "simulate": 0.9297999999980675,
+        "explain": 2769.707600000009,
+        "totalWall": 9263.185199999993
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:checkout.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:checkout.replicas",
+          "match": false,
+          "expected": "known:2:count:declared",
+          "actual": "unknown:count",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:checkout.capacityPerReplica",
+          "match": false,
+          "expected": "known:100:rps:declared",
+          "actual": "unknown:rps",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:checkout.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:checkout.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:pricing.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:pricing.replicas",
+          "match": false,
+          "expected": "known:2:count:declared",
+          "actual": "unknown:count",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:pricing.capacityPerReplica",
+          "match": false,
+          "expected": "known:80:rps:declared",
+          "actual": "unknown:rps",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:pricing.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:pricing.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "dep:checkout-pricing.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.from",
+          "match": true,
+          "expected": "checkout",
+          "actual": "checkout",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.to",
+          "match": true,
+          "expected": "pricing",
+          "actual": "pricing",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.timeout",
+          "match": true,
+          "expected": "known:2000:ms:declared",
+          "actual": "known:2000:ms:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:checkout-pricing.requestsPerParent",
+          "match": false,
+          "expected": "known:1:ratio:declared",
+          "actual": "unknown:ratio",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "system.incomingTraffic",
+          "match": true,
+          "expected": "known:50:rps:declared",
+          "actual": "known:50:rps:declared",
+          "kind": "ingress"
+        },
+        {
+          "path": "system.ingressNodeIds",
+          "match": false,
+          "expected": "checkout",
+          "actual": "(none)",
+          "kind": "ingress"
+        }
+      ]
+    },
+    {
+      "caseId": "V08_missing_baseline",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "simulationStatus": "NOT_ANSWERABLE",
+      "fieldAccuracy": {
+        "matches": 2,
+        "total": 7
+      },
+      "nodePresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "dependencyPresence": {
+        "precision": null,
+        "recall": null,
+        "f1": null
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "load_multiplication",
+        "actualIntent": "load_multiplication"
+      },
+      "explanationSource": "llm+deterministic",
+      "explanationValidationOk": true,
+      "failureCategories": [
+        "arch_comparator_mismatch",
+        "arch_missing_in_dto"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 2460.416299999997,
+        "extractScenario": 1155.949900000007,
+        "simulate": 0.1793000000034226,
+        "explain": 2069.948099999994,
+        "totalWall": 5686.916700000002
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:api.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:api.replicas",
+          "match": false,
+          "expected": "known:2:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:api.capacityPerReplica",
+          "match": false,
+          "expected": "known:100:rps:declared",
+          "actual": "known:0:rps:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:api.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:api.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "system.incomingTraffic",
+          "match": false,
+          "expected": "omitted",
+          "actual": "unknown:rps",
+          "kind": "ingress"
+        },
+        {
+          "path": "system.ingressNodeIds",
+          "match": false,
+          "expected": "api",
+          "actual": "(none)",
+          "kind": "ingress"
+        }
+      ]
+    },
+    {
+      "caseId": "V09_incomplete_inbound",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "simulationStatus": "PARTIALLY_ANSWERED",
+      "fieldAccuracy": {
+        "matches": 20,
+        "total": 42
+      },
+      "nodePresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "dependencyPresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "load_multiplication",
+        "actualIntent": "load_multiplication"
+      },
+      "explanationSource": "llm+deterministic",
+      "explanationValidationOk": true,
+      "failureCategories": [
+        "arch_comparator_mismatch",
+        "arch_mapper_transform",
+        "arch_missing_in_dto"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 4937.006599999993,
+        "extractScenario": 1395.4119999999966,
+        "simulate": 0.809399999998277,
+        "explain": 3635.924100000004,
+        "totalWall": 9969.785099999994
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:gateway.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:gateway.replicas",
+          "match": false,
+          "expected": "known:2:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:gateway.capacityPerReplica",
+          "match": false,
+          "expected": "known:100:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:gateway.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:gateway.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:a.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:a.replicas",
+          "match": false,
+          "expected": "known:2:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:a.capacityPerReplica",
+          "match": false,
+          "expected": "known:100:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:a.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:a.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:b.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:b.replicas",
+          "match": false,
+          "expected": "known:2:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:b.capacityPerReplica",
+          "match": false,
+          "expected": "known:100:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:b.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:b.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:shared.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:shared.replicas",
+          "match": false,
+          "expected": "known:2:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:shared.capacityPerReplica",
+          "match": false,
+          "expected": "known:100:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:shared.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:shared.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "dep:gateway-a.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-a.from",
+          "match": true,
+          "expected": "gateway",
+          "actual": "gateway",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-a.to",
+          "match": true,
+          "expected": "a",
+          "actual": "a",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-a.timeout",
+          "match": false,
+          "expected": "known:1000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:gateway-a.requestsPerParent",
+          "match": false,
+          "expected": "known:1:ratio:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:gateway-b.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-b.from",
+          "match": true,
+          "expected": "gateway",
+          "actual": "gateway",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-b.to",
+          "match": true,
+          "expected": "b",
+          "actual": "b",
+          "kind": "field"
+        },
+        {
+          "path": "dep:gateway-b.timeout",
+          "match": false,
+          "expected": "known:1000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:gateway-b.requestsPerParent",
+          "match": false,
+          "expected": "known:1:ratio:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:a-shared.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:a-shared.from",
+          "match": true,
+          "expected": "a",
+          "actual": "a",
+          "kind": "field"
+        },
+        {
+          "path": "dep:a-shared.to",
+          "match": true,
+          "expected": "shared",
+          "actual": "shared",
+          "kind": "field"
+        },
+        {
+          "path": "dep:a-shared.timeout",
+          "match": false,
+          "expected": "known:1000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:a-shared.requestsPerParent",
+          "match": false,
+          "expected": "known:1:ratio:declared",
+          "actual": "unknown:ratio",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:b-shared.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:b-shared.from",
+          "match": true,
+          "expected": "b",
+          "actual": "b",
+          "kind": "field"
+        },
+        {
+          "path": "dep:b-shared.to",
+          "match": true,
+          "expected": "shared",
+          "actual": "shared",
+          "kind": "field"
+        },
+        {
+          "path": "dep:b-shared.timeout",
+          "match": false,
+          "expected": "known:1000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:b-shared.requestsPerParent",
+          "match": false,
+          "expected": "omitted",
+          "actual": "unknown:ratio",
+          "kind": "quantity_state"
+        }
+      ]
+    },
+    {
+      "caseId": "V10_unsupported_availability_pct",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "fieldAccuracy": {
+        "matches": 19,
+        "total": 31
+      },
+      "nodePresence": {
+        "precision": 0.6,
+        "recall": 1,
+        "f1": 0.7499999999999999
+      },
+      "dependencyPresence": {
+        "precision": 0.5,
+        "recall": 1,
+        "f1": 0.6666666666666666
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "UNSUPPORTED",
+        "actualIntent": "UNSUPPORTED"
+      },
+      "failureCategories": [
+        "arch_comparator_mismatch",
+        "arch_id_or_extra_nodes",
+        "arch_missing_in_dto"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 5684.191900000005,
+        "extractScenario": 1062.5276999999915,
+        "totalWall": 6747.127699999997
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:checkout.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:checkout.replicas",
+          "match": true,
+          "expected": "known:2:count:declared",
+          "actual": "known:2:count:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:checkout.capacityPerReplica",
+          "match": true,
+          "expected": "known:100:rps:declared",
+          "actual": "known:100:rps:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:checkout.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:checkout.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:pricing.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:pricing.replicas",
+          "match": true,
+          "expected": "known:2:count:declared",
+          "actual": "known:2:count:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:pricing.capacityPerReplica",
+          "match": true,
+          "expected": "known:100:rps:declared",
+          "actual": "known:100:rps:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:pricing.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:pricing.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:postgres.kind",
+          "match": true,
+          "expected": "datastore",
+          "actual": "datastore",
+          "kind": "field"
+        },
+        {
+          "path": "node:postgres.replicas",
+          "match": false,
+          "expected": "known:1:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:postgres.capacityPerReplica",
+          "match": false,
+          "expected": "known:200:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:postgres.capacityAggregation",
+          "match": true,
+          "expected": "primary_only",
+          "actual": "primary_only",
+          "kind": "field"
+        },
+        {
+          "path": "node:postgres.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:invoicing",
+          "match": false,
+          "expected": "absent",
+          "actual": "extra",
+          "kind": "extra"
+        },
+        {
+          "path": "node:queue",
+          "match": false,
+          "expected": "absent",
+          "actual": "extra",
+          "kind": "extra"
+        },
+        {
+          "path": "dep:checkout-pricing.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.from",
+          "match": true,
+          "expected": "checkout",
+          "actual": "checkout",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.to",
+          "match": true,
+          "expected": "pricing",
+          "actual": "pricing",
+          "kind": "field"
+        },
+        {
+          "path": "dep:checkout-pricing.timeout",
+          "match": false,
+          "expected": "known:2000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:checkout-pricing.requestsPerParent",
+          "match": false,
+          "expected": "known:1:ratio:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:pricing-postgres.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:pricing-postgres.from",
+          "match": true,
+          "expected": "pricing",
+          "actual": "pricing",
+          "kind": "field"
+        },
+        {
+          "path": "dep:pricing-postgres.to",
+          "match": true,
+          "expected": "postgres",
+          "actual": "postgres",
+          "kind": "field"
+        },
+        {
+          "path": "dep:pricing-postgres.timeout",
+          "match": false,
+          "expected": "known:1000:ms:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:pricing-postgres.requestsPerParent",
+          "match": false,
+          "expected": "known:1:ratio:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:checkout-async-queue|checkout->queue:async",
+          "match": false,
+          "expected": "absent",
+          "actual": "extra",
+          "kind": "extra"
+        },
+        {
+          "path": "dep:queue-drained-by-invoicing|queue->invoicing:async",
+          "match": false,
+          "expected": "absent",
+          "actual": "extra",
+          "kind": "extra"
+        },
+        {
+          "path": "system.incomingTraffic",
+          "match": true,
+          "expected": "known:100:rps:declared",
+          "actual": "known:100:rps:declared",
+          "kind": "ingress"
+        },
+        {
+          "path": "system.ingressNodeIds",
+          "match": true,
+          "expected": "checkout",
+          "actual": "checkout",
+          "kind": "ingress"
+        }
+      ]
+    },
+    {
+      "caseId": "V11_unsupported_e2e_latency",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "fieldAccuracy": {
+        "matches": 10,
+        "total": 17
+      },
+      "nodePresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "dependencyPresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "UNSUPPORTED",
+        "actualIntent": "UNSUPPORTED"
+      },
+      "failureCategories": [
+        "arch_comparator_mismatch",
+        "arch_missing_in_dto"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 3768.5244999999995,
+        "extractScenario": 1079.0218999999925,
+        "totalWall": 4847.92270000001
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:api.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:api.replicas",
+          "match": false,
+          "expected": "known:1:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:api.capacityPerReplica",
+          "match": false,
+          "expected": "known:50:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:api.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:api.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "node:db.kind",
+          "match": true,
+          "expected": "datastore",
+          "actual": "datastore",
+          "kind": "field"
+        },
+        {
+          "path": "node:db.replicas",
+          "match": false,
+          "expected": "known:1:count:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:db.capacityPerReplica",
+          "match": false,
+          "expected": "known:50:rps:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:db.capacityAggregation",
+          "match": false,
+          "expected": "primary_only",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:db.fieldConflicts.count",
+          "match": true,
+          "expected": "0",
+          "actual": "0",
+          "kind": "conflict"
+        },
+        {
+          "path": "dep:api-db.communication",
+          "match": true,
+          "expected": "sync",
+          "actual": "sync",
+          "kind": "field"
+        },
+        {
+          "path": "dep:api-db.from",
+          "match": true,
+          "expected": "api",
+          "actual": "api",
+          "kind": "field"
+        },
+        {
+          "path": "dep:api-db.to",
+          "match": true,
+          "expected": "db",
+          "actual": "db",
+          "kind": "field"
+        },
+        {
+          "path": "dep:api-db.timeout",
+          "match": true,
+          "expected": "known:2000:ms:declared",
+          "actual": "known:2000:ms:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "dep:api-db.requestsPerParent",
+          "match": false,
+          "expected": "known:1:ratio:declared",
+          "actual": "omitted",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "system.incomingTraffic",
+          "match": true,
+          "expected": "known:10:rps:declared",
+          "actual": "known:10:rps:declared",
+          "kind": "ingress"
+        },
+        {
+          "path": "system.ingressNodeIds",
+          "match": true,
+          "expected": "api",
+          "actual": "api",
+          "kind": "ingress"
+        }
+      ]
+    },
+    {
+      "caseId": "V12_conflicting_capacity",
+      "pipelineFailureClass": "none",
+      "architectureStatus": "PROPOSED",
+      "simulationStatus": "PARTIALLY_ANSWERED",
+      "fieldAccuracy": {
+        "matches": 5,
+        "total": 8
+      },
+      "nodePresence": {
+        "precision": 1,
+        "recall": 1,
+        "f1": 1
+      },
+      "dependencyPresence": {
+        "precision": null,
+        "recall": null,
+        "f1": null
+      },
+      "scenarioCompare": {
+        "intentMatch": true,
+        "parameterMatch": true,
+        "overallMatch": true,
+        "expectedIntent": "load_multiplication",
+        "actualIntent": "load_multiplication"
+      },
+      "explanationSource": "llm+deterministic",
+      "explanationValidationOk": true,
+      "failureCategories": [
+        "arch_comparator_mismatch",
+        "arch_missing_in_dto"
+      ],
+      "timingsMs": {
+        "extractArchitecture": 2794.483400000012,
+        "extractScenario": 1186.9661999999953,
+        "simulate": 0.3256999999866821,
+        "explain": 2441.988599999997,
+        "totalWall": 6424.377200000003
+      },
+      "fieldComparisonSample": [
+        {
+          "path": "node:pricing.kind",
+          "match": true,
+          "expected": "service",
+          "actual": "service",
+          "kind": "field"
+        },
+        {
+          "path": "node:pricing.replicas",
+          "match": false,
+          "expected": "known:4:count:declared",
+          "actual": "unknown:count",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:pricing.capacityPerReplica",
+          "match": true,
+          "expected": "known:80:rps:declared",
+          "actual": "known:80:rps:declared",
+          "kind": "quantity_state"
+        },
+        {
+          "path": "node:pricing.capacityAggregation",
+          "match": false,
+          "expected": "sum_replicas",
+          "actual": "omitted",
+          "kind": "field"
+        },
+        {
+          "path": "node:pricing.fieldConflicts.count",
+          "match": true,
+          "expected": "1",
+          "actual": "1",
+          "kind": "conflict"
+        },
+        {
+          "path": "system.incomingTraffic",
+          "match": true,
+          "expected": "known:100:rps:declared",
+          "actual": "known:100:rps:declared",
+          "kind": "ingress"
+        },
+        {
+          "path": "system.ingressNodeIds",
+          "match": false,
+          "expected": "pricing",
+          "actual": "(none)",
+          "kind": "ingress"
+        },
+        {
+          "path": "conflicts.fieldLevel.preserved",
+          "match": true,
+          "expected": "1",
+          "actual": "1",
+          "kind": "conflict"
+        }
+      ]
+    }
+  ],
+  "validationMdCrossCheck": {
+    "ok": true,
+    "discrepancies": []
+  }
+}

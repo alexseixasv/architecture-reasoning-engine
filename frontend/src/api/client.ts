@@ -3,7 +3,11 @@ import type {
   ApiErrorBody,
   ArchitectureEnvelope,
   DocumentDiff,
+  EvaluationRunResult,
+  EvaluationSuiteId,
+  EvaluationSuitesResponse,
   ExtractHttpResponse,
+  HistoricalEvaluationResponse,
   ValidateResponse,
   VersionListResponse,
 } from './types';
@@ -37,9 +41,17 @@ function formatMessage(body: unknown, fallback: string): string {
   if (body === null || typeof body !== 'object') {
     return fallback;
   }
-  const b = body as ApiErrorBody;
+  const b = body as ApiErrorBody & { code?: string };
   if (typeof b.message === 'string' && b.message.trim()) {
     return b.message;
+  }
+  if (
+    b.message !== null &&
+    typeof b.message === 'object' &&
+    !Array.isArray(b.message) &&
+    typeof (b.message as { message?: unknown }).message === 'string'
+  ) {
+    return (b.message as { message: string }).message;
   }
   if (Array.isArray(b.message) && b.message.length > 0) {
     return b.message.map(String).join('; ');
@@ -48,6 +60,30 @@ function formatMessage(body: unknown, fallback: string): string {
     return b.error;
   }
   return fallback;
+}
+
+function extractErrorClass(body: unknown, status: number): string | null {
+  if (body !== null && typeof body === 'object') {
+    const b = body as ApiErrorBody & { code?: string };
+    if (typeof b.errorClass === 'string' && b.errorClass.trim()) {
+      return b.errorClass;
+    }
+    if (typeof b.code === 'string' && b.code.trim()) {
+      return b.code;
+    }
+    if (
+      b.message !== null &&
+      typeof b.message === 'object' &&
+      !Array.isArray(b.message)
+    ) {
+      const nested = b.message as { code?: unknown; errorClass?: unknown };
+      if (typeof nested.errorClass === 'string') return nested.errorClass;
+      if (typeof nested.code === 'string') return nested.code;
+    }
+  }
+  if (status === 409) return 'VERSION_CONFLICT';
+  if (status === 403) return 'FORBIDDEN';
+  return null;
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -84,15 +120,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   if (!response.ok) {
-    const errorClass =
-      body !== null &&
-      typeof body === 'object' &&
-      'errorClass' in body &&
-      typeof (body as ApiErrorBody).errorClass === 'string'
-        ? (body as ApiErrorBody).errorClass!
-        : response.status === 409
-          ? 'VERSION_CONFLICT'
-          : null;
+    const errorClass = extractErrorClass(body, response.status);
     throw new ApiClientError({
       message: formatMessage(
         body,
@@ -203,6 +231,23 @@ export const api = {
 
   health(): Promise<{ status: string; service: string; version: string }> {
     return request('/health');
+  },
+
+  listEvaluationSuites(): Promise<EvaluationSuitesResponse> {
+    return request<EvaluationSuitesResponse>('/evaluation/suites');
+  },
+
+  runEvaluation(
+    suiteId: EvaluationSuiteId = 'deterministic_full',
+  ): Promise<EvaluationRunResult> {
+    return request<EvaluationRunResult>('/evaluation/runs', {
+      method: 'POST',
+      body: JSON.stringify({ suiteId }),
+    });
+  },
+
+  getHistoricalEvaluation(): Promise<HistoricalEvaluationResponse> {
+    return request<HistoricalEvaluationResponse>('/evaluation/historical');
   },
 };
 

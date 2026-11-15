@@ -10,10 +10,18 @@ UI fixtures: [`frontend/src/lib/demoFixtures.ts`](../../frontend/src/lib/demoFix
 
 ## 0. Environment startup
 
+**Workspace-only (Lab API disabled):**
+
 ```bash
 cp .env.example .env    # confirm LLM_PROVIDER=fake
 docker compose up -d --build
 docker compose ps       # postgres healthy; api Up; web Up on 8080
+```
+
+**Full defense demo including Evaluation Lab** (forces Fake + `EVAL_LAB_ENABLED=1`):
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.demo.yml up -d --build
 ```
 
 ### Health
@@ -144,6 +152,23 @@ Navigate to http://127.0.0.1:8080/some/deep/spa/route — SPA shell must load (n
 
 ---
 
+## 12. Evaluation Lab (≈5–7 min — requires demo Compose override)
+
+**URL:** http://127.0.0.1:8080/evaluation
+
+1. Explain: **deterministic Lab ≠ Vitest ≠ historical OpenAI**. Run button never calls OpenAI.
+2. Click **Run evaluation suite** (`deterministic_full`).
+3. Expect **32 passed** (12 golden / 12 validation / 8 adversarial) with real duration.
+4. Open **G01** → show `F-UTIL-001`, substitutions, determinism.
+5. Filter/open **V10** → `schema_validation` (not NL classification success).
+6. Open **ADV-08** → `nl_isolation_check` disclaimer (not LLM injection proof).
+7. Scroll to **Historical OpenAI evaluation — not executed in this run** → baseline 120/235 vs remediation 141/244; note denominator caveat; optional per-case drill-down.
+8. **Export JSON** / mention print CSS. Totals of the current run stay 32 — historical denominators are separate.
+
+Automated check: `npx tsx scripts/compose-evaluation-acceptance.ts`
+
+---
+
 ## Recovery if a step fails
 
 | Symptom | Fix |
@@ -155,9 +180,11 @@ Navigate to http://127.0.0.1:8080/some/deep/spa/route — SPA shell must load (n
 | UNSUPPORTED not firing | Question must contain `availability %` style text |
 | 409 not firing | Confirm concurrent PUT actually created a newer version |
 | `/api` 502 | Wait for api start; check `docker compose logs api` |
+| Evaluation 403 / “Lab disabled” | Use `docker-compose.demo.yml`; confirm `EVAL_LAB_ENABLED=1` on api |
+| API crash mentioning OPENAI_API_KEY | Demo override forces `LLM_PROVIDER=fake`; avoid ambient `.env` openai without key |
 
 ---
 
 ## What to say to the panel
 
-> “This Fake path is for reproducibility. Measured OpenAI extraction quality is in VALIDATION.md on a fixed twelve-case set, with explicit caveats — not this demo.”
+> “This Fake path is for reproducibility. The Evaluation Lab re-runs allowlisted deterministic fixtures against the real engine. Measured OpenAI extraction quality is historical evidence in VALIDATION.md / the Lab’s historical panel — never produced by the Run button.”

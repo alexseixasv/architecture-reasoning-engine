@@ -78,3 +78,6 @@ Qualitative exposure labels + paths (`unavailability.ts`). Not “2 of 4 service
 
 ### 25. What would you improve next?
 Reduce DTO omissions/ID slugs; measure extract→scenario e2e on held-out data; optional OTel; richer exposure **only** with formal definitions (`NOT_DONE.md`).
+
+### 26. What is the Evaluation Lab?
+Opt-in HTTP runner (`EVAL_LAB_ENABLED=1`) for allowlisted G/V/ADV fixtures via in-process adapters — **not** Vitest-as-a-service and **not** live OpenAI. Historical panel shows sanitized Phase 7 summaries excluded from run totals (`VALIDATION.md` §I).

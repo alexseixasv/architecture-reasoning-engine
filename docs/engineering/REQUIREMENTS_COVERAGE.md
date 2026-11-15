@@ -1,4 +1,4 @@
-# Requirements coverage matrix (Phase 8.3)
+# Requirements coverage matrix (Phases 1–9)
 
 **Source of truth:** [`docs/specification/TECHNICAL_REQUIREMENTS.md`](../specification/TECHNICAL_REQUIREMENTS.md)  
 **Rule:** Complete only with implementation **and** verification evidence. Mentions in docs alone do not count.
@@ -29,14 +29,14 @@
 | REQ-096 | FULL | Live field accuracy measured (baseline + remediation) |
 | REQ-097 | FULL | Golden 12/12; live simulate path when scenario OK 10/10 |
 | REQ-098 | FULL | Failure analysis in `VALIDATION.md` |
-| REQ-099 | FULL | Compose + browser demo path; service runnable on panel input (**OpenAI accuracy on unseen text is not proven by Fake demo**) |
+| REQ-099 | FULL | Compose + browser demo path; Evaluation Lab deterministic 32-case path (`docker-compose.demo.yml`); service runnable on panel input (**OpenAI accuracy on unseen text is not proven by Fake demo**) |
 | REQ-100 | FULL | ADV injection fixtures; schema/SO boundary; untrusted delimiters |
 | REQ-110 | PARTIAL | Per-request `timingsMs` + `usage` in API/logs. **No** OpenTelemetry collector/spans export |
 | REQ-111 | FULL (OPTIONAL) | `LLM_PROVIDER=fake` zero-cost path |
 | REQ-112–114 | FULL | Tokens when reported; cost/latency tables in VALIDATION (estimated ≠ invoice; N=12) |
 | REQ-120–121 | FULL | Compose + `.env.example` |
 | REQ-122–124 | OPTIONAL | Stack documented; assistants used |
-| REQ-130–135 | FULL | Deliverables present after Phase 8.3 |
+| REQ-130–135 | FULL | Deliverables present after Phase 8.3; Evaluation Lab + historical packaging in Phase 9 |
 | REQ-140–145 | OUT_OF_SCOPE | Not implemented (correct) |
 | REQ-146 | OPTIONAL | Vue SPA shipped as thin UI (beyond PDF minimum; still no polished product UI) |
 | REQ-150–153 | FULL | Defense docs: PRESENTATION, DEMO, QA, LIVE_CHANGES |

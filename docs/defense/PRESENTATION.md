@@ -22,7 +22,7 @@
 
 ---
 
-## 2. Architecture overview — 4 min
+## 2. Architecture overview — 3 min
 
 **Explain**
 
@@ -55,7 +55,7 @@
 
 ---
 
-## 4. Formal model, versioning, OCC — 4 min
+## 4. Formal model, versioning, OCC — 3 min
 
 **Explain**
 
@@ -71,7 +71,7 @@
 
 ---
 
-## 5. Simulation formulas and refusals — 5 min
+## 5. Simulation formulas and refusals — 4 min
 
 **Explain**
 
@@ -89,31 +89,49 @@
 
 ---
 
-## 6. Live browser demonstration — 8 min
+## 6. Live browser demonstration — 5 min
 
-**Follow [`DEMO.md`](DEMO.md) exactly.**
+**Follow [`DEMO.md`](DEMO.md) §§1–8** (skip OCC §9 if time-boxed; mention it).
 
-Emphasize verbally: Fake handlers are regex/deterministic — **not** evidence of OpenAI generalization. For measured OpenAI numbers, point to VALIDATION later.
+Emphasize verbally: Fake handlers are regex/deterministic — **not** evidence of OpenAI generalization.
 
-**Show:** extract non-persist → validate → save v1 → util@1x → availability% refuse → edit save v2 → diff → force 409 → usage panel → SPA refresh.
+**Show:** extract non-persist → validate → save v1 → util@1x → availability% refuse → edit save v2 → diff.
 
 **Refs:** `frontend/src/lib/demoFixtures.ts`; `src/llm/provider/fake-demo-handlers.ts`.
 
-**Transition:** “How do we know the math and the LLM path are honest?”
+**Transition:** “Next: prove the engine with the Evaluation Lab, then show historical OpenAI separately.”
 
 ---
 
-## 7. Validation evidence and limitations — 3 min
+## 6b. Evaluation Lab — 6 min (within the 30)
+
+**Requires** `docker-compose.demo.yml`. **Follow [`DEMO.md`](DEMO.md) §12.**
 
 **Explain**
 
-- Goldens 12/12; adversarial 8/8; Fake Compose green.
-- Live OpenAI: baseline + remediation; latest 141/244 directional, F1 0.86/0.84, scenarios 10/10, unsupported 2/2, explain 9/10.
+- Lab = allowlisted domain evaluation over HTTP — not Vitest-as-a-service, not OpenAI.
+- 32 cases: golden / formal validation / adversarial; V10 schema-only; ADV-08 NL isolation only.
+- Historical panel loads sanitized Phase 7 summaries; Run button did **not** produce those numbers.
+
+**Show:** `/evaluation` → Run → G01 formulas → V10/ADV-08 labels → historical disclaimer + F1/field tables → Export JSON.
+
+**Refs:** `src/evaluation/*`; `VALIDATION.md` §I; `scripts/compose-evaluation-acceptance.ts`.
+
+**Transition:** “Limitations stay explicit.”
+
+---
+
+## 7. Validation evidence and limitations — 2 min
+
+**Explain**
+
+- Goldens 12/12; adversarial 8/8; Fake Compose + Evaluation acceptance green.
+- Live OpenAI: baseline + remediation; latest 141/244 directional, F1 0.86/0.84.
 - Caveats: denom change, same dataset, formal-context scenarios, DTO omissions, N=12 latency.
 
-**Show:** `VALIDATION.md` caveats + side-by-side table; `REQUIREMENTS_COVERAGE.md` PARTIAL rows (REQ-003, REQ-110).
+**Show:** `VALIDATION.md` caveats; PARTIAL REQ-003 / REQ-110 if asked.
 
-**Refs:** `VALIDATION.md` D–G; `docs/engineering/REQUIREMENTS_COVERAGE.md`.
+**Refs:** `VALIDATION.md` D–G / I; `docs/engineering/REQUIREMENTS_COVERAGE.md`.
 
 **Transition:** “Close with the tradeoffs we would defend under pressure.”
 
