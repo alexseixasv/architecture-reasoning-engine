@@ -18,6 +18,12 @@ Central principle: **LLMs interpret and explain. Deterministic code performs num
 
 The engine does **not** invent availability %, successful throughput, or p95/p99 latency.
 
+## System Architecture
+
+![Architecture Reasoning Engine — System Architecture](docs/assets/system-architecture.png)
+
+The Vue 3 SPA talks to a NestJS API that keeps LLM roles (optional OpenAI Structured Outputs, or Fake for offline demos) separate from a pure deterministic simulation engine. Validated models are versioned in PostgreSQL via Drizzle ORM. The opt-in Evaluation Lab re-runs allowlisted golden, validation, and adversarial fixtures and surfaces historical OpenAI evidence without mixing those metrics into deterministic run totals.
+
 ## Architecture
 
 ```mermaid
