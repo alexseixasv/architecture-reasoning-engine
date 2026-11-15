@@ -9,13 +9,13 @@ withDefaults(
 );
 
 const toneClass: Record<string, string> = {
-  info: 'bg-[var(--color-info-tint)] text-[var(--color-info)] border-[var(--color-info)]',
+  info: 'bg-info-tint text-info border-info',
   success:
-    'bg-[var(--color-success-tint)] text-[var(--color-success)] border-[var(--color-success)]',
+    'bg-success-tint text-success border-success',
   warning:
-    'bg-[var(--color-warning-tint)] text-[var(--color-warning)] border-[var(--color-warning)]',
+    'bg-warning-tint text-warning border-warning',
   danger:
-    'bg-[var(--color-danger-tint)] text-[var(--color-danger)] border-[var(--color-danger)]',
+    'bg-danger-tint text-danger border-danger',
 };
 </script>
 

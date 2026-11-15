@@ -273,18 +273,18 @@ async function onCompare(): Promise<void> {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[var(--color-canvas)] text-[var(--color-ink)]">
-    <header class="border-b border-black/20 bg-[var(--color-header)] text-[var(--color-ink-on-dark)]">
+  <div class="min-h-screen bg-canvas text-ink">
+    <header class="border-b border-black/20 bg-header text-ink-on-dark">
       <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4">
         <div>
-          <p class="text-xs uppercase tracking-wide text-[var(--color-ink-on-dark-muted)]">
+          <p class="text-xs uppercase tracking-wide text-ink-on-dark-muted">
             Deterministic analysis workspace
           </p>
           <h1 class="text-xl font-semibold">
             Architecture Reasoning Engine
           </h1>
         </div>
-        <p class="max-w-md text-xs text-[var(--color-ink-on-dark-muted)]">
+        <p class="max-w-md text-xs text-ink-on-dark-muted">
           LLMs extract and explain. Numbers come from the engine. Fake LLM is the default reproducible demo.
         </p>
       </div>
@@ -339,7 +339,7 @@ async function onCompare(): Promise<void> {
         />
         <section
           v-if="findings.length"
-          class="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)] p-4 text-sm shadow-sm"
+          class="rounded-xl border border-border bg-panel p-4 text-sm shadow-sm"
         >
           <h2 class="mb-2 text-base font-semibold">
             Validation findings

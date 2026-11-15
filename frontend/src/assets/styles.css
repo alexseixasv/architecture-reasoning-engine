@@ -12,6 +12,8 @@
   --color-ink: #0f172a;
   --color-ink-muted: #475569;
   --color-ink-subtle: #64748b;
+  --color-ink-on-dark: #f8fafc;
+  --color-ink-on-dark-muted: rgb(248 250 252 / 0.72);
   --color-accent: #0f766e;
   --color-accent-hover: #0d9488;
   --color-accent-tint: #ccfbf1;
