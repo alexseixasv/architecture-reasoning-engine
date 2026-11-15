@@ -8,8 +8,8 @@ Eight stop-gated phases. Mark requirements complete only with implementation + v
 | 2 | Formal model and persistence | complete |
 | 3 | Deterministic simulation engine | complete |
 | 4 | Golden tests, validation dataset & mathematical correctness | complete |
-| 5 | OpenAI LLM integration, structured extraction & grounded reasoning | complete (pending human review) |
-| 6 | API and observability | pending |
+| 5 | OpenAI LLM integration, structured extraction & grounded reasoning | complete |
+| 6 | API and observability | complete (pending human review) |
 | 7 | Validation and benchmarking | pending |
 | 8 | Documentation and interview preparation | pending |
 
@@ -248,13 +248,56 @@ Recorded 2026-11-15:
 
 ### Limitations
 
-- No public HTTP extract/simulate/explain routes (Phase 6).
 - Live smoke proves one V01 E2E path; full extraction accuracy (REQ-096 denominators) **NOT MEASURED**.
 - Ollama Compose service still not started.
 
 ## Phase 6 — API and observability
 
-Pending. Primary REQs: REQ-001–002, REQ-110, REQ-112, REQ-130.
+### Goals
+
+- HTTP orchestration: extract (no auto-persist) → review → persist → analyze exact version.
+- Reuse Phase 2 persistence/OCC/diff and Phase 3–5 simulate/LLM libraries.
+- Request-scoped usage accounting; domain outcomes on HTTP 200; provider infra → 503.
+- Structured stage timings + usage in responses; no external OTel collector.
+
+### Requirement IDs
+
+| ID | Intent | Complete? |
+| --- | --- | --- |
+| REQ-001 | E2E analysis endpoint with engine metrics | yes — `POST .../analyze` |
+| REQ-002 | Free-text + question path | yes — extract + analyze |
+| REQ-021 | Question → simulate → explain | yes — HTTP |
+| REQ-022 / 030 / 031 | Corrected formal model without re-NL | yes — existing CRUD + analyze by version |
+| REQ-051 / 052 | Assumptions + NOT_ANSWERABLE visible | yes — simulation payload on 200 |
+| REQ-110 | Per-request stage latency / usage | yes — `timingsMs` + `usage` (no OTel collector) |
+| REQ-112 | Tokens per analysis | yes — response `usage` |
+| REQ-120 / 130 | Compose API runnable | yes — `/health` + new routes; `LLM_PROVIDER=fake` default |
+
+### Verification evidence
+
+Recorded 2026-11-15:
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | exit 0 |
+| `npm run lint` | exit 0 |
+| `npm test` | exit 0 — **120** passed |
+| `npm run test:integration` | exit 0 — repo **3** + HTTP **9** |
+| `npm run test:http` | exit 0 — **9** passed (Fake LLM) |
+| `npm run build` | exit 0 |
+| Live OpenAI via HTTP | **NOT RUN** (CI/default Fake only) |
+| `docker compose up -d --build` + HTTP acceptance | **PASS** — `LLM_PROVIDER=fake`, `OPENAI_API_KEY` unset in api; extract→persist→analyze v1; OCC v2 then re-analyze v1 still `architectureVersion=1`; 404/400/UNSUPPORTED domain 200; details in `VALIDATION.md` |
+
+### Suggested commit
+
+`feat: expose extract and analyze HTTP orchestration with request-scoped usage`
+
+### Limitations
+
+- No auth, multitenancy, UI, RAG, or external observability stack.
+- `changeSource` is client-declared metadata only (not proof of human approval).
+- Compose Fake uses built-in demo handlers via `createLlmProvider` (tests that use `new FakeLlmProvider()` remain fail-closed).
+- REQ-096 dataset-scale accuracy still **NOT MEASURED** (Phase 7).
 
 ## Phase 7 — Validation and benchmarking
 

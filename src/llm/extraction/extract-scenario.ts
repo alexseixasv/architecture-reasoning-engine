@@ -13,6 +13,7 @@ import {
   SCENARIO_EXTRACTION_SYSTEM_PROMPT,
   wrapUntrustedQuestion,
 } from '../prompts/scenario';
+import type { UsageCollector } from '../usage/usage-collector';
 import { recordUsage } from '../usage/usage-recorder';
 
 export type ScenarioExtractionResult =
@@ -37,6 +38,7 @@ export async function extractScenario(input: {
   architecture: ArchitectureDocument;
   provider: LlmProvider;
   config?: LlmConfig;
+  usage?: UsageCollector;
 }): Promise<ScenarioExtractionResult> {
   const config = input.config ?? loadLlmConfig();
   if (input.question.length > config.maxQuestionChars) {
@@ -60,18 +62,21 @@ export async function extractScenario(input: {
     schemaName: SCENARIO_EXTRACTION_SCHEMA_NAME,
   });
 
-  recordUsage({
-    operation: 'extract_scenario',
-    model: parsed.model,
-    inputTokens: parsed.inputTokens,
-    outputTokens: parsed.outputTokens,
-    totalTokens: parsed.totalTokens,
-    durationMs: parsed.durationMs,
-    ...(parsed.providerRequestId
-      ? { providerRequestId: parsed.providerRequestId }
-      : {}),
-    ...(!parsed.ok ? { errorClass: parsed.errorClass } : {}),
-  });
+  recordUsage(
+    {
+      operation: 'extract_scenario',
+      model: parsed.model,
+      inputTokens: parsed.inputTokens,
+      outputTokens: parsed.outputTokens,
+      totalTokens: parsed.totalTokens,
+      durationMs: parsed.durationMs,
+      ...(parsed.providerRequestId
+        ? { providerRequestId: parsed.providerRequestId }
+        : {}),
+      ...(!parsed.ok ? { errorClass: parsed.errorClass } : {}),
+    },
+    input.usage,
+  );
 
   if (!parsed.ok) {
     return {

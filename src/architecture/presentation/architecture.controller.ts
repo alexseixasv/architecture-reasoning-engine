@@ -1,39 +1,40 @@
 import {
   BadRequestException,
   Body,
-  ConflictException,
   Controller,
   Get,
   HttpCode,
-  NotFoundException,
+  Inject,
   Param,
   ParseIntPipe,
   Post,
   Put,
   Query,
 } from '@nestjs/common';
+import { ArchitectureService } from '../application/architecture.service';
 import {
-  ArchitectureService,
-  PersistRejectedError,
-} from '../application/architecture.service';
-import {
-  ArchitectureNotFoundError,
-  ArchitectureVersionNotFoundError,
-  VersionConflictError,
-} from '../infrastructure/architecture.repository';
+  changeSourceSchema,
+  DEFAULT_CHANGE_SOURCE,
+} from '../../common/change-source';
+import { mapDomainErrorToHttp } from '../../common/http-error.mapper';
 
 type CreateBody = {
   document: unknown;
+  changeSource?: unknown;
 };
 
 type UpdateBody = {
   expectedVersion: number;
   document: unknown;
+  changeSource?: unknown;
 };
 
 @Controller('architectures')
 export class ArchitectureController {
-  constructor(private readonly service: ArchitectureService) {}
+  constructor(
+    @Inject(ArchitectureService)
+    private readonly service: ArchitectureService,
+  ) {}
 
   @Post('validate')
   @HttpCode(200)
@@ -46,11 +47,15 @@ export class ArchitectureController {
 
   @Post()
   async create(@Body() body: CreateBody) {
+    if (body === null || typeof body !== 'object' || !('document' in body)) {
+      throw new BadRequestException('Body must include document');
+    }
+    const changeSource = this.parseChangeSource(body.changeSource);
     try {
-      const stored = await this.service.create(body.document);
+      const stored = await this.service.create(body.document, changeSource);
       return this.toEnvelope(stored);
     } catch (error) {
-      this.rethrow(error);
+      mapDomainErrorToHttp(error);
     }
   }
 
@@ -60,7 +65,7 @@ export class ArchitectureController {
       const stored = await this.service.getLatest(id);
       return this.toEnvelope(stored);
     } catch (error) {
-      this.rethrow(error);
+      mapDomainErrorToHttp(error);
     }
   }
 
@@ -72,7 +77,7 @@ export class ArchitectureController {
         versions: await this.service.listVersions(id),
       };
     } catch (error) {
-      this.rethrow(error);
+      mapDomainErrorToHttp(error);
     }
   }
 
@@ -85,7 +90,7 @@ export class ArchitectureController {
       const stored = await this.service.getVersion(id, version);
       return this.toEnvelope(stored);
     } catch (error) {
-      this.rethrow(error);
+      mapDomainErrorToHttp(error);
     }
   }
 
@@ -101,15 +106,17 @@ export class ArchitectureController {
         'Body must include integer expectedVersion and document',
       );
     }
+    const changeSource = this.parseChangeSource(body.changeSource);
     try {
       const stored = await this.service.update(
         id,
         body.expectedVersion,
         body.document,
+        changeSource,
       );
       return this.toEnvelope(stored);
     } catch (error) {
-      this.rethrow(error);
+      mapDomainErrorToHttp(error);
     }
   }
 
@@ -122,8 +129,21 @@ export class ArchitectureController {
     try {
       return await this.service.diff(id, from, to);
     } catch (error) {
-      this.rethrow(error);
+      mapDomainErrorToHttp(error);
     }
+  }
+
+  private parseChangeSource(raw: unknown): string {
+    if (raw === undefined || raw === null) {
+      return DEFAULT_CHANGE_SOURCE;
+    }
+    const parsed = changeSourceSchema.safeParse(raw);
+    if (!parsed.success) {
+      throw new BadRequestException(
+        'changeSource must be one of: manual, user_corrected, approved_extraction',
+      );
+    }
+    return parsed.data;
   }
 
   private toEnvelope(
@@ -138,29 +158,5 @@ export class ArchitectureController {
       changeSource: stored.changeSource,
       createdAt: stored.createdAt.toISOString(),
     };
-  }
-
-  private rethrow(error: unknown): never {
-    if (error instanceof PersistRejectedError) {
-      throw new BadRequestException({
-        message: error.message,
-        findings: error.findings,
-      });
-    }
-    if (error instanceof VersionConflictError) {
-      throw new ConflictException({
-        message: error.message,
-        architectureId: error.architectureId,
-        expectedVersion: error.expectedVersion,
-        actualVersion: error.actualVersion,
-      });
-    }
-    if (
-      error instanceof ArchitectureNotFoundError ||
-      error instanceof ArchitectureVersionNotFoundError
-    ) {
-      throw new NotFoundException(error.message);
-    }
-    throw error;
   }
 }

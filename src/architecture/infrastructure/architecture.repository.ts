@@ -62,6 +62,7 @@ export class ArchitectureRepository {
   async create(
     document: ArchitectureDocument,
     findings: ValidationFinding[],
+    changeSource = 'manual',
   ): Promise<StoredArchitectureVersion> {
     return this.db.transaction(async (tx) => {
       const [arch] = await tx
@@ -80,7 +81,7 @@ export class ArchitectureRepository {
           version: 1,
           document,
           validationSummary: findings,
-          changeSource: 'manual',
+          changeSource,
         })
         .returning();
 
@@ -104,6 +105,7 @@ export class ArchitectureRepository {
     expectedVersion: number,
     document: ArchitectureDocument,
     findings: ValidationFinding[],
+    changeSource = 'manual',
   ): Promise<StoredArchitectureVersion> {
     return this.db.transaction(async (tx) => {
       const nextVersion = expectedVersion + 1;
@@ -147,7 +149,7 @@ export class ArchitectureRepository {
           version: nextVersion,
           document,
           validationSummary: findings,
-          changeSource: 'manual',
+          changeSource,
         })
         .returning();
 

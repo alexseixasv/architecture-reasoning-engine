@@ -27,6 +27,11 @@ services:
       NODE_ENV: production
       PORT: 3000
       DATABASE_URL: postgresql://${POSTGRES_USER:-are}:${POSTGRES_PASSWORD:-are_dev_password}@postgres:5432/${POSTGRES_DB:-architecture_reasoning}
+      LLM_PROVIDER: ${LLM_PROVIDER:-fake}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1}
+      OPENAI_TIMEOUT_MS: ${OPENAI_TIMEOUT_MS:-60000}
+      LLM_MAX_ARCHITECTURE_CHARS: ${LLM_MAX_ARCHITECTURE_CHARS:-20000}
+      LLM_MAX_QUESTION_CHARS: ${LLM_MAX_QUESTION_CHARS:-4000}
     ports:
       - '${PORT:-3000}:3000'
     depends_on:

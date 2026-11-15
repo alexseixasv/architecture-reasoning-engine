@@ -20,6 +20,7 @@
     "test:adversarial": "vitest run tests/adversarial",
     "test:validation": "vitest run tests/validation",
     "test:integration": "vitest run tests/integration",
+    "test:http": "vitest run tests/integration/http",
     "test:all": "vitest run",
     "test:watch": "vitest",
     "llm:live-eval": "tsx scripts/live-validation-eval.ts",

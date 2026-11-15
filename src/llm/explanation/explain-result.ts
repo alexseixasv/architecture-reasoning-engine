@@ -9,6 +9,7 @@ import {
 import type { LlmErrorClass } from '../errors';
 import type { LlmProvider } from '../provider/llm-provider';
 import { EXPLANATION_SYSTEM_PROMPT } from '../prompts/explanation';
+import type { UsageCollector } from '../usage/usage-collector';
 import { recordUsage } from '../usage/usage-recorder';
 import {
   buildEvidencePacket,
@@ -86,6 +87,7 @@ export async function explainSimulationResult(input: {
   result: SimulationResult;
   provider: LlmProvider;
   config?: LlmConfig;
+  usage?: UsageCollector;
 }): Promise<ExplanationResult> {
   void (input.config ?? loadLlmConfig());
   const packet = buildEvidencePacket(input.result);
@@ -103,18 +105,21 @@ export async function explainSimulationResult(input: {
     schemaName: EXPLANATION_SCHEMA_NAME,
   });
 
-  recordUsage({
-    operation: 'explain',
-    model: parsed.model,
-    inputTokens: parsed.inputTokens,
-    outputTokens: parsed.outputTokens,
-    totalTokens: parsed.totalTokens,
-    durationMs: parsed.durationMs,
-    ...(parsed.providerRequestId
-      ? { providerRequestId: parsed.providerRequestId }
-      : {}),
-    ...(!parsed.ok ? { errorClass: parsed.errorClass } : {}),
-  });
+  recordUsage(
+    {
+      operation: 'explain',
+      model: parsed.model,
+      inputTokens: parsed.inputTokens,
+      outputTokens: parsed.outputTokens,
+      totalTokens: parsed.totalTokens,
+      durationMs: parsed.durationMs,
+      ...(parsed.providerRequestId
+        ? { providerRequestId: parsed.providerRequestId }
+        : {}),
+      ...(!parsed.ok ? { errorClass: parsed.errorClass } : {}),
+    },
+    input.usage,
+  );
 
   if (!parsed.ok) {
     return {

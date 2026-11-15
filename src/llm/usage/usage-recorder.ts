@@ -1,5 +1,8 @@
 import type { LlmErrorClass } from '../errors';
-import { estimateCostUsd } from './pricing';
+import {
+  UsageCollector,
+  type UsageRecordInput,
+} from './usage-collector';
 
 export type LlmOperation =
   | 'extract_architecture'
@@ -34,48 +37,26 @@ export type AnalysisCostProjection = {
   pricingIncomplete: boolean;
 };
 
-const records: UsageRecord[] = [];
+/** Process-global buffer for offline scripts/tests only — not for HTTP concurrency. */
+const globalCollector = new UsageCollector();
 
 export function clearUsageRecords(): void {
-  records.length = 0;
+  globalCollector.clear();
 }
 
 export function getUsageRecords(): readonly UsageRecord[] {
-  return records;
+  return globalCollector.snapshot();
 }
 
+/**
+ * Record usage into an explicit collector when provided (HTTP path).
+ * Falls back to the process-global collector for scripts/unit tests.
+ */
 export function recordUsage(
-  input: Omit<UsageRecord, 'estimatedCostUsd' | 'pricingDate' | 'at' | 'totalTokens'> & {
-    totalTokens?: number;
-    errorClass?: LlmErrorClass;
-  },
+  input: UsageRecordInput,
+  collector?: UsageCollector,
 ): UsageRecord {
-  const totalTokens =
-    input.totalTokens ?? input.inputTokens + input.outputTokens;
-  const { estimatedCostUsd, pricingDate } = estimateCostUsd({
-    model: input.model,
-    inputTokens: input.inputTokens,
-    outputTokens: input.outputTokens,
-  });
-  const record: UsageRecord = {
-    operation: input.operation,
-    model: input.model,
-    inputTokens: input.inputTokens,
-    outputTokens: input.outputTokens,
-    totalTokens,
-    durationMs: input.durationMs,
-    estimatedCostUsd,
-    pricingDate,
-    at: new Date().toISOString(),
-  };
-  if (input.providerRequestId !== undefined) {
-    record.providerRequestId = input.providerRequestId;
-  }
-  if (input.errorClass !== undefined) {
-    record.errorClass = input.errorClass;
-  }
-  records.push(record);
-  return record;
+  return (collector ?? globalCollector).record(input);
 }
 
 /**
@@ -83,7 +64,7 @@ export function recordUsage(
  * when present; otherwise estimates from mean cost of each operation type.
  */
 export function projectCostPer1000Analyses(
-  sample: readonly UsageRecord[] = records,
+  sample: readonly UsageRecord[] = getUsageRecords(),
 ): AnalysisCostProjection {
   const byOp = {
     extract_architecture: [] as UsageRecord[],

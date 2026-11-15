@@ -1,8 +1,8 @@
 # VALIDATION.md — Mathematical correctness & LLM evaluation status
 
 **Date:** 2026-11-15  
-**Scope:** Phase 4 golden/validation/adversarial + Phase 5 LLM offline seams.  
-**Not in scope yet:** Public HTTP API (Phase 6); live accuracy tables until opt-in eval runs.
+**Scope:** Phase 4–6 — golden/validation/adversarial, LLM offline seams, HTTP orchestration (Fake LLM).  
+**Not in scope yet:** Live accuracy tables (REQ-096) until opt-in eval runs; auth/UI.
 
 ---
 
@@ -184,6 +184,85 @@ npm run test:adversarial
 | Phase 5 | `npm run build` | 0 | |
 | Phase 5 | `npm run llm:live-eval` | — | **NOT RUN** |
 | Phase 5 | `npm run llm:live-smoke` | 0 | smoke #3: **3** OpenAI calls; **e2eSuccess=true** (see below) |
+| Phase 6 | `npm run typecheck` / `lint` / `test` / `build` | 0 | **120** offline unit/golden/validation tests |
+| Phase 6 | `npm run test:integration` | 0 | repo **3** + HTTP **9** (Fake LLM) |
+| Phase 6 | `npm run test:http` | 0 | extract/analyze/OCC/version-pin/fallback |
+| Phase 6 | `docker compose up -d --build` + `scripts/compose-http-acceptance.ts` | 0 | Fresh image; Fake LLM; full HTTP workflow **PASS** (see below) |
+
+---
+
+## Phase 6 — HTTP API
+
+### Endpoints
+
+| Method | Path | Persists? |
+| --- | --- | --- |
+| `POST` | `/architectures/extract` | **No** |
+| `POST` | `/architectures` | Yes (approved document) |
+| `PUT` | `/architectures/:id` | Yes (OCC `expectedVersion`) |
+| `GET` | `/architectures/:id` / `.../versions` / `.../versions/:version` / `.../diff` | No |
+| `POST` | `/architectures/:id/versions/:version/analyze` | No |
+
+### Example curl
+
+```bash
+# Extract (never persists)
+curl -s -X POST http://localhost:3000/architectures/extract \
+  -H 'content-type: application/json' \
+  -d '{"architectureText":"API has 4 replicas at 80 rps each. Ingress 80 rps."}'
+
+# Persist after review
+curl -s -X POST http://localhost:3000/architectures \
+  -H 'content-type: application/json' \
+  -d '{"document":{...},"changeSource":"approved_extraction"}'
+
+# Analyze exact version
+curl -s -X POST http://localhost:3000/architectures/$ID/versions/1/analyze \
+  -H 'content-type: application/json' \
+  -d '{"question":"What is utilization at baseline load?"}'
+```
+
+### Error / outcome mapping
+
+| Condition | HTTP | Notes |
+| --- | --- | --- |
+| Invalid / oversized body | 400 | `INPUT_TOO_LARGE` when applicable |
+| Persist validation reject | 400 | `findings` |
+| Missing id/version | 404 | |
+| OCC conflict | 409 | |
+| Provider timeout/unavailable/config | 503 | sanitized `errorClass` |
+| `NEEDS_CLARIFICATION` / `UNSUPPORTED` / `NOT_ANSWERABLE` / explain fallback | **200** | domain fields; simulation kept on fallback |
+| Unexpected | 500 | sanitized |
+
+### Version consistency
+
+- Analyze calls `getVersion(id, version)` only — never substitutes latest.
+- Response always includes `architectureId` + `architectureVersion`.
+- `changeSource` is informational client metadata (`manual` \| `user_corrected` \| `approved_extraction`), not proof of human approval.
+
+### Known limitations
+
+- Default Compose uses `LLM_PROVIDER=fake`; OpenAI requires explicit env + key (server-side only).
+- No authentication; no OTel collector (timings/usage in JSON + structured logs).
+- Full V01–V12 live HTTP eval **NOT RUN**.
+
+### Compose HTTP acceptance (2026-11-15) — measured
+
+Command: `LLM_PROVIDER=fake docker compose up -d --build` then `npx tsx scripts/compose-http-acceptance.ts`
+
+| Check | Result |
+| --- | --- |
+| Compose build/start | exit 0 — api recreated on Phase 6 image; postgres healthy |
+| Container `LLM_PROVIDER` | `fake` |
+| Container `OPENAI_API_KEY` | unset |
+| OpenAI API calls | **none** |
+| `GET /health` | **200** `status=ok` |
+| A `POST /architectures/extract` | **200** `PROPOSED` `canPersist=true` (no auto-persist) |
+| B `POST /architectures` | **201** version **1** `changeSource=approved_extraction` |
+| C `POST .../versions/1/analyze` | **200** scenario **OK**; sim **ANSWERED**; metrics **3**; refused **3**; explain **`llm+deterministic`** (fake-demo); `architectureVersion=1` |
+| C usage / timings | present (`usage.totals`, `timingsMs`; USD `null` / `pricingIncomplete=true` for `fake-demo` model) |
+| D OCC → v2 then analyze v1 | update **200** version **2**; re-analyze **200** still **`architectureVersion=1`** (no silent substitution) |
+| E missing / invalid / unsupported | **404** / **400** / **200** `UNSUPPORTED` |
 
 ---
 
@@ -295,3 +374,4 @@ Smoke only demonstrates a single architecture extraction success, not field-leve
 | REQ-012 / REQ-020 / REQ-100 / REQ-111 / REQ-123 | `src/llm/**` + Fake unit tests |
 | REQ-090–095 | Dataset under `tests/validation` |
 | REQ-096 | Explicitly **NOT MEASURED** (live tooling present, not executed) |
+| REQ-001 / 002 / 021 / 022 / 051 / 052 / 110 / 112 / 120 / 130 | Phase 6 HTTP extract/analyze + Fake HTTP suite |

@@ -23,4 +23,11 @@ export {
   recordUsage,
   type UsageRecord,
 } from './usage/usage-recorder';
+export {
+  UsageCollector,
+  type UsageSummary,
+} from './usage/usage-collector';
 export { estimateCostUsd, lookupPricing } from './usage/pricing';
+export { LLM_CONFIG, LLM_PROVIDER } from './llm.tokens';
+export { LlmModule } from './llm.module';
+

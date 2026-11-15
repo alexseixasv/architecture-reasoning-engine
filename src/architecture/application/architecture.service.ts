@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { diffDocuments } from './diff';
 import { validateArchitectureDocument } from './validate';
 import { completenessGaps } from '../domain/completeness';
@@ -8,10 +9,10 @@ import type {
   ValidationFinding,
   ValidationResult,
 } from '../domain/types';
-import type {
+import {
   ArchitectureRepository,
-  StoredArchitectureVersion,
-  VersionListItem,
+  type StoredArchitectureVersion,
+  type VersionListItem,
 } from '../infrastructure/architecture.repository';
 
 export class PersistRejectedError extends Error {
@@ -21,6 +22,7 @@ export class PersistRejectedError extends Error {
   }
 }
 
+@Injectable()
 export class ArchitectureService {
   constructor(private readonly repository: ArchitectureRepository) {}
 
@@ -32,18 +34,26 @@ export class ArchitectureService {
     return { ...result, gaps };
   }
 
-  async create(input: unknown): Promise<StoredArchitectureVersion> {
+  async create(
+    input: unknown,
+    changeSource = 'manual',
+  ): Promise<StoredArchitectureVersion> {
     const result = validateArchitectureDocument(input);
     if (!result.canPersist || !result.document) {
       throw new PersistRejectedError(result.findings);
     }
-    return this.repository.create(result.document, result.findings);
+    return this.repository.create(
+      result.document,
+      result.findings,
+      changeSource,
+    );
   }
 
   async update(
     architectureId: string,
     expectedVersion: number,
     input: unknown,
+    changeSource = 'manual',
   ): Promise<StoredArchitectureVersion> {
     const result = validateArchitectureDocument(input);
     if (!result.canPersist || !result.document) {
@@ -54,6 +64,7 @@ export class ArchitectureService {
       expectedVersion,
       result.document,
       result.findings,
+      changeSource,
     );
   }
 

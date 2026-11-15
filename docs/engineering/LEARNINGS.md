@@ -84,3 +84,18 @@ Discoveries, mistakes, fixes, and reusable patterns. Update after each phase.
 - Smoke #2: model put `availability_percent` / `throughput` / `latency_p95_p99` in `metricIds`.
 - Those ids live on `SimulationResult.refused[].metricId`, not `metrics[]`.
 - DTO now has `refusedMetricIds`; catalog separates `availableMetrics` vs `refusedOutputs`; validator rejects refused ids in `metricIds`.
+
+## L-017 — Vitest/esbuild needs explicit @Inject for Nest (2026-11-15)
+
+- Vitest does not emit `design:paramtypes`; constructor type-only DI resolves as `undefined`.
+- Prefer `@Inject(Token)` on Nest controllers/services used under Vitest HTTP tests.
+
+## L-018 — Domain HTTP 200 ≠ success of the question (2026-11-15)
+
+- Clarification/unsupported/not-answerable are successful transport responses with unsuccessful domain status.
+- Clients and curl demos must inspect payload status fields.
+
+## L-019 — Compose acceptance needs a rebuilt image (2026-11-15)
+
+- A long-running Compose `api` container can stay on a pre-Phase-6 image after code lands.
+- Always `docker compose up -d --build` before claiming HTTP acceptance against Compose.

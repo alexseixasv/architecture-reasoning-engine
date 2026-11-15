@@ -16,6 +16,7 @@ import {
   ARCHITECTURE_EXTRACTION_SYSTEM_PROMPT,
   wrapUntrustedArchitecture,
 } from '../prompts/architecture';
+import type { UsageCollector } from '../usage/usage-collector';
 import { recordUsage } from '../usage/usage-recorder';
 
 export type ArchitectureExtractionResult =
@@ -38,6 +39,7 @@ export async function extractArchitecture(input: {
   architectureText: string;
   provider: LlmProvider;
   config?: LlmConfig;
+  usage?: UsageCollector;
 }): Promise<ArchitectureExtractionResult> {
   const config = input.config ?? loadLlmConfig();
   const text = input.architectureText;
@@ -59,18 +61,21 @@ export async function extractArchitecture(input: {
     schemaName: ARCHITECTURE_EXTRACTION_SCHEMA_NAME,
   });
 
-  recordUsage({
-    operation: 'extract_architecture',
-    model: parsed.model,
-    inputTokens: parsed.inputTokens,
-    outputTokens: parsed.outputTokens,
-    totalTokens: parsed.totalTokens,
-    durationMs: parsed.durationMs,
-    ...(parsed.providerRequestId
-      ? { providerRequestId: parsed.providerRequestId }
-      : {}),
-    ...(!parsed.ok ? { errorClass: parsed.errorClass } : {}),
-  });
+  recordUsage(
+    {
+      operation: 'extract_architecture',
+      model: parsed.model,
+      inputTokens: parsed.inputTokens,
+      outputTokens: parsed.outputTokens,
+      totalTokens: parsed.totalTokens,
+      durationMs: parsed.durationMs,
+      ...(parsed.providerRequestId
+        ? { providerRequestId: parsed.providerRequestId }
+        : {}),
+      ...(!parsed.ok ? { errorClass: parsed.errorClass } : {}),
+    },
+    input.usage,
+  );
 
   if (!parsed.ok) {
     return {

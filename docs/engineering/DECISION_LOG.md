@@ -144,3 +144,24 @@ Append-only record of meaningful engineering decisions. Final submission also co
 - **Decision:** Add `refusedMetricIds` to each explanation statement. Trusted catalog exposes `availableMetrics` / `refusedOutputs` / `availableComponents` separately. Validator rejects refused ids in `metricIds` and validates `refusedMetricIds` and `refusalCodes` against their own sets. Do not weaken validation or disable deterministic fallback.
 - **Alternatives rejected:** Accepting refused ids as calculated metrics; collapsing metricId and reasonCode into one field.
 - **Consequences:** Prompt and DTO roles are unambiguous; live re-smoke still required to confirm the model follows the new contract.
+
+## D-022 — HTTP domain outcomes vs provider infrastructure (2026-11-15)
+
+- **Context:** Phase 6 must expose extract/analyze without treating ASK/REFUSE/UNSUPPORTED as server faults.
+- **Decision:** `NEEDS_CLARIFICATION`, `UNSUPPORTED`, `NOT_ANSWERABLE`, `PARTIALLY_ANSWERED`, and explanation `deterministic_fallback` return **HTTP 200** with explicit domain fields. Provider timeout/unavailable/config → **503**. Oversized/invalid request → **400**. OCC → **409**. Extract never auto-persists. Analyze loads the exact path version only.
+- **Alternatives rejected:** Mapping domain refusals to 4xx/5xx; silent latest-version substitution; global mutable usage for HTTP.
+- **Consequences:** Clients must read `scenarioExtraction.status` / `simulation.status` / `explanation.source`, not only HTTP codes.
+
+## D-023 — Request-scoped UsageCollector for HTTP (2026-11-15)
+
+- **Context:** Process-global usage array mixes concurrent requests.
+- **Decision:** HTTP orchestration creates a `UsageCollector` per request and passes it into extract/scenario/explain. Scripts/tests may still use the global fallback via `recordUsage` without a collector.
+- **Alternatives rejected:** Shared global buffer for Nest handlers; full OpenTelemetry collector dependency for Phase 6.
+- **Consequences:** Response `usage` + `timingsMs` satisfy REQ-110/112 without external observability infra.
+
+## D-024 — Fake demo handlers only via createLlmProvider (2026-11-15)
+
+- **Context:** Compose with `LLM_PROVIDER=fake` must exercise extract/analyze HTTP without OpenAI; bare `FakeLlmProvider` fail-closed breaks Compose acceptance.
+- **Decision:** `createLlmProvider('fake')` installs deterministic demo handlers. Unit/HTTP tests that need fail-closed or custom fixtures use `new FakeLlmProvider()` / overrides.
+- **Alternatives rejected:** Requiring OpenAI for Compose smoke; changing default bare Fake to always succeed.
+- **Consequences:** Zero-cost Compose path works; offline tests remain explicit.
