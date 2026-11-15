@@ -88,6 +88,11 @@ export type ArchitectureDependency = {
   communication: CommunicationType;
   timeout?: Quantity<'ms'>;
   retry?: RetryPolicy;
+  /**
+   * How many calls to `to` are made per request handled at `from`.
+   * Required for exact downstream load; never invented by the engine.
+   */
+  requestsPerParent?: Quantity<'ratio'>;
 };
 
 export type Assumption = {
@@ -108,6 +113,8 @@ export type DocumentConflict = {
 export type SystemProperties = {
   incomingTraffic?: Quantity<'rps'>;
   availabilityTarget?: Quantity<'percent'>;
+  /** Explicit ingress node ids for root traffic attribution. */
+  ingressNodeIds?: string[];
 };
 
 export type ArchitectureDocument = {

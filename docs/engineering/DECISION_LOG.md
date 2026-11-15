@@ -68,3 +68,31 @@ Append-only record of meaningful engineering decisions. Final submission also co
 - **Decision:** Diff by stable entity ids; ignore reorder; sort changes by `(entityType, id, path, kind)`.
 - **Alternatives rejected:** Index-based array diffs; third-party deep-diff dependency.
 - **Consequences:** Reorders produce empty diffs; field edits remain visible.
+
+## D-011 — Multi-path load accumulation (2026-11-15)
+
+- **Context:** Single-edge `λ_to = λ_from * f` under-counts shared downstreams.
+- **Decision:** Accumulate known sync inbound contributions; omit missing fan-out (never as zero); refuse exact node load if incomplete; async excluded; cycles refuse fixed-point.
+- **Alternatives rejected:** Assign full system λ to every node; invent requestsPerParent=1.
+- **Consequences:** Fixtures must declare fan-out; shared DB tests use gateway fan-out.
+
+## D-012 — Failure exposure taxonomy (2026-11-15)
+
+- **Context:** Reachability ≠ proven unavailability; fallback may exist off-model.
+- **Decision:** Labels `unavailable` (direct only), `sync_failure_exposed`, `sync_transitively_exposed`, `async_dependent`, `unaffected` + paths + `NO_IMPLIED_FALLBACK`.
+- **Alternatives rejected:** Auto-mark transitive callers degraded/down.
+- **Consequences:** Honest blast-radius language for interviews.
+
+## D-013 — Refuse E2E latency; timeout per edge only (2026-11-15)
+
+- **Context:** Ordering/concurrency not explicit in Phase 2 model.
+- **Decision:** F-LAT-001 only; refuse E2E; no concurrencyGroup inference.
+- **Alternatives rejected:** Infer sequential/parallel from group ids.
+- **Consequences:** Latency answers are timeout-centric.
+
+## D-014 — Retry attempts vs attempt-rate honesty (2026-11-15)
+
+- **Context:** Max retries are not measured RPS; backoff affects timing.
+- **Decision:** Always allow `A_max` count; attempt-rate upper bound only if backoff `none` + known edge load, unit `attempts_per_s`; refuse expected/observed attempts.
+- **Alternatives rejected:** Blind λ×A_max as successful RPS across the graph.
+- **Consequences:** PDF-like “1240” must be framed as attempt-rate upper bound when justified.

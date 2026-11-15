@@ -179,6 +179,7 @@ const dependencySchema = z
     communication: z.enum(['sync', 'async']),
     timeout: msQuantity.optional(),
     retry: retrySchema.optional(),
+    requestsPerParent: ratioQuantity.optional(),
   })
   .strict();
 
@@ -205,6 +206,7 @@ const systemSchema = z
   .object({
     incomingTraffic: rpsQuantity.optional(),
     availabilityTarget: percentQuantity.optional(),
+    ingressNodeIds: z.array(z.string().min(1)).optional(),
   })
   .strict();
 

@@ -2,7 +2,7 @@
 
 Deterministic architecture analysis service for “what happens if” questions. Natural language is used only to extract and explain; **all numbers come from hand-verifiable code**.
 
-**Status:** Phase 2 — versioned formal model + Postgres persistence. Simulation and LLM extraction are not implemented yet.
+**Status:** Phase 3 — deterministic `simulate()` engine (pure TS) + Phase 2 persistence. LLM extraction and HTTP simulate route are not implemented yet.
 
 ## Requirements source
 
@@ -76,10 +76,12 @@ src/
 
 | Present | Not yet |
 | --- | --- |
-| Formal model + Zod validation | Deterministic simulation engine |
-| Immutable version history + OCC | LLM extraction / explanation |
-| Manual correction + diffs | OpenTelemetry / analysis endpoints |
-| Unit + Postgres integration tests | Golden numerical tests |
+| Formal model + Zod validation | LLM extraction / explanation |
+| Immutable version history + OCC | HTTP simulate / analyze routes |
+| Pure `simulate()` engine + evidence | OpenTelemetry |
+| Unit + Postgres integration tests | Golden suite docs (Phase 4) |
+
+Math: [docs/engineering/MODEL.md](docs/engineering/MODEL.md).
 
 ## Privacy
 

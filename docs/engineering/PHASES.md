@@ -5,8 +5,8 @@ Eight stop-gated phases. Mark requirements complete only with implementation + v
 | Phase | Name | Status |
 | --- | --- | --- |
 | 1 | Foundation and engineering rules | complete |
-| 2 | Formal model and persistence | complete (pending human review) |
-| 3 | Deterministic simulation engine | pending |
+| 2 | Formal model and persistence | complete |
+| 3 | Deterministic simulation engine | complete (pending human review) |
 | 4 | Golden tests | pending |
 | 5 | LLM integration | pending |
 | 6 | API and observability | pending |
@@ -124,7 +124,43 @@ Recorded 2026-11-14:
 
 ## Phase 3 — Deterministic simulation engine
 
-Pending. Primary REQs: REQ-003, REQ-010–012, REQ-021, REQ-050–052, REQ-060–062, REQ-071–073, REQ-083.
+### Goals
+
+- Pure `simulate(architecture, scenario)` with evidence, refusals, exposure taxonomy.
+- Multi-path load accumulation; timeout checks; honest retry attempt metrics.
+- Additive schema: `requestsPerParent`, `ingressNodeIds`.
+
+### Requirement IDs
+
+| ID | Intent | Complete? |
+| --- | --- | --- |
+| REQ-010–012 | Engine-only numbers + evidence | yes — unit tests |
+| REQ-021 / REQ-083 | Structured simulate seam | yes |
+| REQ-050–052 | Partial/refuse + assumptions | yes |
+| REQ-060–062 | Three scenarios | yes |
+| REQ-003 | Timeout/retry/sat/blast; no fake avail % | yes (partial shape) |
+| REQ-071–073 | Steady-state closed-form honesty | yes — MODEL.md |
+| REQ-032–033 | Formulas documented | yes — draft MODEL.md |
+
+### Verification evidence
+
+Recorded 2026-11-15:
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | exit 0 |
+| `npm run lint` | exit 0 |
+| `npm test` | 35 passed (incl. 17 simulation; review added incomplete-inbound + healthy-no-amp) |
+| `npm run test:integration` | 3 passed (Postgres) |
+| `npm run build` | exit 0 |
+
+### Suggested commit
+
+`feat: add deterministic simulation engine for unavailable latency and load scenarios`
+
+### Limitations
+
+- No E2E latency; no availability %; no throughput; golden suite docs → Phase 4; no Nest simulate route yet.
 
 ## Phase 4 — Golden tests
 

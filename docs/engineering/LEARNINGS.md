@@ -27,3 +27,13 @@ Discoveries, mistakes, fixes, and reusable patterns. Update after each phase.
 
 - A sequential “update then update again with stale version” only proves stale rejection, not mutual exclusion under concurrency.
 - Use `Promise.allSettled` on two updates with the same `expectedVersion` and assert exactly one fulfilled + one `VersionConflictError`.
+
+## L-006 — Multiple ingress without split invents load (2026-11-15)
+
+- Applying full `λ'` to each of several ingress nodes double-counts boundary traffic.
+- Prefer a single ingress (or gateway) with explicit `requestsPerParent` fan-out; refuse `MULTIPLE_INGRESS_REQUIRES_SPLIT` otherwise.
+
+## L-007 — Standing refusals vs material partials (2026-11-15)
+
+- Always-on refusals (availability %, throughput, E2E, expected attempts) should not alone force `NOT_ANSWERABLE`.
+- Filter “standing” reason codes when deriving ANSWERED vs PARTIALLY_ANSWERED from primary metrics.

@@ -128,9 +128,13 @@ describe.runIf(Boolean(databaseUrl))('ArchitectureRepository integration', () =>
 
     const v2 = await service.getVersion(created.architectureId, 2);
     expect(v2.document.conflicts).toEqual([]);
-    expect(
-      v2.document.nodes.find((n) => n.id === 'pricing')?.replicas?.provenance,
-    ).toBe('user_confirmed');
+    const pricingReplicas = v2.document.nodes.find(
+      (n) => n.id === 'pricing',
+    )?.replicas;
+    expect(pricingReplicas?.state).toBe('known');
+    if (pricingReplicas?.state === 'known') {
+      expect(pricingReplicas.provenance).toBe('user_confirmed');
+    }
 
     const diff = await service.diff(created.architectureId, 1, 2);
     expect(diff.changes.length).toBeGreaterThan(0);

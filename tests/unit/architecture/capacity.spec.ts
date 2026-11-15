@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { nominalCapacityRps } from '../../../src/architecture/application/validate';
+import { nominalCapacityRps } from '../../../src/architecture/domain/capacity';
 import type { ArchitectureNode } from '../../../src/architecture/domain/types';
 
 describe('nominalCapacityRps', () => {
