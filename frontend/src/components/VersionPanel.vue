@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VersionConflictInfo, VersionListItem } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 
 defineProps<{
   loadIdInput: string;
@@ -22,8 +23,10 @@ const emit = defineEmits<{
 
 <template>
   <section class="rounded-xl border border-border bg-panel p-4 shadow-sm">
-    <h2 class="mb-3 text-base font-semibold">
+    <h2 class="mb-3 flex items-center gap-1.5 text-base font-semibold">
       Versions &amp; optimistic concurrency
+      <InfoTooltip term="optimisticConcurrency" />
+      <InfoTooltip term="architectureVersion" />
     </h2>
 
     <label
@@ -60,7 +63,10 @@ const emit = defineEmits<{
         <dd class="font-mono font-semibold">{{ version ?? '—' }}</dd>
       </div>
       <div>
-        <dt class="text-xs text-ink-muted">expectedVersion (OCC)</dt>
+        <dt class="inline-flex items-center gap-1 text-xs text-ink-muted">
+          expectedVersion (OCC)
+          <InfoTooltip term="expectedVersion" />
+        </dt>
         <dd class="font-mono font-semibold">{{ expectedVersion ?? '—' }}</dd>
       </div>
       <div>
@@ -100,7 +106,10 @@ const emit = defineEmits<{
       class="mt-4 rounded-lg border border-danger bg-danger-tint p-3 text-sm text-danger"
       role="alert"
     >
-      <p class="font-semibold">HTTP 409 — version conflict</p>
+      <p class="inline-flex items-center gap-1.5 font-semibold">
+        HTTP 409 — version conflict
+        <InfoTooltip term="http409Conflict" />
+      </p>
       <p class="mt-1">{{ conflict.message }}</p>
       <p class="mt-1 font-mono text-xs">
         expected={{ conflict.expectedVersion ?? '—' }} ·

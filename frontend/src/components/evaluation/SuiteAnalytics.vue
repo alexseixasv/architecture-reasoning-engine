@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { EvaluationRunResult } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 import { checkKindLabel, formatDurationMs } from '@/lib/evaluationFormat';
 
 const props = defineProps<{
@@ -68,8 +69,9 @@ const byCheckKind = computed(() => {
 
     <div class="mt-4 grid gap-6 lg:grid-cols-2">
       <div>
-        <h3 class="text-xs font-semibold uppercase tracking-wide text-ink-subtle">
+        <h3 class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-ink-subtle">
           Pass / fail / skipped
+          <InfoTooltip term="casePassed" />
         </h3>
         <div
           class="mt-2 flex h-4 overflow-hidden rounded-full border border-border bg-panel-muted"
@@ -134,8 +136,11 @@ const byCheckKind = computed(() => {
       </div>
 
       <div>
-        <h3 class="text-xs font-semibold uppercase tracking-wide text-ink-subtle">
+        <h3 class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-ink-subtle">
           Evaluation category coverage
+          <InfoTooltip term="formalValidation" />
+          <InfoTooltip term="schemaValidation" />
+          <InfoTooltip term="adversarialDeterministic" />
         </h3>
         <ul class="mt-2 space-y-1 text-xs">
           <li

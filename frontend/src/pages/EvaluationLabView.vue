@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import type { ApiClient } from '@/api/client';
 import { api } from '@/api/client';
 import type { EvaluationCaseResult } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 import StatusBanner from '@/components/StatusBanner.vue';
 import CaseDetailDrawer from '@/components/evaluation/CaseDetailDrawer.vue';
 import EvaluationControls from '@/components/evaluation/EvaluationControls.vue';
@@ -51,9 +52,11 @@ async function onRun(): Promise<void> {
   <div>
     <div class="border-b border-border bg-panel print:border-0">
       <div class="mx-auto max-w-7xl px-4 py-3">
-        <p class="text-sm text-ink-muted">
+        <p class="inline-flex flex-wrap items-center gap-1.5 text-sm text-ink-muted">
           Deterministic fixture execution versus historical OpenAI evidence —
           kept strictly separate.
+          <InfoTooltip term="deterministicEvaluation" />
+          <InfoTooltip term="historicalEvaluation" />
         </p>
       </div>
     </div>

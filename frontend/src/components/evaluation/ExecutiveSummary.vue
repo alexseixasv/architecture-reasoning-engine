@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { EvaluationRunResult } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 import { formatDurationMs } from '@/lib/evaluationFormat';
 
 defineProps<{
@@ -14,8 +15,12 @@ defineProps<{
   >
     <div class="flex flex-wrap items-start justify-between gap-3">
       <div>
-        <h2 id="exec-summary-heading" class="text-sm font-semibold text-ink">
+        <h2
+          id="exec-summary-heading"
+          class="inline-flex items-center gap-1.5 text-sm font-semibold text-ink"
+        >
           Executive summary
+          <InfoTooltip term="deterministicEvaluation" />
         </h2>
         <p class="mt-1 font-mono text-xs text-ink-subtle">
           runId {{ run.runId }}
@@ -40,15 +45,24 @@ defineProps<{
         <dd class="font-mono text-lg font-semibold text-ink">{{ run.summary.total }}</dd>
       </div>
       <div class="rounded-md bg-panel-muted px-3 py-2">
-        <dt class="text-[0.7rem] uppercase tracking-wide text-ink-subtle">Passed</dt>
+        <dt class="inline-flex items-center gap-1 text-[0.7rem] uppercase tracking-wide text-ink-subtle">
+          Passed
+          <InfoTooltip term="casePassed" />
+        </dt>
         <dd class="font-mono text-lg font-semibold text-success">{{ run.summary.passed }}</dd>
       </div>
       <div class="rounded-md bg-panel-muted px-3 py-2">
-        <dt class="text-[0.7rem] uppercase tracking-wide text-ink-subtle">Failed</dt>
+        <dt class="inline-flex items-center gap-1 text-[0.7rem] uppercase tracking-wide text-ink-subtle">
+          Failed
+          <InfoTooltip term="caseFailed" />
+        </dt>
         <dd class="font-mono text-lg font-semibold text-danger">{{ run.summary.failed }}</dd>
       </div>
       <div class="rounded-md bg-panel-muted px-3 py-2">
-        <dt class="text-[0.7rem] uppercase tracking-wide text-ink-subtle">Skipped</dt>
+        <dt class="inline-flex items-center gap-1 text-[0.7rem] uppercase tracking-wide text-ink-subtle">
+          Skipped
+          <InfoTooltip term="caseSkipped" />
+        </dt>
         <dd class="font-mono text-lg font-semibold text-ink-muted">{{ run.summary.skipped }}</dd>
       </div>
       <div class="rounded-md bg-panel-muted px-3 py-2">

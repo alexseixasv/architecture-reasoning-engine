@@ -534,7 +534,12 @@ export function sampleHistoricalEvaluation(): HistoricalEvaluationResponse {
           wallMs: { p50: 7972, p95: 10980, sampleSize: 12 },
           tokens: { input: 43247, output: 12405 },
         },
-        limitations: ['formal_context_scenario_scoring', 'small_sample_N12'],
+        limitations: [
+          'formal_context_scenario_scoring',
+          'small_sample_N12',
+          'estimated_usd_not_invoice',
+          'fake_llm_not_openai_accuracy',
+        ],
         cases: [
           {
             caseId: 'V01',

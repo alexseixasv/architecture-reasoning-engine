@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { EvaluationSuiteDescriptor, EvaluationSuiteId } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 
 defineProps<{
   suites: EvaluationSuiteDescriptor[];
@@ -22,8 +23,13 @@ const emit = defineEmits<{
   >
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div class="min-w-[16rem] flex-1">
-        <h2 id="eval-controls-heading" class="text-sm font-semibold text-ink">
+        <h2
+          id="eval-controls-heading"
+          class="inline-flex items-center gap-1.5 text-sm font-semibold text-ink"
+        >
           Deterministic evaluation
+          <InfoTooltip term="deterministicEvaluation" />
+          <InfoTooltip term="goldenCases" />
         </h2>
         <p class="mt-1 text-xs text-ink-muted">
           Runs allowlisted golden, validation, and adversarial fixtures against the

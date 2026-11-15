@@ -5,12 +5,16 @@ import type {
   HistoricalEvaluationResponse,
   HistoricalSummary,
 } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 import {
   formatF1,
   formatPct,
   formatRatio,
   prettyJson,
 } from '@/lib/evaluationFormat';
+import {
+  explainMethodologicalLimitation,
+} from '@/lib/glossary';
 import type { EvaluationUiError } from '@/composables/useEvaluation';
 
 const props = defineProps<{
@@ -66,6 +70,18 @@ function metricCell(
   if (!artifact) return '—';
   return picker(artifact.metrics);
 }
+
+function limitationCopy(id: string): { title: string; body: string; raw: string } {
+  const explained = explainMethodologicalLimitation(id);
+  if (explained) {
+    return { title: explained.title, body: explained.body, raw: id };
+  }
+  return {
+    title: id,
+    body: 'Documented methodological caveat from the sanitized historical artifact.',
+    raw: id,
+  };
+}
 </script>
 
 <template>
@@ -77,9 +93,11 @@ function metricCell(
       <div>
         <h2
           id="historical-heading"
-          class="text-sm font-semibold text-ink"
+          class="inline-flex flex-wrap items-center gap-1.5 text-sm font-semibold text-ink"
         >
           {{ HISTORICAL_TITLE }}
+          <InfoTooltip term="historicalEvaluation" />
+          <InfoTooltip term="baselineVsRemediation" />
         </h2>
         <p class="mt-1 text-xs text-ink-muted">
           Sanitized artifacts from prior measured OpenAI runs. These metrics are
@@ -158,7 +176,12 @@ function metricCell(
               </td>
             </tr>
             <tr class="border-b border-border/70">
-              <td class="px-2 py-1.5 text-ink-muted">Field accuracy</td>
+              <td class="px-2 py-1.5 text-ink-muted">
+                <span class="inline-flex items-center gap-1">
+                  Field accuracy
+                  <InfoTooltip term="fieldAccuracy" />
+                </span>
+              </td>
               <td class="px-2 py-1.5 font-mono">
                 {{
                   baseline
@@ -175,7 +198,12 @@ function metricCell(
               </td>
             </tr>
             <tr class="border-b border-border/70">
-              <td class="px-2 py-1.5 text-ink-muted">Node F1</td>
+              <td class="px-2 py-1.5 text-ink-muted">
+                <span class="inline-flex items-center gap-1">
+                  Node F1
+                  <InfoTooltip term="nodeF1" />
+                </span>
+              </td>
               <td class="px-2 py-1.5 font-mono">
                 {{ formatF1(baseline?.metrics.node.f1 ?? null) }}
               </td>
@@ -184,7 +212,12 @@ function metricCell(
               </td>
             </tr>
             <tr class="border-b border-border/70">
-              <td class="px-2 py-1.5 text-ink-muted">Dependency F1</td>
+              <td class="px-2 py-1.5 text-ink-muted">
+                <span class="inline-flex items-center gap-1">
+                  Dependency F1
+                  <InfoTooltip term="dependencyF1" />
+                </span>
+              </td>
               <td class="px-2 py-1.5 font-mono">
                 {{ formatF1(baseline?.metrics.dependency.f1 ?? null) }}
               </td>
@@ -193,7 +226,12 @@ function metricCell(
               </td>
             </tr>
             <tr class="border-b border-border/70">
-              <td class="px-2 py-1.5 text-ink-muted">Scenario structured</td>
+              <td class="px-2 py-1.5 text-ink-muted">
+                <span class="inline-flex items-center gap-1">
+                  Scenario structured
+                  <InfoTooltip term="scenarioStructured" />
+                </span>
+              </td>
               <td class="px-2 py-1.5 font-mono">
                 {{
                   formatRatio(
@@ -212,7 +250,12 @@ function metricCell(
               </td>
             </tr>
             <tr class="border-b border-border/70">
-              <td class="px-2 py-1.5 text-ink-muted">Unsupported NL</td>
+              <td class="px-2 py-1.5 text-ink-muted">
+                <span class="inline-flex items-center gap-1">
+                  Unsupported NL
+                  <InfoTooltip term="unsupportedNl" />
+                </span>
+              </td>
               <td class="px-2 py-1.5 font-mono">
                 {{
                   formatRatio(
@@ -231,7 +274,12 @@ function metricCell(
               </td>
             </tr>
             <tr class="border-b border-border/70">
-              <td class="px-2 py-1.5 text-ink-muted">Grounded explanation</td>
+              <td class="px-2 py-1.5 text-ink-muted">
+                <span class="inline-flex items-center gap-1">
+                  Grounded explanation
+                  <InfoTooltip term="groundedExplanation" />
+                </span>
+              </td>
               <td class="px-2 py-1.5 font-mono">
                 {{
                   baseline
@@ -248,7 +296,13 @@ function metricCell(
               </td>
             </tr>
             <tr class="border-b border-border/70">
-              <td class="px-2 py-1.5 text-ink-muted">Est. USD / wall p50·p95</td>
+              <td class="px-2 py-1.5 text-ink-muted">
+                <span class="inline-flex items-center gap-1">
+                  Est. USD / wall p50·p95
+                  <InfoTooltip term="estimatedUsd" />
+                  <InfoTooltip term="wallP50P95" />
+                </span>
+              </td>
               <td class="px-2 py-1.5 font-mono">
                 {{
                   metricCell(baseline, (m) =>
@@ -269,7 +323,12 @@ function metricCell(
               </td>
             </tr>
             <tr class="border-b border-border/70">
-              <td class="px-2 py-1.5 text-ink-muted">Tokens in/out</td>
+              <td class="px-2 py-1.5 text-ink-muted">
+                <span class="inline-flex items-center gap-1">
+                  Tokens in/out
+                  <InfoTooltip term="tokensInOut" />
+                </span>
+              </td>
               <td class="px-2 py-1.5 font-mono">
                 {{
                   baseline?.metrics.tokens
@@ -286,7 +345,12 @@ function metricCell(
               </td>
             </tr>
             <tr class="border-b border-border/70">
-              <td class="px-2 py-1.5 text-ink-muted">Source SHA-256</td>
+              <td class="px-2 py-1.5 text-ink-muted">
+                <span class="inline-flex items-center gap-1">
+                  Source SHA-256
+                  <InfoTooltip term="sourceSha256" />
+                </span>
+              </td>
               <td class="px-2 py-1.5 font-mono break-all text-[0.65rem]">
                 {{ baseline?.sourceArtifactSha256 ?? '—' }}
               </td>
@@ -305,10 +369,11 @@ function metricCell(
       </p>
 
       <div class="mt-4">
-        <h3 class="text-xs font-semibold uppercase tracking-wide text-ink-subtle">
+        <h3 class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-ink-subtle">
           Methodological limitations
+          <InfoTooltip term="methodologicalLimitations" />
         </h3>
-        <ul class="mt-2 list-disc space-y-1 pl-5 text-xs text-ink-muted">
+        <ul class="mt-2 space-y-2 text-xs text-ink-muted">
           <li
             v-for="(lim, i) in [
               ...new Set(
@@ -316,8 +381,15 @@ function metricCell(
               ),
             ]"
             :key="i"
+            class="rounded-md border border-border bg-panel-muted px-3 py-2"
           >
-            {{ lim }}
+            <p class="font-semibold text-ink">
+              {{ limitationCopy(lim).title }}
+            </p>
+            <p class="mt-1">{{ limitationCopy(lim).body }}</p>
+            <p class="mt-1 font-mono text-[0.65rem] text-ink-subtle">
+              id: {{ limitationCopy(lim).raw }}
+            </p>
           </li>
         </ul>
       </div>

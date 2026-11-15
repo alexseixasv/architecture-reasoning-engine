@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ExtractHttpResponse } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 
 const props = defineProps<{
   result: ExtractHttpResponse | null;
@@ -30,7 +31,10 @@ const dependencies = () => {
 
 <template>
   <section class="rounded-xl border border-border bg-panel p-4 shadow-sm">
-    <h2 class="mb-3 text-base font-semibold">Extracted model summary</h2>
+    <h2 class="mb-3 flex items-center gap-1.5 text-base font-semibold">
+      Extracted model summary
+      <InfoTooltip term="formalArchitectureModel" />
+    </h2>
     <p v-if="!result" class="text-sm text-ink-subtle">
       Extract an architecture to inspect components, dependencies, and findings.
     </p>
@@ -57,9 +61,18 @@ const dependencies = () => {
             {{ (node as { id?: string }).id }} · {{ (node as { kind?: string }).kind }} ·
             {{ (node as { name?: string }).name }}
           </p>
-          <p class="mt-1 text-xs text-ink-muted">
-            replicas: {{ quantityLabel((node as { replicas?: unknown }).replicas) }} ·
-            capacity: {{ quantityLabel((node as { capacityPerReplica?: unknown }).capacityPerReplica) }}
+          <p class="mt-1 inline-flex flex-wrap items-center gap-1 text-xs text-ink-muted">
+            <span class="inline-flex items-center gap-0.5">
+              replicas
+              <InfoTooltip term="replicas" />
+            </span>
+            : {{ quantityLabel((node as { replicas?: unknown }).replicas) }}
+            ·
+            <span class="inline-flex items-center gap-0.5">
+              capacity
+              <InfoTooltip term="capacity" />
+            </span>
+            : {{ quantityLabel((node as { capacityPerReplica?: unknown }).capacityPerReplica) }}
           </p>
         </li>
       </ul>

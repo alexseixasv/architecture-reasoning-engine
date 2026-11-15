@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { AnalyzeHttpResponse } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 
 defineProps<{
   result: AnalyzeHttpResponse | null;
@@ -8,7 +9,11 @@ defineProps<{
 
 <template>
   <section class="rounded-xl border border-border bg-panel p-4 shadow-sm">
-    <h2 class="mb-3 text-base font-semibold">Results &amp; evidence</h2>
+    <h2 class="mb-3 flex items-center gap-1.5 text-base font-semibold">
+      Results &amp; evidence
+      <InfoTooltip term="deterministicSimulation" />
+      <InfoTooltip term="groundedExplanation" />
+    </h2>
     <p v-if="!result" class="text-sm text-ink-subtle">
       Run analysis on a persisted version to see deterministic metrics and refusals.
     </p>
@@ -60,8 +65,9 @@ defineProps<{
       </template>
 
       <template v-if="result.simulation">
-        <h3 class="mt-4 text-xs font-semibold uppercase tracking-wide text-ink-muted">
+        <h3 class="mt-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-ink-muted">
           Deterministic metrics
+          <InfoTooltip term="utilization" />
         </h3>
         <ul class="mt-2 space-y-2">
           <li
@@ -73,8 +79,12 @@ defineProps<{
             <p class="font-semibold">
               {{ m.value }} <span class="font-normal text-ink-muted">{{ m.unit }}</span>
             </p>
-            <p v-if="m.formulaId" class="font-mono text-xs text-ink-subtle">
+            <p
+              v-if="m.formulaId"
+              class="inline-flex items-center gap-1 font-mono text-xs text-ink-subtle"
+            >
               {{ m.formulaId }}
+              <InfoTooltip term="formulaId" />
             </p>
           </li>
         </ul>
@@ -85,8 +95,9 @@ defineProps<{
           No calculated metrics in this result.
         </p>
 
-        <h3 class="mt-4 text-xs font-semibold uppercase tracking-wide text-ink-muted">
+        <h3 class="mt-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-ink-muted">
           Refused metrics
+          <InfoTooltip term="refusedMetrics" />
         </h3>
         <ul class="mt-2 space-y-2">
           <li

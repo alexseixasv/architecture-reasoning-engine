@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { DocumentDiff, VersionListItem } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 
 defineProps<{
   versions: VersionListItem[];
@@ -30,8 +31,9 @@ function onTo(e: Event): void {
 
 <template>
   <section class="rounded-xl border border-border bg-panel p-4 shadow-sm">
-    <h2 class="mb-3 text-base font-semibold">
+    <h2 class="mb-3 flex items-center gap-1.5 text-base font-semibold">
       Semantic diff
+      <InfoTooltip term="semanticDiff" />
     </h2>
     <p class="mb-3 text-xs text-ink-muted">
       Compares two persisted versions via the backend. No graph editor.

@@ -65,5 +65,6 @@ Open `http://127.0.0.1:5173`. Vite proxies `/api/*` to `http://127.0.0.1:3000` (
 - Version updates use `expectedVersion` OCC; HTTP 409 preserves unsaved JSON and never auto-retries.
 - Semantic diff uses `GET /architectures/:id/diff?from=&to=` only.
 - Evaluation Lab Run button never calls OpenAI; historical panel is sanitized evidence only.
+- Contextual `InfoTooltip` icons use the shared glossary in `src/lib/glossary.ts` (interview explanations; no client-side math).
 - No Nest CORS required for Vite/Compose same-origin `/api` routing.
 - Do not set secrets in frontend env files.

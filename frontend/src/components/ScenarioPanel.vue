@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import InfoTooltip from '@/components/InfoTooltip.vue';
+
 defineProps<{
   modelValue: string;
   loading: boolean;
@@ -19,7 +21,11 @@ const emit = defineEmits<{
 <template>
   <section class="rounded-xl border border-border bg-panel p-4 shadow-sm">
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-      <h2 class="text-base font-semibold">Scenario analysis</h2>
+      <h2 class="flex items-center gap-1.5 text-base font-semibold">
+        Scenario analysis
+        <InfoTooltip term="scenarioAnalysis" />
+        <InfoTooltip term="deterministicSimulation" />
+      </h2>
       <div class="flex flex-wrap gap-2">
         <button
           type="button"

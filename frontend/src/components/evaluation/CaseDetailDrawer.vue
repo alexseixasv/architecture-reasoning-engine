@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, watch } from 'vue';
 import type { EvaluationCaseResult } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 import {
   checkKindLabel,
   formatDurationMs,
@@ -85,8 +86,17 @@ watch(open, (isOpen) => {
 
       <div class="space-y-4 px-4 py-4 text-sm">
         <section class="rounded-md border border-border bg-panel-muted p-3">
-          <h3 class="text-xs font-semibold uppercase tracking-wide text-ink-subtle">
+          <h3 class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-ink-subtle">
             Check semantics
+            <InfoTooltip
+              :term="
+                isNlIsolation
+                  ? 'nlIsolationCheck'
+                  : isSchemaOnly
+                    ? 'schemaValidation'
+                    : 'formalValidation'
+              "
+            />
           </h3>
           <p class="mt-1 text-ink">
             <span class="font-semibold">{{ checkKindLabel(caseResult.checkKind) }}</span>
@@ -141,9 +151,19 @@ watch(open, (isOpen) => {
               <thead>
                 <tr class="border-b border-border text-ink-subtle">
                   <th class="px-2 py-1">Metric</th>
-                  <th class="px-2 py-1">Expected</th>
+                  <th class="px-2 py-1">
+                    <span class="inline-flex items-center gap-1">
+                      Expected
+                      <InfoTooltip term="expectedVsActual" />
+                    </span>
+                  </th>
                   <th class="px-2 py-1">Actual</th>
-                  <th class="px-2 py-1">Formula</th>
+                  <th class="px-2 py-1">
+                    <span class="inline-flex items-center gap-1">
+                      Formula
+                      <InfoTooltip term="formulaId" />
+                    </span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -160,24 +180,32 @@ watch(open, (isOpen) => {
               </tbody>
             </table>
           </div>
-          <details
+          <div
             v-for="m in metricEvidence"
             :key="`sub-${m.metricId}`"
-            class="mt-2 rounded border border-border bg-panel-muted px-2 py-1"
+            class="mt-2"
           >
-            <summary class="cursor-pointer font-mono text-xs text-ink">
-              {{ m.metricId }} substitutions / inputs
-            </summary>
-            <ul class="mt-1 list-disc pl-4 text-xs text-ink-muted">
-              <li v-for="(s, i) in m.substitutions" :key="i">{{ s }}</li>
-            </ul>
-            <p class="mt-1 font-mono text-[0.7rem] text-ink-subtle">
-              inputs: {{ m.inputPaths.join(', ') || '—' }}
-            </p>
-            <p class="mt-1 font-mono text-[0.7rem] text-ink-subtle">
-              result: {{ m.result || '—' }}
-            </p>
-          </details>
+            <div class="mb-1 inline-flex items-center gap-1 text-[0.7rem] text-ink-subtle">
+              Formula substitutions
+              <InfoTooltip term="formulaSubstitutions" />
+            </div>
+            <details
+              class="rounded border border-border bg-panel-muted px-2 py-1"
+            >
+              <summary class="cursor-pointer font-mono text-xs text-ink">
+                {{ m.metricId }} substitutions / inputs
+              </summary>
+              <ul class="mt-1 list-disc pl-4 text-xs text-ink-muted">
+                <li v-for="(s, i) in m.substitutions" :key="i">{{ s }}</li>
+              </ul>
+              <p class="mt-1 font-mono text-[0.7rem] text-ink-subtle">
+                inputs: {{ m.inputPaths.join(', ') || '—' }}
+              </p>
+              <p class="mt-1 font-mono text-[0.7rem] text-ink-subtle">
+                result: {{ m.result || '—' }}
+              </p>
+            </details>
+          </div>
         </section>
 
         <section>
@@ -186,7 +214,10 @@ watch(open, (isOpen) => {
           </h3>
           <dl class="mt-2 grid grid-cols-2 gap-2 text-xs">
             <div>
-              <dt class="text-ink-subtle">Determinism OK</dt>
+              <dt class="inline-flex items-center gap-1 text-ink-subtle">
+                Determinism OK
+                <InfoTooltip term="determinismEvidence" />
+              </dt>
               <dd class="font-mono">
                 {{
                   caseResult.evidence.determinismOk === undefined
@@ -196,13 +227,19 @@ watch(open, (isOpen) => {
               </dd>
             </div>
             <div>
-              <dt class="text-ink-subtle">Formula IDs</dt>
+              <dt class="inline-flex items-center gap-1 text-ink-subtle">
+                Formula IDs
+                <InfoTooltip term="formulaId" />
+              </dt>
               <dd class="font-mono break-all">
                 {{ (caseResult.evidence.formulaIds ?? []).join(', ') || '—' }}
               </dd>
             </div>
             <div class="col-span-2">
-              <dt class="text-ink-subtle">Refusal codes</dt>
+              <dt class="inline-flex items-center gap-1 text-ink-subtle">
+                Refusal codes
+                <InfoTooltip term="refusalCodes" />
+              </dt>
               <dd class="font-mono break-all">
                 {{
                   (caseResult.evidence.refusedReasonCodes ?? []).join(', ') || '—'

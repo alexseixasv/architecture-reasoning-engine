@@ -6,6 +6,7 @@ import type {
   EvaluationCheckKind,
   EvaluationRunResult,
 } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 import {
   checkKindLabel,
   formatDurationMs,
@@ -136,11 +137,26 @@ const statusClass: Record<CaseRunStatus, string> = {
           <tr class="border-b border-border text-ink-subtle">
             <th scope="col" class="px-2 py-2 font-semibold">Case ID</th>
             <th scope="col" class="px-2 py-2 font-semibold">Suite</th>
-            <th scope="col" class="px-2 py-2 font-semibold">Check kind</th>
+            <th scope="col" class="px-2 py-2 font-semibold">
+              <span class="inline-flex items-center gap-1">
+                Check kind
+                <InfoTooltip term="nlIsolationCheck" />
+              </span>
+            </th>
             <th scope="col" class="px-2 py-2 font-semibold">Description</th>
-            <th scope="col" class="px-2 py-2 font-semibold">Expected</th>
+            <th scope="col" class="px-2 py-2 font-semibold">
+              <span class="inline-flex items-center gap-1">
+                Expected
+                <InfoTooltip term="expectedVsActual" />
+              </span>
+            </th>
             <th scope="col" class="px-2 py-2 font-semibold">Actual</th>
-            <th scope="col" class="px-2 py-2 font-semibold">Status</th>
+            <th scope="col" class="px-2 py-2 font-semibold">
+              <span class="inline-flex items-center gap-1">
+                Status
+                <InfoTooltip term="casePassed" />
+              </span>
+            </th>
             <th scope="col" class="px-2 py-2 font-semibold">Duration</th>
             <th scope="col" class="px-2 py-2 font-semibold print:hidden">Detail</th>
           </tr>

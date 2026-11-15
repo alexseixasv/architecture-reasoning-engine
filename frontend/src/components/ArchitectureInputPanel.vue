@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import InfoTooltip from '@/components/InfoTooltip.vue';
+
 defineProps<{
   modelValue: string;
   loading: boolean;
@@ -15,8 +17,9 @@ const emit = defineEmits<{
 <template>
   <section class="rounded-xl border border-border bg-panel p-4 shadow-sm">
     <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-      <h2 class="text-base font-semibold text-ink">
+      <h2 class="flex items-center gap-1.5 text-base font-semibold text-ink">
         Architecture description
+        <InfoTooltip term="architectureExtraction" />
       </h2>
       <button
         type="button"
@@ -46,8 +49,10 @@ const emit = defineEmits<{
       >
         {{ loading ? 'Extracting…' : 'Extract architecture' }}
       </button>
-      <p class="text-xs text-ink-subtle">
+      <p class="inline-flex items-center gap-1 text-xs text-ink-subtle">
         Extraction proposes a model only — it does not persist.
+        <InfoTooltip term="explicitPersistence" />
+        <InfoTooltip term="fakeVsOpenAi" />
       </p>
     </div>
     <p v-if="error" class="mt-3 text-sm text-danger" role="alert">

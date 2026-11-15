@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import InfoTooltip from '@/components/InfoTooltip.vue';
+
 defineProps<{
   modelValue: string;
   jsonError: string | null;
@@ -23,7 +25,11 @@ const emit = defineEmits<{
 
 <template>
   <section class="rounded-xl border border-border bg-panel p-4 shadow-sm">
-    <h2 class="mb-3 text-base font-semibold">Review &amp; correct formal model</h2>
+    <h2 class="mb-3 flex items-center gap-1.5 text-base font-semibold">
+      Review &amp; correct formal model
+      <InfoTooltip term="formalArchitectureModel" />
+      <InfoTooltip term="validation" />
+    </h2>
     <label class="block text-xs font-semibold uppercase tracking-wide text-ink-muted" for="document-json">
       Architecture document JSON
     </label>
@@ -60,6 +66,13 @@ const emit = defineEmits<{
           Save architecture (create v1)
         </template>
       </button>
+      <span
+        v-if="isUpdate"
+        class="inline-flex items-center gap-1 self-center text-xs text-ink-subtle"
+      >
+        OCC
+        <InfoTooltip term="expectedVersion" />
+      </span>
     </div>
     <p v-if="validateError" class="mt-2 text-sm text-danger" role="alert">
       {{ validateError }}
@@ -76,8 +89,10 @@ const emit = defineEmits<{
       version
       <span class="font-mono">{{ version }}</span>
     </p>
-    <p class="mt-2 text-xs text-ink-subtle">
+    <p class="mt-2 inline-flex flex-wrap items-center gap-1 text-xs text-ink-subtle">
       Save is always explicit. Extraction never writes to the database. Updates use optimistic concurrency and never auto-retry after 409.
+      <InfoTooltip term="optimisticConcurrency" />
+      <InfoTooltip term="http409Conflict" />
     </p>
   </section>
 </template>

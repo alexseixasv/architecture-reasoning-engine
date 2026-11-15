@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UsageSummary } from '@/api/types';
+import InfoTooltip from '@/components/InfoTooltip.vue';
 import { formatMs, formatUsd } from '@/lib/format';
 
 defineProps<{
@@ -15,7 +16,11 @@ defineProps<{
 
 <template>
   <section class="rounded-xl border border-border bg-panel p-4 shadow-sm">
-    <h2 class="mb-3 text-base font-semibold">Observability</h2>
+    <h2 class="mb-3 flex items-center gap-1.5 text-base font-semibold">
+      Observability
+      <InfoTooltip term="tokenUsage" />
+      <InfoTooltip term="requestLatency" />
+    </h2>
     <p v-if="!usage" class="text-sm text-ink-subtle">
       Usage appears after extract or analyze. Fake LLM costs are often unavailable.
     </p>
@@ -30,7 +35,10 @@ defineProps<{
           <dd class="font-mono font-semibold">{{ usage.totals.outputTokens }}</dd>
         </div>
         <div>
-          <dt class="text-xs text-ink-muted">Est. USD</dt>
+          <dt class="inline-flex items-center gap-1 text-xs text-ink-muted">
+            Est. USD
+            <InfoTooltip term="estimatedUsd" />
+          </dt>
           <dd class="font-mono text-xs font-semibold">
             {{ formatUsd(usage.totals.estimatedCostUsd) }}
           </dd>
@@ -55,8 +63,9 @@ defineProps<{
       </ul>
     </template>
     <template v-if="timingsMs">
-      <h3 class="mt-4 text-xs font-semibold uppercase tracking-wide text-ink-muted">
+      <h3 class="mt-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-ink-muted">
         Request timings (not architecture latency)
+        <InfoTooltip term="requestLatency" />
       </h3>
       <ul class="mt-2 space-y-1 font-mono text-xs text-ink-muted">
         <li v-if="timingsMs.extractScenario !== undefined">
