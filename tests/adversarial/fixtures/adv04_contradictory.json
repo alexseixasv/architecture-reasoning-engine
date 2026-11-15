@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "nodes": [
+    {
+      "id": "pricing",
+      "kind": "service",
+      "name": "Pricing",
+      "replicas": {
+        "state": "known",
+        "value": 4,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 80,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "sum_replicas",
+      "fieldConflicts": [
+        {
+          "field": "replicas",
+          "candidates": [
+            {
+              "state": "known",
+              "value": 4,
+              "unit": "count",
+              "provenance": "declared"
+            },
+            {
+              "state": "known",
+              "value": 6,
+              "unit": "count",
+              "provenance": "declared"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "dependencies": [],
+  "system": {
+    "incomingTraffic": {
+      "state": "known",
+      "value": 100,
+      "unit": "rps",
+      "provenance": "declared"
+    },
+    "ingressNodeIds": ["pricing"]
+  },
+  "assumptions": [],
+  "conflicts": []
+}

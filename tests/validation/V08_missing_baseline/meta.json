@@ -1,0 +1,7 @@
+{
+  "id": "V08",
+  "tags": ["refusal", "missing-traffic", "incomplete"],
+  "requirementIds": ["REQ-080", "REQ-083", "REQ-091"],
+  "execution": "simulate",
+  "extractionAccuracy": "NOT_MEASURED"
+}

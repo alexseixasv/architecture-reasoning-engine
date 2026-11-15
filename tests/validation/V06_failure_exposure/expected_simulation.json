@@ -1,0 +1,72 @@
+{
+  "status": "ANSWERED",
+  "metrics": [
+    {
+      "metricId": "max_attempts_per_logical_request:pricing-postgres",
+      "value": 2,
+      "unit": "count",
+      "formulaId": "F-RETRY-001",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "max_attempts_for_declared_volume:pricing-postgres",
+      "value": 200,
+      "unit": "attempts_per_s",
+      "formulaId": "F-RETRY-002",
+      "requireEvidence": true
+    }
+  ],
+  "impacts": [
+    {
+      "componentId": "postgres",
+      "impact": "unavailable",
+      "path": ["postgres"]
+    },
+    {
+      "componentId": "pricing",
+      "impact": "sync_failure_exposed",
+      "path": ["pricing", "postgres"]
+    },
+    {
+      "componentId": "checkout",
+      "impact": "sync_transitively_exposed",
+      "path": ["checkout", "pricing", "postgres"]
+    },
+    {
+      "componentId": "queue",
+      "impact": "unaffected",
+      "path": []
+    },
+    {
+      "componentId": "invoicing",
+      "impact": "unaffected",
+      "path": []
+    }
+  ],
+  "propagationPaths": [
+    { "componentId": "postgres", "path": ["postgres"] },
+    { "componentId": "pricing", "path": ["pricing", "postgres"] },
+    {
+      "componentId": "checkout",
+      "path": ["checkout", "pricing", "postgres"]
+    }
+  ],
+  "requiredAssumptionIds": [
+    "NO_IMPLIED_FALLBACK",
+    "ASSUME_IMMEDIATE_RETRIES_NO_BACKOFF:pricing-postgres"
+  ],
+  "requiredRefusedReasonCodes": [
+    "NO_AVAILABILITY_MODEL",
+    "NO_THROUGHPUT_MODEL",
+    "NO_LATENCY_DISTRIBUTION",
+    "NEEDS_FAILURE_PROBABILITY",
+    "NEEDS_RUNTIME_DATA"
+  ],
+  "forbiddenMetricIds": [
+    "availability_percent",
+    "throughput",
+    "latency_p95_p99",
+    "expected_attempts",
+    "observed_attempts"
+  ]
+}

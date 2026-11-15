@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "1.0.0",
+  "nodes": [
+    {
+      "id": "gateway",
+      "kind": "service",
+      "name": "Gateway",
+      "replicas": {
+        "state": "known",
+        "value": 2,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 200,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "sum_replicas"
+    },
+    {
+      "id": "orders",
+      "kind": "service",
+      "name": "Orders",
+      "replicas": {
+        "state": "known",
+        "value": 4,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 100,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "sum_replicas"
+    },
+    {
+      "id": "catalog",
+      "kind": "service",
+      "name": "Catalog",
+      "replicas": {
+        "state": "known",
+        "value": 4,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 100,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "sum_replicas"
+    },
+    {
+      "id": "inventory",
+      "kind": "service",
+      "name": "Inventory",
+      "replicas": {
+        "state": "known",
+        "value": 2,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 100,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "sum_replicas"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "gateway-orders",
+      "from": "gateway",
+      "to": "orders",
+      "communication": "sync",
+      "timeout": {
+        "state": "known",
+        "value": 1000,
+        "unit": "ms",
+        "provenance": "declared"
+      },
+      "requestsPerParent": {
+        "state": "known",
+        "value": 2,
+        "unit": "ratio",
+        "provenance": "declared"
+      }
+    },
+    {
+      "id": "gateway-catalog",
+      "from": "gateway",
+      "to": "catalog",
+      "communication": "sync",
+      "timeout": {
+        "state": "known",
+        "value": 1000,
+        "unit": "ms",
+        "provenance": "declared"
+      },
+      "requestsPerParent": {
+        "state": "known",
+        "value": 1,
+        "unit": "ratio",
+        "provenance": "declared"
+      }
+    },
+    {
+      "id": "orders-inventory",
+      "from": "orders",
+      "to": "inventory",
+      "communication": "sync",
+      "timeout": {
+        "state": "known",
+        "value": 1000,
+        "unit": "ms",
+        "provenance": "declared"
+      },
+      "requestsPerParent": {
+        "state": "known",
+        "value": 1,
+        "unit": "ratio",
+        "provenance": "declared"
+      }
+    },
+    {
+      "id": "catalog-inventory",
+      "from": "catalog",
+      "to": "inventory",
+      "communication": "sync",
+      "timeout": {
+        "state": "known",
+        "value": 1000,
+        "unit": "ms",
+        "provenance": "declared"
+      },
+      "requestsPerParent": {
+        "state": "known",
+        "value": 1,
+        "unit": "ratio",
+        "provenance": "declared"
+      }
+    }
+  ],
+  "system": {
+    "incomingTraffic": {
+      "state": "known",
+      "value": 50,
+      "unit": "rps",
+      "provenance": "declared"
+    },
+    "ingressNodeIds": ["gateway"]
+  },
+  "assumptions": [],
+  "conflicts": []
+}

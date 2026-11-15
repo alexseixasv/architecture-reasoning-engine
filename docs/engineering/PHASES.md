@@ -6,8 +6,8 @@ Eight stop-gated phases. Mark requirements complete only with implementation + v
 | --- | --- | --- |
 | 1 | Foundation and engineering rules | complete |
 | 2 | Formal model and persistence | complete |
-| 3 | Deterministic simulation engine | complete (pending human review) |
-| 4 | Golden tests | pending |
+| 3 | Deterministic simulation engine | complete |
+| 4 | Golden tests, validation dataset & mathematical correctness | complete (pending human review) |
 | 5 | LLM integration | pending |
 | 6 | API and observability | pending |
 | 7 | Validation and benchmarking | pending |
@@ -162,9 +162,46 @@ Recorded 2026-11-15:
 
 - No E2E latency; no availability %; no throughput; golden suite docs → Phase 4; no Nest simulate route yet.
 
-## Phase 4 — Golden tests
+## Phase 4 — Golden tests, validation dataset & mathematical correctness
 
-Pending. Primary REQs: REQ-080–083.
+### Goals
+
+- Strong golden suite G01–G12 with independent hand oracles (`DERIVATION.md`).
+- Executable validation pairs V01–V12 (schema + simulate where supported).
+- Adversarial ADV-01–08 deterministic boundaries.
+- Root `VALIDATION.md` with denominators; extraction accuracy explicitly NOT MEASURED.
+
+### Requirement IDs
+
+| ID | Intent | Complete? |
+| --- | --- | --- |
+| REQ-080 | ≥8 hand-derivable goldens | yes — 12 cases |
+| REQ-081 | Hand derivation in repo | yes — per-case `DERIVATION.md` |
+| REQ-082 | Offline deterministic suite | yes — Vitest, no live LLM |
+| REQ-083 | Extraction/computation seam | yes — NL fixtures separate from `simulate()` |
+| REQ-090–095 | Validation dataset prep | yes (prepared); measured accuracy deferred to Phase 7 |
+| REQ-096 | Extraction accuracy report | deferred — documented NOT MEASURED |
+
+### Verification evidence
+
+Recorded 2026-11-15 — see root `VALIDATION.md` for full tables.
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | exit 0 |
+| `npm run lint` | exit 0 |
+| `npm test` | exit 0 — **69** passed (unit 35 + golden 13 + validation 13 + adversarial 8) |
+| `npm run test:integration` | exit 0 — **3** passed (Compose Postgres) |
+| `npm run build` | exit 0 |
+
+### Suggested commit
+
+`test: add golden validation and adversarial suites for simulation correctness`
+
+### Limitations
+
+- No LLM; extraction accuracy NOT MEASURED.
+- Phase 5+ not started.
 
 ## Phase 5 — LLM integration
 

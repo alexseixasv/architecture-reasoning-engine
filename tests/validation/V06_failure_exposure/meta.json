@@ -1,0 +1,7 @@
+{
+  "id": "V06",
+  "tags": ["failure","exposure","retry"],
+  "requirementIds": ["REQ-080","REQ-060","REQ-061"],
+  "execution": "simulate",
+  "extractionAccuracy": "NOT_MEASURED"
+}

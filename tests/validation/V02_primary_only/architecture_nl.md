@@ -1,0 +1,1 @@
+An API (2 replicas x 100 rps) sync-calls Postgres. Postgres has 3 replicas but capacity is primary-only at 50 rps each. Baseline traffic is 40 rps into the API with 1 request per parent to the database.

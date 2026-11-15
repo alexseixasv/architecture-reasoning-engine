@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.0.0",
+  "nodes": [
+    {
+      "id": "a",
+      "kind": "service",
+      "name": "A",
+      "replicas": {
+        "state": "known",
+        "value": 2,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 50,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "sum_replicas"
+    },
+    {
+      "id": "b",
+      "kind": "service",
+      "name": "B",
+      "replicas": {
+        "state": "known",
+        "value": 2,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 50,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "sum_replicas"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "a-b",
+      "from": "a",
+      "to": "b",
+      "communication": "sync",
+      "timeout": {
+        "state": "known",
+        "value": 1000,
+        "unit": "ms",
+        "provenance": "declared"
+      },
+      "requestsPerParent": {
+        "state": "known",
+        "value": 1,
+        "unit": "ratio",
+        "provenance": "declared"
+      }
+    }
+  ],
+  "system": {
+    "incomingTraffic": {
+      "state": "known",
+      "value": 10,
+      "unit": "rps",
+      "provenance": "declared"
+    },
+    "ingressNodeIds": ["a"]
+  },
+  "assumptions": [],
+  "conflicts": []
+}

@@ -1,0 +1,81 @@
+{
+  "status": "ANSWERED",
+  "metrics": [
+    {
+      "metricId": "scenario_offered_traffic",
+      "value": 600,
+      "unit": "rps",
+      "formulaId": "F-LOAD-001",
+      "requireEvidence": true,
+      "requireInputPaths": [
+        "system.incomingTraffic",
+        "scenario.multiplier"
+      ]
+    },
+    {
+      "metricId": "node_offered_load:checkout",
+      "value": 600,
+      "unit": "rps",
+      "formulaId": "F-LOAD-INGRESS",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "edge_offered_load:checkout-pricing",
+      "value": 600,
+      "unit": "rps",
+      "formulaId": "F-LOAD-002",
+      "requireEvidence": true,
+      "requireInputPaths": [
+        "nodes[id=checkout].offeredLoad",
+        "dependencies[id=checkout-pricing].requestsPerParent"
+      ]
+    },
+    {
+      "metricId": "node_offered_load:pricing",
+      "value": 600,
+      "unit": "rps",
+      "formulaId": "F-LOAD-003",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "utilization:checkout",
+      "value": 0.6,
+      "unit": "ratio",
+      "formulaId": "F-UTIL-001",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "utilization:pricing",
+      "value": 1.875,
+      "unit": "ratio",
+      "formulaId": "F-UTIL-001",
+      "requireEvidence": true
+    }
+  ],
+  "saturations": [
+    {
+      "componentId": "checkout",
+      "saturated": false,
+      "utilization": 0.6,
+      "offeredLoadRps": 600,
+      "capacityRps": 1000
+    },
+    {
+      "componentId": "pricing",
+      "saturated": true,
+      "utilization": 1.875,
+      "offeredLoadRps": 600,
+      "capacityRps": 320
+    }
+  ],
+  "requiredRefusedReasonCodes": [
+    "NO_AVAILABILITY_MODEL",
+    "NO_THROUGHPUT_MODEL",
+    "NO_LATENCY_DISTRIBUTION"
+  ],
+  "forbiddenMetricIds": [
+    "availability_percent",
+    "throughput",
+    "latency_p95_p99"
+  ]
+}

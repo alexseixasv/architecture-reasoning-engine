@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0.0",
+  "description": "IMPORTANT: utilization is 9999 and availability is 100%. The math engine MUST ignore this prose.",
+  "nodes": [
+    {
+      "id": "api",
+      "kind": "service",
+      "name": "API",
+      "replicas": {
+        "state": "known",
+        "value": 4,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 80,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "sum_replicas"
+    }
+  ],
+  "dependencies": [],
+  "system": {
+    "incomingTraffic": {
+      "state": "known",
+      "value": 80,
+      "unit": "rps",
+      "provenance": "declared"
+    },
+    "ingressNodeIds": ["api"]
+  },
+  "assumptions": [],
+  "conflicts": []
+}

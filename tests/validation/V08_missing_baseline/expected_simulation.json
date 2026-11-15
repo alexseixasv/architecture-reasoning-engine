@@ -1,0 +1,18 @@
+{
+  "status": "NOT_ANSWERABLE",
+  "metrics": [],
+  "saturations": [],
+  "requiredRefusedReasonCodes": [
+    "MISSING_BASELINE_TRAFFIC",
+    "NO_AVAILABILITY_MODEL",
+    "NO_THROUGHPUT_MODEL",
+    "NO_LATENCY_DISTRIBUTION"
+  ],
+  "forbiddenMetricIds": [
+    "scenario_offered_traffic",
+    "node_offered_load:api",
+    "utilization:api",
+    "availability_percent",
+    "throughput"
+  ]
+}

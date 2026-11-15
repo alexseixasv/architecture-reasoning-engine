@@ -243,7 +243,7 @@
 | 1 Foundation | REQ-120, REQ-121, REQ-122, REQ-130 (partial) | `docker compose up`, health check, `.env.example`, lockfile, typecheck/test/lint |
 | 2 Formal model & persistence | REQ-022, REQ-030, REQ-031, REQ-040–042, REQ-070, REQ-161 | Schema/Zod tests, persistence/version/diff tests, semantic validation fixtures |
 | 3 Simulation engine | REQ-003, REQ-010–012 (engine side), REQ-021, REQ-050–052, REQ-060–062, REQ-071–073, REQ-083, REQ-132 (draft) | Pure `simulate()` unit tests, MODEL.md draft formulas |
-| 4 Golden tests | REQ-011, REQ-080–083, REQ-060–062 | ≥8 golden cases with hand derivations; offline suite green |
+| 4 Golden tests | REQ-011, REQ-080–083, REQ-060–062, REQ-090–095 (prep) | 12 goldens + DERIVATION.md; V01–V12 prepared; ADV-01–08; VALIDATION.md (extraction NOT MEASURED) |
 | 5 LLM integration | REQ-012, REQ-020, REQ-100, REQ-111, REQ-123 | Fixture provider tests, injection fixtures, schema rejection tests |
 | 6 API & observability | REQ-001–002, REQ-021–022, REQ-051–052, REQ-110, REQ-112, REQ-120, REQ-130 | Curl/HTTP collection, span assertions, measured stage latency |
 | 7 Validation & benchmarking | REQ-090–098, REQ-113–114 | Validation dataset + measured accuracy/cost/latency tables |

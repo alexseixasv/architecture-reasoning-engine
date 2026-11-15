@@ -1,0 +1,8 @@
+{
+  "id": "V11",
+  "tags": ["unsupported-nl", "e2e-latency", "p95", "refusal"],
+  "requirementIds": ["REQ-083", "REQ-090", "REQ-092"],
+  "execution": "schema_only",
+  "extractionAccuracy": "NOT_MEASURED",
+  "unsupportedNlOutcome": "NL asks for end-to-end p95 latency. Engine refuses latency distributions (NO_LATENCY_DISTRIBUTION) and E2E aggregation without explicit execution order (E2E_LATENCY_ORDER_UNSPECIFIED). No new scenario type is invented for p95/E2E. Related supported question: latency_degradation with absolute component latency vs timeouts."
+}

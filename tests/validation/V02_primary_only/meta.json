@@ -1,0 +1,7 @@
+{
+  "id": "V02",
+  "tags": ["capacity","primary_only","datastore"],
+  "requirementIds": ["REQ-080","REQ-081","REQ-031"],
+  "execution": "simulate",
+  "extractionAccuracy": "NOT_MEASURED"
+}

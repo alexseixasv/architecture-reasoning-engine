@@ -78,7 +78,10 @@ If backoff ≠ `none` → refuse rate (`BACKOFF_PREVENTS_INSTANT_RATE`).
 | `async_dependent` | Async topology relation |
 | `unaffected` | No relevant path |
 
-No implied fallback absence.
+### `NO_IMPLIED_FALLBACK` (clarification)
+
+Means **no fallback behavior is inferred** from silence in the model.  
+It does **not** mean fallback is assumed absent / proven missing. Exposure labels are not outage proofs.
 
 ## Ingress
 

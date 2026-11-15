@@ -37,3 +37,19 @@ Discoveries, mistakes, fixes, and reusable patterns. Update after each phase.
 
 - Always-on refusals (availability %, throughput, E2E, expected attempts) should not alone force `NOT_ANSWERABLE`.
 - Filter “standing” reason codes when deriving ANSWERED vs PARTIALLY_ANSWERED from primary metrics.
+
+## L-008 — Shared accumulation needs an explicit single ingress (2026-11-15)
+
+- Two “root” services as `ingressNodeIds` triggers `MULTIPLE_INGRESS_REQUIRES_SPLIT`.
+- Model shared downstream with a gateway ingress and declared `requestsPerParent` fan-out so 100+50=150 is constructive, not coincidental.
+
+## L-009 — `NO_IMPLIED_FALLBACK` is easy to misread (2026-11-15)
+
+- Correct reading: do not infer fallback behavior from silence.
+- Incorrect reading: assume fallback is absent / proven missing.
+- Documented in MODEL.md + adversarial ADV-07.
+
+## L-010 — PowerShell `Set-Content -Encoding utf8` writes BOM (2026-11-15)
+
+- BOM breaks `JSON.parse` on Windows-created fixture metas.
+- Prefer UTF-8 without BOM for test fixtures; strip `\uFEFF` defensively in loaders.

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0.0",
+  "nodes": [
+    {
+      "id": "api",
+      "kind": "service",
+      "name": "API",
+      "replicas": {
+        "state": "known",
+        "value": 5,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 100,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "sum_replicas"
+    }
+  ],
+  "dependencies": [],
+  "system": {
+    "incomingTraffic": {
+      "state": "known",
+      "value": 100,
+      "unit": "rps",
+      "provenance": "declared"
+    },
+    "ingressNodeIds": ["api"]
+  },
+  "assumptions": [],
+  "conflicts": []
+}

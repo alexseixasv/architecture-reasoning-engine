@@ -1,0 +1,5 @@
+{
+  "type": "latency_degradation",
+  "componentId": "pricing",
+  "latencyMs": 5000
+}

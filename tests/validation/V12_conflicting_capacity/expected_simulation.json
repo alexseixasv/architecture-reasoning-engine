@@ -1,0 +1,31 @@
+{
+  "status": "PARTIALLY_ANSWERED",
+  "metrics": [
+    {
+      "metricId": "scenario_offered_traffic",
+      "value": 100,
+      "unit": "rps",
+      "formulaId": "F-LOAD-001",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "node_offered_load:pricing",
+      "value": 100,
+      "unit": "rps",
+      "formulaId": "F-LOAD-INGRESS",
+      "requireEvidence": true
+    }
+  ],
+  "saturations": [],
+  "requiredRefusedReasonCodes": [
+    "CONFLICTING_CAPACITY_FIELDS",
+    "NO_AVAILABILITY_MODEL",
+    "NO_THROUGHPUT_MODEL",
+    "NO_LATENCY_DISTRIBUTION"
+  ],
+  "forbiddenMetricIds": [
+    "utilization:pricing",
+    "availability_percent",
+    "throughput"
+  ]
+}

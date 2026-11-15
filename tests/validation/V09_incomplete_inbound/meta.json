@@ -1,0 +1,7 @@
+{
+  "id": "V09",
+  "tags": ["refusal","incomplete-inbound"],
+  "requirementIds": ["REQ-080","REQ-083"],
+  "execution": "simulate",
+  "extractionAccuracy": "NOT_MEASURED"
+}

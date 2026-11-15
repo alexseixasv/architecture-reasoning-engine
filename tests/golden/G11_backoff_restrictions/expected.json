@@ -1,0 +1,41 @@
+{
+  "status": "PARTIALLY_ANSWERED",
+  "metrics": [
+    {
+      "metricId": "scenario_component_latency:pricing",
+      "value": 5000,
+      "unit": "ms",
+      "formulaId": "F-LAT-SCENARIO",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "timeout_violated:api-pricing",
+      "value": 1,
+      "unit": "count",
+      "formulaId": "F-LAT-001",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "max_attempts_per_logical_request:api-pricing",
+      "value": 4,
+      "unit": "count",
+      "formulaId": "F-RETRY-001",
+      "requireEvidence": true
+    }
+  ],
+  "requiredRefusedReasonCodes": [
+    "BACKOFF_PREVENTS_INSTANT_RATE",
+    "E2E_LATENCY_ORDER_UNSPECIFIED",
+    "NEEDS_FAILURE_PROBABILITY",
+    "NEEDS_RUNTIME_DATA",
+    "NO_AVAILABILITY_MODEL",
+    "NO_THROUGHPUT_MODEL",
+    "NO_LATENCY_DISTRIBUTION"
+  ],
+  "forbiddenMetricIds": [
+    "max_attempts_for_declared_volume:api-pricing",
+    "end_to_end_latency",
+    "availability_percent",
+    "throughput"
+  ]
+}

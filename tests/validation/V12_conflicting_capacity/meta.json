@@ -1,0 +1,7 @@
+{
+  "id": "V12",
+  "tags": ["refusal", "conflict", "contradiction"],
+  "requirementIds": ["REQ-080", "REQ-040", "REQ-092"],
+  "execution": "simulate",
+  "extractionAccuracy": "NOT_MEASURED"
+}

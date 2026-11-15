@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0.0",
+  "nodes": [
+    {
+      "id": "checkout",
+      "kind": "service",
+      "name": "Checkout",
+      "replicas": {
+        "state": "known",
+        "value": 2,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 100,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "sum_replicas"
+    },
+    {
+      "id": "pricing",
+      "kind": "service",
+      "name": "Pricing",
+      "replicas": {
+        "state": "known",
+        "value": 2,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 100,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "sum_replicas"
+    },
+    {
+      "id": "postgres",
+      "kind": "datastore",
+      "name": "Postgres",
+      "replicas": {
+        "state": "known",
+        "value": 1,
+        "unit": "count",
+        "provenance": "declared"
+      },
+      "capacityPerReplica": {
+        "state": "known",
+        "value": 200,
+        "unit": "rps",
+        "provenance": "declared"
+      },
+      "capacityAggregation": "primary_only"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "checkout-pricing",
+      "from": "checkout",
+      "to": "pricing",
+      "communication": "sync",
+      "timeout": {
+        "state": "known",
+        "value": 2000,
+        "unit": "ms",
+        "provenance": "declared"
+      },
+      "requestsPerParent": {
+        "state": "known",
+        "value": 1,
+        "unit": "ratio",
+        "provenance": "declared"
+      }
+    },
+    {
+      "id": "pricing-postgres",
+      "from": "pricing",
+      "to": "postgres",
+      "communication": "sync",
+      "timeout": {
+        "state": "known",
+        "value": 1000,
+        "unit": "ms",
+        "provenance": "declared"
+      },
+      "requestsPerParent": {
+        "state": "known",
+        "value": 1,
+        "unit": "ratio",
+        "provenance": "declared"
+      }
+    }
+  ],
+  "system": {
+    "incomingTraffic": {
+      "state": "known",
+      "value": 100,
+      "unit": "rps",
+      "provenance": "declared"
+    },
+    "ingressNodeIds": ["checkout"]
+  },
+  "assumptions": [],
+  "conflicts": []
+}

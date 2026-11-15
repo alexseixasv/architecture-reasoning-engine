@@ -96,3 +96,17 @@ Append-only record of meaningful engineering decisions. Final submission also co
 - **Decision:** Always allow `A_max` count; attempt-rate upper bound only if backoff `none` + known edge load, unit `attempts_per_s`; refuse expected/observed attempts.
 - **Alternatives rejected:** Blind λ×A_max as successful RPS across the graph.
 - **Consequences:** PDF-like “1240” must be framed as attempt-rate upper bound when justified.
+
+## D-015 — Strong golden oracles independent of simulate (2026-11-15)
+
+- **Context:** Weak “metric present” asserts can hide wrong math; copying engine output into expected.json creates circular proof.
+- **Decision:** Phase 4 goldens assert complete metric sets (id/value/unit/formulaId), unexpected metrics, refusals, status, saturations, impacts/paths, and evidence. Oracles hand-derived in `DERIVATION.md` first.
+- **Alternatives rejected:** Snapshot-from-simulate as source of truth; presence-only checks.
+- **Consequences:** Engine defects must be fixed in Phase 3 code, not by weakening expectations.
+
+## D-016 — Validation pairs prepare NL without claiming extraction accuracy (2026-11-15)
+
+- **Context:** REQ-090–096 need a dataset, but LLM arrives in Phase 5.
+- **Decision:** Ship V01–V12 with NL + formal model + expected scenario/sim or documented unsupported-NL outcome; mark extraction accuracy **NOT MEASURED** in `VALIDATION.md`.
+- **Alternatives rejected:** Fabricating accuracy %; inventing unsupported scenario schema types for availability%/p95.
+- **Consequences:** Phase 7 can measure extraction against the same fixtures.

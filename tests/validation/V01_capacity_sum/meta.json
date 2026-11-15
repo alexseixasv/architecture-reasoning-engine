@@ -1,0 +1,7 @@
+{
+  "id": "V01",
+  "tags": ["capacity","sum_replicas"],
+  "requirementIds": ["REQ-080","REQ-081","REQ-030"],
+  "execution": "simulate",
+  "extractionAccuracy": "NOT_MEASURED"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "V05",
+  "tags": ["load","accumulation","multi-path"],
+  "requirementIds": ["REQ-080","REQ-051"],
+  "execution": "simulate",
+  "extractionAccuracy": "NOT_MEASURED"
+}

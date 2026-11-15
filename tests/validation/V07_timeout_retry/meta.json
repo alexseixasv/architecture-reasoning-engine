@@ -1,0 +1,7 @@
+{
+  "id": "V07",
+  "tags": ["latency","timeout","retry"],
+  "requirementIds": ["REQ-080","REQ-070"],
+  "execution": "simulate",
+  "extractionAccuracy": "NOT_MEASURED"
+}

@@ -1,0 +1,7 @@
+{
+  "id": "V04",
+  "tags": ["load", "saturation", "fanout", "counterintuitive"],
+  "requirementIds": ["REQ-080", "REQ-082", "REQ-050", "REQ-095"],
+  "execution": "simulate",
+  "extractionAccuracy": "NOT_MEASURED"
+}

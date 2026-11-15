@@ -1,0 +1,5 @@
+{
+  "type": "latency_degradation",
+  "componentId": "db",
+  "latencyMs": 2000
+}

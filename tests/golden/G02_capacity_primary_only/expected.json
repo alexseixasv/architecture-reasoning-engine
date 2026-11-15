@@ -1,0 +1,73 @@
+{
+  "status": "ANSWERED",
+  "metrics": [
+    {
+      "metricId": "scenario_offered_traffic",
+      "value": 40,
+      "unit": "rps",
+      "formulaId": "F-LOAD-001",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "node_offered_load:api",
+      "value": 40,
+      "unit": "rps",
+      "formulaId": "F-LOAD-INGRESS",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "edge_offered_load:api-db",
+      "value": 40,
+      "unit": "rps",
+      "formulaId": "F-LOAD-002",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "node_offered_load:db",
+      "value": 40,
+      "unit": "rps",
+      "formulaId": "F-LOAD-003",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "utilization:api",
+      "value": 0.2,
+      "unit": "ratio",
+      "formulaId": "F-UTIL-001",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "utilization:db",
+      "value": 0.8,
+      "unit": "ratio",
+      "formulaId": "F-UTIL-001",
+      "requireEvidence": true
+    }
+  ],
+  "saturations": [
+    {
+      "componentId": "api",
+      "saturated": false,
+      "utilization": 0.2,
+      "offeredLoadRps": 40,
+      "capacityRps": 200
+    },
+    {
+      "componentId": "db",
+      "saturated": false,
+      "utilization": 0.8,
+      "offeredLoadRps": 40,
+      "capacityRps": 50
+    }
+  ],
+  "requiredRefusedReasonCodes": [
+    "NO_AVAILABILITY_MODEL",
+    "NO_THROUGHPUT_MODEL",
+    "NO_LATENCY_DISTRIBUTION"
+  ],
+  "forbiddenMetricIds": [
+    "availability_percent",
+    "throughput",
+    "latency_p95_p99"
+  ]
+}

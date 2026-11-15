@@ -1,0 +1,52 @@
+{
+  "status": "ANSWERED",
+  "metrics": [
+    {
+      "metricId": "scenario_component_latency:pricing",
+      "value": 3000,
+      "unit": "ms",
+      "formulaId": "F-LAT-SCENARIO",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "timeout_violated:checkout-pricing",
+      "value": 1,
+      "unit": "count",
+      "formulaId": "F-LAT-001",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "max_attempts_per_logical_request:checkout-pricing",
+      "value": 4,
+      "unit": "count",
+      "formulaId": "F-RETRY-001",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "max_attempts_for_declared_volume:checkout-pricing",
+      "value": 200,
+      "unit": "attempts_per_s",
+      "formulaId": "F-RETRY-002",
+      "requireEvidence": true
+    }
+  ],
+  "requiredAssumptionIds": [
+    "ASSUME_IMMEDIATE_RETRIES_NO_BACKOFF:checkout-pricing"
+  ],
+  "requiredRefusedReasonCodes": [
+    "NO_AVAILABILITY_MODEL",
+    "NO_THROUGHPUT_MODEL",
+    "NO_LATENCY_DISTRIBUTION",
+    "E2E_LATENCY_ORDER_UNSPECIFIED",
+    "NEEDS_FAILURE_PROBABILITY",
+    "NEEDS_RUNTIME_DATA"
+  ],
+  "forbiddenMetricIds": [
+    "availability_percent",
+    "throughput",
+    "latency_p95_p99",
+    "end_to_end_latency",
+    "expected_attempts",
+    "observed_attempts"
+  ]
+}

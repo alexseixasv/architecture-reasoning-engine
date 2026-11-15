@@ -1,0 +1,7 @@
+{
+  "id": "V03",
+  "tags": ["load", "unsaturated", "slack-style", "informal-prose"],
+  "requirementIds": ["REQ-080", "REQ-082", "REQ-093"],
+  "execution": "simulate",
+  "extractionAccuracy": "NOT_MEASURED"
+}

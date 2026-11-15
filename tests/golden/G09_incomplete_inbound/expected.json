@@ -1,0 +1,113 @@
+{
+  "status": "PARTIALLY_ANSWERED",
+  "metrics": [
+    {
+      "metricId": "scenario_offered_traffic",
+      "value": 40,
+      "unit": "rps",
+      "formulaId": "F-LOAD-001",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "node_offered_load:gateway",
+      "value": 40,
+      "unit": "rps",
+      "formulaId": "F-LOAD-INGRESS",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "edge_offered_load:gateway-a",
+      "value": 40,
+      "unit": "rps",
+      "formulaId": "F-LOAD-002",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "edge_offered_load:gateway-b",
+      "value": 40,
+      "unit": "rps",
+      "formulaId": "F-LOAD-002",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "node_offered_load:a",
+      "value": 40,
+      "unit": "rps",
+      "formulaId": "F-LOAD-003",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "node_offered_load:b",
+      "value": 40,
+      "unit": "rps",
+      "formulaId": "F-LOAD-003",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "edge_offered_load:a-shared",
+      "value": 40,
+      "unit": "rps",
+      "formulaId": "F-LOAD-002",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "utilization:gateway",
+      "value": 0.2,
+      "unit": "ratio",
+      "formulaId": "F-UTIL-001",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "utilization:a",
+      "value": 0.2,
+      "unit": "ratio",
+      "formulaId": "F-UTIL-001",
+      "requireEvidence": true
+    },
+    {
+      "metricId": "utilization:b",
+      "value": 0.2,
+      "unit": "ratio",
+      "formulaId": "F-UTIL-001",
+      "requireEvidence": true
+    }
+  ],
+  "saturations": [
+    {
+      "componentId": "a",
+      "saturated": false,
+      "utilization": 0.2,
+      "offeredLoadRps": 40,
+      "capacityRps": 200
+    },
+    {
+      "componentId": "b",
+      "saturated": false,
+      "utilization": 0.2,
+      "offeredLoadRps": 40,
+      "capacityRps": 200
+    },
+    {
+      "componentId": "gateway",
+      "saturated": false,
+      "utilization": 0.2,
+      "offeredLoadRps": 40,
+      "capacityRps": 200
+    }
+  ],
+  "requiredRefusedReasonCodes": [
+    "MISSING_REQUESTS_PER_PARENT",
+    "INCOMPLETE_INBOUND_CONTRIBUTIONS",
+    "DEPENDS_ON_UNKNOWN_OFFERED_LOAD",
+    "NO_AVAILABILITY_MODEL",
+    "NO_THROUGHPUT_MODEL",
+    "NO_LATENCY_DISTRIBUTION"
+  ],
+  "forbiddenMetricIds": [
+    "node_offered_load:shared",
+    "utilization:shared",
+    "edge_offered_load:b-shared",
+    "availability_percent",
+    "throughput"
+  ]
+}

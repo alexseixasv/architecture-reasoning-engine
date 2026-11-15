@@ -1,0 +1,1 @@
+Checkout (2×100 rps) sync-calls Pricing (2×100), which sync-calls Postgres (primary-only 200 rps). Checkout also emits async events to a queue drained by Invoicing. Baseline traffic is 100 rps into Checkout.
