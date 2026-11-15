@@ -53,3 +53,34 @@ Discoveries, mistakes, fixes, and reusable patterns. Update after each phase.
 
 - BOM breaks `JSON.parse` on Windows-created fixture metas.
 - Prefer UTF-8 without BOM for test fixtures; strip `\uFEFF` defensively in loaders.
+
+## L-011 — Structured Outputs need a flatter DTO than the domain schema (2026-11-15)
+
+- OpenAI strict JSON Schema + domain `.strict()` Quantity unions fight each other.
+- Pattern: LLM-facing DTO with explicit `presence` enums → deterministic mapper → domain Zod + semantic validate.
+
+## L-012 — Complete analysis cost ≠ single LLM call (2026-11-15)
+
+- A full NL→answer path may bill architecture extraction + scenario extraction + explanation.
+- Project $/1000 analyses as the sum of mean costs of those three operations; unknown model pricing → `null`, never `$0`.
+
+## L-013 — Provenance excerpts stop fabricated “declared” evidence (2026-11-15)
+
+- Requiring the excerpt to be a contiguous substring of the user text catches invented citations.
+- Unverified excerpts become `unknown` + `PROVENANCE_UNVERIFIED` rather than trusted declarations.
+
+## L-014 — “Don’t compute metrics” ≠ utilization questions unsupported (2026-11-15)
+
+- Live smoke: V01 “baseline 1x … utilization?” was classified `UNSUPPORTED` despite being `load_multiplication` ×1.
+- Prompt must separate classifier non-computation from supported load scenarios that yield engine utilization.
+
+## L-015 — Explanation guards must not reject refusal discussion (2026-11-15)
+
+- Banning bare `p95`/`p99` tokens false-positives explanations that correctly cite `NO_LATENCY_DISTRIBUTION`.
+- Reject numeric percentile/availability claims; allow naming refused metric classes with refusalCodes.
+
+## L-016 — Refused metric ids ≠ calculated metric ids (2026-11-15)
+
+- Smoke #2: model put `availability_percent` / `throughput` / `latency_p95_p99` in `metricIds`.
+- Those ids live on `SimulationResult.refused[].metricId`, not `metrics[]`.
+- DTO now has `refusedMetricIds`; catalog separates `availableMetrics` vs `refusedOutputs`; validator rejects refused ids in `metricIds`.

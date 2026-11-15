@@ -1,8 +1,8 @@
-# VALIDATION.md — Phase 4 mathematical correctness
+# VALIDATION.md — Mathematical correctness & LLM evaluation status
 
 **Date:** 2026-11-15  
-**Scope:** Golden tests, validation dataset preparation, adversarial deterministic boundaries.  
-**Not in scope:** LLM extraction, prompt-injection defenses, Phase 5+ APIs.
+**Scope:** Phase 4 golden/validation/adversarial + Phase 5 LLM offline seams.  
+**Not in scope yet:** Public HTTP API (Phase 6); live accuracy tables until opt-in eval runs.
 
 ---
 
@@ -19,8 +19,9 @@
 | Class | What it proves | Status this phase |
 | --- | --- | --- |
 | Executed engine tests | Deterministic math/refusals match hand oracles | Measured below |
-| Prepared NL extraction fixtures | Dataset ready for Phase 5/7 | Prepared only |
-| Extraction accuracy | LLM field-level accuracy vs formal models | **NOT MEASURED** |
+| Prepared NL extraction fixtures | Dataset ready for Phase 5/7 | Prepared |
+| Offline LLM seam tests (Fake provider) | Extraction/scenario/explain contracts | Measured (unit) |
+| Live extraction accuracy (OpenAI) | Field-level vs `formal_model.json` | **NOT MEASURED — live eval NOT RUN** |
 
 Never fabricate accuracy percentages.
 
@@ -171,26 +172,126 @@ npm run test:validation
 npm run test:adversarial
 ```
 
-### Regression results (2026-11-15)
+### Regression results
 
-| Command | Exit | Detail |
-| --- | --- | --- |
-| `npm run typecheck` | 0 | |
-| `npm run lint` | 0 | |
-| `npm test` | 0 | 69 passed |
-| `npm run test:integration` | 0 | 3 passed (Postgres via Compose) |
-| `npm run build` | 0 | |
-
+| When | Command | Exit | Detail |
+| --- | --- | --- | --- |
+| Phase 4 | `npm test` | 0 | 69 passed |
+| Phase 5 | `npm run typecheck` | 0 | |
+| Phase 5 | `npm run lint` | 0 | |
+| Phase 5 | `npm test` | 0 | **110** passed (offline; includes Fake LLM + smoke #2 explanation regression) |
+| Phase 5 | `npm run test:integration` | 0 | 3 passed (Postgres via Compose) |
+| Phase 5 | `npm run build` | 0 | |
+| Phase 5 | `npm run llm:live-eval` | — | **NOT RUN** |
+| Phase 5 | `npm run llm:live-smoke` | 0 | smoke #3: **3** OpenAI calls; **e2eSuccess=true** (see below) |
 
 ---
 
-## Requirement coverage (Phase 4)
+## Phase 5 — LLM integration notes
+
+- **Primary provider:** OpenAI (`gpt-4.1` default) via Responses API + Structured Outputs; `maxRetries: 0`.
+- **Offline provider:** `LLM_PROVIDER=fake` (default for tests).
+- **Provenance:** declared quantities require verified `sourceExcerpt` substrings.
+- **Explanation:** LLM qualitative refs only; numbers rendered deterministically; fallback on validation/provider failure.
+- **Cost:** usage recorder separates measured tokens vs estimated USD (pricing table dated **2026-11-15**); unknown models → cost `null`. Complete analysis = extract architecture + extract scenario + explain.
+- **Live smoke:** #1/#2 partial; **#3 (2026-11-15) full E2E success** — see evidence tables below.
+- **Live full eval:** `npm run llm:live-eval` — up to ~24 calls on V01–V12. **Status: NOT RUN.**
+
+### Live smoke #1 (V01, 2026-11-15) — partial / pre-fix
+
+| Step | Result |
+| --- | --- |
+| Calls | 3/3 |
+| A | PROPOSED (1 node) |
+| B | **UNSUPPORTED** (intent miss vs `load_multiplication`×1) |
+| C | deterministic_fallback (E2E not honest yet) |
+| Est. USD | ~$0.013 |
+
+### Offline corrections after smoke #1
+
+| Issue | Fix |
+| --- | --- |
+| Scenario over-refuse utilization@1x | Prompt clarifies baseline utilization → `load_multiplication` |
+| Explanation p95 false positive | Reject only numeric percentile claims |
+| Smoke fixture substitution | True E2E; exit 3 on failure; print rejection reasons |
+
+### Live smoke #2 (V01, 2026-11-15) — after corrections
+
+Command: `RUN_LIVE_OPENAI=1 node --env-file=.env --import tsx scripts/live-smoke.ts`  
+Model: `gpt-4.1` · Timeout: `60000` · Cap: **3** · Persist: none · `e2eSuccess: false` (exit 3)
+
+| Step | Result |
+| --- | --- |
+| Provider requests attempted | **3 / 3** |
+| A Architecture extraction | **PROPOSED** — 1 node, 0 findings, `canPersist=true` |
+| B Scenario extraction | **OK** — `load_multiplication`, **multiplier=1** (matches fixture) |
+| C Deterministic simulation (from B) | **ANSWERED** — 3 metrics, 3 standing refusals |
+| D/E Grounded explanation | OpenAI returned Structured Output but **validation failed** → **`deterministic_fallback`** |
+| Sanitized rejection reasons | `unknown metricId "availability_percent"`; `unknown metricId "latency_p95_p99"`; `unknown metricId "throughput"` (LLM put refused metric names in `metricIds` instead of `refusalCodes`) |
+| Schema/provider hard failures | None |
+| Estimated USD | **~$0.0123** |
+| Wall duration | **~8.8 s** (provider ms sum ≈ 6.6 s) |
+| Final `e2eSuccess` | **false** |
+
+Token usage (actual, smoke #2):
+
+| Operation | Input | Output | Total | Duration ms | Est. USD | Request id prefix |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| extract_architecture | 2230 | 342 | 2572 | 3029 | 0.007196 | `resp_04aecc…` |
+| extract_scenario | 552 | 64 | 616 | 1071 | 0.001616 | `resp_0c22d9…` |
+| explain | 651 | 279 | 930 | 2522 | 0.003534 | `resp_054dd0…` |
+
+**Smoke #2 verdict:** A+B+simulate succeeded on the true E2E path; explanation still fails validation (refused metric IDs mis-cited as computed `metricIds`). **Not full success.**
+
+### Offline correction after smoke #2 (D-021)
+
+| Issue | Fix |
+| --- | --- |
+| Refused metric ids in `metricIds` | `refusedMetricIds` field; separated trusted catalog; strict validator; prompt example |
+
+### Live smoke #3 (V01, 2026-11-15) — post D-021
+
+Command: `RUN_LIVE_OPENAI=1 node --env-file=.env --import tsx scripts/live-smoke.ts`  
+Model: `gpt-4.1` · Timeout: `60000` · Cap: **3** · Persist: none · `e2eSuccess: true` (exit 0)
+
+| Step | Result |
+| --- | --- |
+| Provider requests attempted | **3 / 3** |
+| A Architecture extraction | **PROPOSED** — 1 node, 0 findings, `canPersist=true` |
+| B Scenario extraction | **OK** — `load_multiplication`, **multiplier=1** (matches fixture) |
+| C Deterministic simulation (from A+B) | **ANSWERED** — 3 metrics, 3 standing refusals |
+| D/E Grounded explanation | **`llm+deterministic`** — **fallback=false** |
+| Sanitized rejection reasons | none |
+| Schema/provider hard failures | None |
+| Estimated USD | **~$0.01422** |
+| Wall duration | **~10.2 s** (provider ms sum ≈ 7.6 s) |
+| Final `e2eSuccess` | **true** |
+
+Token usage (actual, smoke #3):
+
+| Operation | Input | Output | Total | Duration ms | Est. USD | Request id prefix |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| extract_architecture | 2230 | 318 | 2548 | 3334 | 0.007004 | `resp_01ffbe…` |
+| extract_scenario | 553 | 70 | 623 | 1546 | 0.001666 | `resp_0f35cf…` |
+| explain | 859 | 479 | 1338 | 2745 | 0.005550 | `resp_0b2a80…` |
+
+**Smoke #3 verdict:** Full E2E path succeeded (extract → validate → scenario → simulate → grounded explain without fallback). Numbers remain deterministic-renderer-only. **Live smoke success.**
+
+### Extraction accuracy (REQ-096)
+
+**NOT MEASURED** at dataset scale (V01–V12 full live eval **NOT RUN**).  
+Smoke only demonstrates a single architecture extraction success, not field-level accuracy denominators.
+
+---
+
+## Requirement coverage (Phase 4–5)
 
 | REQ | Evidence |
 | --- | --- |
 | REQ-080 | 12 golden cases (≥8) |
 | REQ-081 | `DERIVATION.md` per golden |
-| REQ-082 | Offline Vitest; no live model |
+| REQ-082 | Offline Vitest; no live model in `npm test` |
 | REQ-083 | `simulate(architecture, scenario)` seam; V fixtures keep NL separate |
-| REQ-090–095 | Dataset prepared under `tests/validation` (measurement deferred Phase 7) |
-| REQ-096 | Explicitly **NOT MEASURED** |
+| REQ-012 / REQ-020 / REQ-100 / REQ-111 / REQ-123 | `src/llm/**` + Fake unit tests |
+| REQ-090–095 | Dataset under `tests/validation` |
+| REQ-096 | Explicitly **NOT MEASURED** (live tooling present, not executed) |

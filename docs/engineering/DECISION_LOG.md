@@ -110,3 +110,37 @@ Append-only record of meaningful engineering decisions. Final submission also co
 - **Decision:** Ship V01–V12 with NL + formal model + expected scenario/sim or documented unsupported-NL outcome; mark extraction accuracy **NOT MEASURED** in `VALIDATION.md`.
 - **Alternatives rejected:** Fabricating accuracy %; inventing unsupported scenario schema types for availability%/p95.
 - **Consequences:** Phase 7 can measure extraction against the same fixtures.
+
+## D-017 — OpenAI as primary LLM provider (2026-11-15)
+
+- **Context:** ENG-004 preferred Ollama zero-cost default; product choice for this case is OpenAI with a local API key.
+- **Decision:** Primary live provider is OpenAI via official SDK Responses API + Structured Outputs; default model `gpt-4.1` (`OPENAI_MODEL`). Offline/CI uses `LLM_PROVIDER=fake`. Client `maxRetries: 0`.
+- **Alternatives rejected:** Ollama-first for Phase 5 demos; Chat Completions JSON mode without Structured Outputs; uncontrolled SDK retries.
+- **Consequences:** REQ-111 satisfied by Fake provider for zero-cost CI; live eval is opt-in (`RUN_LIVE_OPENAI=1`).
+
+## D-018 — Extraction DTO + provenance excerpts (2026-11-15)
+
+- **Context:** Domain `ArchitectureDocument` is too strict / policy-rich for direct LLM emission; invented “declared” values are unsafe.
+- **Decision:** LLM emits a dedicated extraction DTO; mapper builds the domain document. Every declared numeric quantity requires a `sourceExcerpt` that must appear verbatim in the source text or the value is downgraded to `unknown` with `PROVENANCE_UNVERIFIED`.
+- **Alternatives rejected:** Direct ArchitectureDocument Structured Outputs; trusting LLM provenance without verification.
+- **Consequences:** Conflicts keep independent candidates; silent invention is harder.
+
+## D-019 — Grounded explanation by ID references, not digit-scan (2026-11-15)
+
+- **Context:** Regex digit-scanning is brittle and still allows wrong qualitative claims.
+- **Decision:** LLM returns qualitative statements that reference metric/component/refusal IDs from a deterministic evidence packet; application code alone renders numeric values/units/formulas. Invalid refs or forbidden claim patterns → deterministic Markdown fallback.
+- **Alternatives rejected:** Primary digit-scan guards; letting the LLM author numeric result fields.
+- **Consequences:** Reference validation constrains claims but does not prove every qualitative sentence true.
+
+## D-020 — Live smoke must exercise true E2E, not fixture substitution (2026-11-15)
+
+- **Context:** First smoke simulated/explained using formal+expected scenario even when live scenario extraction failed, hiding E2E breaks.
+- **Decision:** E2E success requires A=PROPOSED and B=OK; simulate+explain use extracted artifacts. On B failure, mark E2E failed; optional formal baseline explain is labeled diagnostic-only.
+- **Consequences:** Exit code 3 on E2E failure; sanitized rejection reasons printed.
+
+## D-021 — Separate calculated vs refused metric references in ExplanationDto (2026-11-15)
+
+- **Context:** Smoke #2 explanation failed validation because the model put refused output ids (`availability_percent`, `throughput`, `latency_p95_p99`) into `metricIds`. Those ids are on `SimulationResult.refused[].metricId`, not `metrics[]`. Reason codes are a distinct field (`reasonCode`).
+- **Decision:** Add `refusedMetricIds` to each explanation statement. Trusted catalog exposes `availableMetrics` / `refusedOutputs` / `availableComponents` separately. Validator rejects refused ids in `metricIds` and validates `refusedMetricIds` and `refusalCodes` against their own sets. Do not weaken validation or disable deterministic fallback.
+- **Alternatives rejected:** Accepting refused ids as calculated metrics; collapsing metricId and reasonCode into one field.
+- **Consequences:** Prompt and DTO roles are unambiguous; live re-smoke still required to confirm the model follows the new contract.

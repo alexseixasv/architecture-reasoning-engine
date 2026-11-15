@@ -7,8 +7,8 @@ Eight stop-gated phases. Mark requirements complete only with implementation + v
 | 1 | Foundation and engineering rules | complete |
 | 2 | Formal model and persistence | complete |
 | 3 | Deterministic simulation engine | complete |
-| 4 | Golden tests, validation dataset & mathematical correctness | complete (pending human review) |
-| 5 | LLM integration | pending |
+| 4 | Golden tests, validation dataset & mathematical correctness | complete |
+| 5 | OpenAI LLM integration, structured extraction & grounded reasoning | complete (pending human review) |
 | 6 | API and observability | pending |
 | 7 | Validation and benchmarking | pending |
 | 8 | Documentation and interview preparation | pending |
@@ -203,9 +203,54 @@ Recorded 2026-11-15 — see root `VALIDATION.md` for full tables.
 - No LLM; extraction accuracy NOT MEASURED.
 - Phase 5+ not started.
 
-## Phase 5 — LLM integration
+## Phase 5 — OpenAI LLM integration, structured extraction & grounded reasoning
 
-Pending. Primary REQs: REQ-020, REQ-100, REQ-111, REQ-123.
+### Goals
+
+- OpenAI Responses API + Structured Outputs behind `LlmProvider` (`openai` | `fake`).
+- Architecture/scenario extraction DTOs → domain Zod + validate; provenance excerpt verification.
+- Grounded explanation via evidence IDs + deterministic numeric rendering + fallback.
+- Offline FakeLlmProvider tests; opt-in live V01–V12 eval (not run in CI).
+
+### Requirement IDs
+
+| ID | Intent | Complete? |
+| --- | --- | --- |
+| REQ-012 | LLM extracts/explains; does not calculate | yes — offline tests |
+| REQ-020 | Formal model from free text | yes — extract pipeline |
+| REQ-021 (partial) | Question → scenario → simulate → explain | yes (library; HTTP Phase 6) |
+| REQ-010/011 | No LLM numbers in answers | yes — evidence renderer |
+| REQ-100 | Untrusted architecture/questions | yes — delimiters + ADV-style tests |
+| REQ-111 | Zero-cost path | yes — `LLM_PROVIDER=fake` |
+| REQ-123 | Provider abstraction | yes — `LlmProvider` |
+| REQ-096 | Extraction accuracy | partial — live smoke only; full V01–V12 **NOT MEASURED** |
+
+### Verification evidence
+
+Recorded 2026-11-15:
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | exit 0 |
+| `npm run lint` | exit 0 |
+| `npm test` | exit 0 — **110** passed (includes smoke #2 explanation regression A–E) |
+| `npm run test:integration` | exit 0 — **3** passed |
+| `npm run build` | exit 0 |
+| Live OpenAI smoke #1 (V01, 3 calls) | partial — A OK; B intent miss; C fallback (pre-fix) |
+| Live OpenAI smoke #2 (V01, 3 calls, post-fix) | A **PROPOSED**; B **`load_multiplication`×1 OK**; sim **ANSWERED**; explain **fallback** (refused ids in `metricIds`); `e2eSuccess=false`; est. **~$0.012**; details in `VALIDATION.md` |
+| Offline explanation contract fix (D-021) | DTO `refusedMetricIds` + separated catalog + strict validator; smoke #2 misclassification reproduced offline |
+| Live OpenAI smoke #3 (V01, 3 calls, post D-021) | A **PROPOSED** (1 node); B **`load_multiplication`×1 OK**; sim **ANSWERED** (3 metrics, 3 refusals); explain **`llm+deterministic`**, **fallback=false**; **`e2eSuccess=true`**; est. **~$0.01422**; wall **~10.2 s**; details in `VALIDATION.md` |
+| Live full V01–V12 eval | **NOT RUN** |
+
+### Suggested commit
+
+`fix: separate refused vs calculated metric refs in grounded explanation`
+
+### Limitations
+
+- No public HTTP extract/simulate/explain routes (Phase 6).
+- Live smoke proves one V01 E2E path; full extraction accuracy (REQ-096 denominators) **NOT MEASURED**.
+- Ollama Compose service still not started.
 
 ## Phase 6 — API and observability
 
