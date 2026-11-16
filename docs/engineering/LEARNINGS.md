@@ -160,3 +160,10 @@ Discoveries, mistakes, fixes, and reusable patterns. Update after each phase.
 - V10/V11 Lab status is `schema_validation`, not NL scenario classification success.
 - ADV-08 is `nl_isolation_check` — never market as LLM injection resistance.
 - Historical OpenAI metrics belong in a separately labeled panel and must not alter deterministic run totals.
+
+## L-030 — Live defense case must be a first-class Fake path (2026-11-16)
+
+- Defense required evaluating multi-service prose + Postgres latency **ao vivo** under Compose Fake.
+- Earlier Fake only extracted a single `api` node; FE validate was click-only; trailing questions were swallowed into Extract — live case failed in session.
+- Fix: checkout-pricing Fake extractor + latency classifier; peel trailing questions; seed findings + debounced live validate; document the failure honestly in `PRESENTATION.md` §6.
+- “My actual availability is 95%” / “RPS is 80%” remain claims, not engine answers.

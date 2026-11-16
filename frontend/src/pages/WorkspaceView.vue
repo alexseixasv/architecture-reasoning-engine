@@ -18,9 +18,12 @@ import { useDiff } from '@/composables/useDiff';
 import { useExtraction } from '@/composables/useExtraction';
 import {
   DEMO_ARCHITECTURE_TEXT,
+  DEMO_CHECKOUT_PRICING_TEXT,
   DEMO_QUESTION_LOAD,
+  DEMO_QUESTION_POSTGRES_LATENCY,
   DEMO_QUESTION_UNSUPPORTED,
 } from '@/lib/demoFixtures';
+import { peelTrailingQuestion } from '@/lib/peelQuestion';
 
 const props = defineProps<{
   client?: ApiClient;
@@ -97,6 +100,11 @@ const latestUsage = computed<UsageSummary | null>(() => {
 async function onExtract(): Promise<void> {
   banner.value = null;
   const draftBefore = architectureText.value;
+  const peeled = peelTrailingQuestion(draftBefore);
+  architectureText.value = peeled.architecture;
+  if (peeled.question && !question.value.trim()) {
+    question.value = peeled.question;
+  }
   const response = await extract();
   if (!response) {
     architectureText.value = draftBefore;
@@ -108,11 +116,17 @@ async function onExtract(): Promise<void> {
     return;
   }
   if (response.status === 'PROPOSED' && response.document) {
-    setDocumentFromUnknown(response.document);
+    setDocumentFromUnknown(response.document, {
+      document: response.document,
+      findings: response.findings ?? [],
+      canPersist: response.canPersist,
+    });
     banner.value = {
       tone: 'success',
       title: 'Proposed architecture ready for review',
-      message: 'Not persisted. Validate and save explicitly when ready.',
+      message: peeled.question
+        ? 'Not persisted. Semantic findings update live. Persist before Analyze.'
+        : 'Not persisted. Semantic findings update live from the validate API.',
     };
   } else {
     banner.value = {
@@ -296,6 +310,7 @@ async function onCompare(): Promise<void> {
           :error="extractError"
           @extract="onExtract"
           @load-demo="architectureText = DEMO_ARCHITECTURE_TEXT"
+          @load-checkout-demo="architectureText = DEMO_CHECKOUT_PRICING_TEXT"
         />
         <ExtractedModelPanel :result="extractResult" />
         <JsonDocumentEditor
@@ -335,6 +350,7 @@ async function onCompare(): Promise<void> {
         >
           <h2 class="mb-2 text-base font-semibold">
             Validation findings
+            <span class="ml-2 text-xs font-normal text-ink-muted">live via API</span>
           </h2>
           <ul class="space-y-1">
             <li v-for="(f, i) in findings" :key="i">
@@ -356,6 +372,7 @@ async function onCompare(): Promise<void> {
           @analyze="onAnalyze"
           @load-load-question="question = DEMO_QUESTION_LOAD"
           @load-unsupported-question="question = DEMO_QUESTION_UNSUPPORTED"
+          @load-latency-question="question = DEMO_QUESTION_POSTGRES_LATENCY"
         />
         <ResultsEvidencePanel :result="analyzeResult" />
         <DiffViewer

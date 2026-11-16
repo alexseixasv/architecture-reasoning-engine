@@ -89,15 +89,29 @@
 
 ---
 
-## 6. Live browser demonstration — 5 min
+## 6. Live browser demonstration — 5–7 min
 
-**Follow [`DEMO.md`](DEMO.md) §§1–8** (skip OCC §9 if time-boxed; mention it).
+### Honest failure note (say this out loud)
 
-Emphasize verbally: Fake handlers are regex/deterministic — **not** evidence of OpenAI generalization.
+An earlier defense path **failed a live multi-service paste**: Fake only extracted a single `api` node, findings required a manual Validate click, and a trailing “Postgres +2s” question was swallowed into architecture text. That meant the panel could not evaluate the **real case in real time** under Compose Fake. That gap is fixed for the checkout-pricing path below — still Fake/deterministic, still **not** OpenAI generalization.
 
-**Show:** extract non-persist → validate → save v1 → util@1x → availability% refuse → edit save v2 → diff.
+### Primary live case (must work)
 
-**Refs:** `frontend/src/lib/demoFixtures.ts`; `src/llm/provider/fake-demo-handlers.ts`.
+**Follow [`DEMO.md`](DEMO.md) Path B (checkout-pricing).**
+
+1. Click **Load checkout-pricing demo** (or paste the checkout/pricing/Postgres prose).
+2. **Extract** → graph with `checkout`, `pricing`, `postgres`, queue/invoicing.
+3. **Validation findings appear live** (SPOF, RETRY_WITHOUT_BACKOFF, SYNC_MISSING_TIMEOUT) — no click required.
+4. **Save v1** → **Demo: Postgres +2s** → **Analyze**.
+5. Expect `latency_degradation` on `postgres` @ 2000 ms; engine refuses invented availability % (“95% actual” is not an answer).
+
+### Optional short path (time-box)
+
+[`DEMO.md`](DEMO.md) Path A §§1–8: simple API util@1x + availability% refuse + OCC/diff.
+
+Emphasize verbally: Fake handlers are regex/deterministic for **known** defense fixtures — **not** evidence of OpenAI on unseen prose. For arbitrary new text, use `LLM_PROVIDER=openai` with a key.
+
+**Refs:** `frontend/src/lib/demoFixtures.ts`; `src/llm/provider/fake-demo-handlers.ts`; `frontend/src/lib/peelQuestion.ts`.
 
 **Transition:** “Next: prove the engine with the Evaluation Lab, then show historical OpenAI separately.”
 

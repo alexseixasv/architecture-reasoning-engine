@@ -41,6 +41,8 @@ Optional automated path: `npx tsx scripts/compose-frontend-acceptance.ts`
 
 ## 1. Demo architecture text
 
+### Path A — simple API
+
 Click **Load Fake demo text** or paste exactly:
 
 ```text
@@ -49,22 +51,43 @@ The API service runs 4 replicas, each handling 80 requests per second. Capacity 
 
 Fake extraction regexes require: `\d+ replicas`, `\d+ requests per second`, `\d+ rps`.
 
+### Path B — checkout-pricing (live defense case)
+
+Click **Load checkout-pricing demo**. This is the case that must work **ao vivo**:
+
+```text
+The checkout API calls the pricing service synchronously with a 2s timeout
+and 3 retries. Pricing reads from a single Postgres primary. Checkout also
+publishes an event to a queue consumed by the invoicing worker. Checkout
+runs 6 replicas, pricing 4, each handling 80 rps. Target is 99.9% availability.
+MY actual availability is 95%.
+
+My actual RPS is 80%
+```
+
+Optional trailing question (auto-peeled into Analyze):
+
+```text
+Let's suppose my PostgreSQL starts growing up the latency for 2s, what could happen to my architecture?
+```
+
 ---
 
 ## 2. Extract (must not persist)
 
 1. Click **Extract architecture**.
-2. Banner: “Proposed architecture ready for review” / “Not persisted”.
-3. Components show `api` · replicas **4** · capacity **80 rps**.
-4. **Available versions** still empty / “Persist…”.
-5. Observability may show `extract_architecture · fake-demo` with cost **n/a**.
+2. Banner: “Proposed architecture ready for review” / findings update live.
+3. Path A: Components show `api` · replicas **4** · capacity **80 rps**.
+4. Path B: Components include `checkout`, `pricing`, `postgres`, queue/invoicing; findings include **SPOF**, **RETRY_WITHOUT_BACKOFF**, **SYNC_MISSING_TIMEOUT** without clicking Validate.
+5. **Available versions** still empty / “Persist…”.
+6. Observability may show `extract_architecture · fake-demo` with cost **n/a**.
 
 ---
 
 ## 3. Review and validate
 
 1. Inspect JSON editor (document present).
-2. Click **Validate with API** → success / `canPersist` message.
+2. Semantic findings refresh automatically (debounced `POST /architectures/validate`); **Validate with API** remains for an explicit refresh.
 3. Do **not** invent fields; optional tiny comment-free edit later for v2.
 
 ---
@@ -97,6 +120,17 @@ Hand check: \(C = 4 \times 80 = 320\), \(\lambda = 80\), \(U = 80/320 = 0.25\).
    Question: `What is the availability % if the API fails?`
 2. Analyze → scenario **UNSUPPORTED** (Fake regex `availability\s*%`).
 3. UI: explicit refusal copy — **no invented percentage**.
+
+---
+
+## 6b. Postgres latency (Path B — required live proof)
+
+After Path B extract → persist:
+
+1. Click **Demo: Postgres +2s** (or use the peeled question).
+2. Analyze → scenario **`latency_degradation`** on `postgres` with `latencyMs=2000`.
+3. Engine may refuse exact timeout checks when `pricing → postgres` timeout is missing (`MISSING_TIMEOUT`); standing refusals still include **no availability %**.
+4. Claimed “actual availability 95%” / “RPS is 80%” are **not** treated as engine answers.
 
 ---
 

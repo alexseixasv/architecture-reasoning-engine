@@ -15,6 +15,7 @@ const emit = defineEmits<{
   analyze: [];
   loadLoadQuestion: [];
   loadUnsupportedQuestion: [];
+  loadLatencyQuestion: [];
 }>();
 </script>
 
@@ -40,6 +41,13 @@ const emit = defineEmits<{
           @click="emit('loadUnsupportedQuestion')"
         >
           Demo: availability %
+        </button>
+        <button
+          type="button"
+          class="rounded-md border border-border-strong px-2 py-1 text-xs font-semibold text-ink-muted"
+          @click="emit('loadLatencyQuestion')"
+        >
+          Demo: Postgres +2s
         </button>
       </div>
     </div>

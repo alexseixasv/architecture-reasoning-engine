@@ -74,6 +74,9 @@ const emit = defineEmits<{
         <InfoTooltip term="expectedVersion" />
       </span>
     </div>
+    <p class="mt-2 text-xs text-ink-subtle">
+      Semantic findings refresh automatically after extract and while this JSON stays valid.
+    </p>
     <p v-if="validateError" class="mt-2 text-sm text-danger" role="alert">
       {{ validateError }}
     </p>

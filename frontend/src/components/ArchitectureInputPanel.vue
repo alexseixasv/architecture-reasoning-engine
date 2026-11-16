@@ -11,6 +11,7 @@ const emit = defineEmits<{
   'update:modelValue': [value: string];
   extract: [];
   loadDemo: [];
+  loadCheckoutDemo: [];
 }>();
 </script>
 
@@ -21,13 +22,22 @@ const emit = defineEmits<{
         Architecture description
         <InfoTooltip term="architectureExtraction" />
       </h2>
-      <button
-        type="button"
-        class="rounded-md border border-border-strong px-2 py-1 text-xs font-semibold text-ink-muted hover:bg-panel-muted"
-        @click="emit('loadDemo')"
-      >
-        Load Fake demo text
-      </button>
+      <div class="flex flex-wrap gap-2">
+        <button
+          type="button"
+          class="rounded-md border border-border-strong px-2 py-1 text-xs font-semibold text-ink-muted hover:bg-panel-muted"
+          @click="emit('loadDemo')"
+        >
+          Load Fake demo text
+        </button>
+        <button
+          type="button"
+          class="rounded-md border border-border-strong px-2 py-1 text-xs font-semibold text-ink-muted hover:bg-panel-muted"
+          @click="emit('loadCheckoutDemo')"
+        >
+          Load checkout-pricing demo
+        </button>
+      </div>
     </div>
     <label class="block text-xs font-semibold uppercase tracking-wide text-ink-muted" for="architecture-text">
       Natural-language architecture

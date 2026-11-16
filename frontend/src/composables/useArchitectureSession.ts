@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, onUnmounted, ref } from 'vue';
 import { api, ApiClientError, type ApiClient } from '@/api/client';
 import type {
   ArchitectureEnvelope,
@@ -7,6 +7,9 @@ import type {
   VersionConflictInfo,
   VersionListItem,
 } from '@/api/types';
+
+/** Debounce for live JSON → POST /architectures/validate. */
+export const LIVE_VALIDATE_DEBOUNCE_MS = 400;
 
 function tryParseJson(
   text: string,
@@ -68,6 +71,9 @@ export function useArchitectureSession(client: ApiClient = api) {
 
   const loadIdInput = ref('');
 
+  let validateSeq = 0;
+  let liveValidateTimer: ReturnType<typeof setTimeout> | undefined;
+
   const canValidate = computed(() => documentJson.value.trim().length > 0);
 
   const canPersist = computed(() => {
@@ -87,17 +93,41 @@ export function useArchitectureSession(client: ApiClient = api) {
       expectedVersion.value >= 1,
   );
 
-  function setDocumentFromUnknown(document: unknown): void {
+  function setDocumentFromUnknown(
+    document: unknown,
+    nextValidation?: ValidateResponse | null,
+  ): void {
     documentJson.value = JSON.stringify(document, null, 2);
     jsonError.value = null;
-    validation.value = null;
     conflict.value = null;
+    validation.value = nextValidation === undefined ? null : nextValidation;
+    scheduleLiveValidate();
+  }
+
+  function clearLiveValidateTimer(): void {
+    if (liveValidateTimer !== undefined) {
+      clearTimeout(liveValidateTimer);
+      liveValidateTimer = undefined;
+    }
+  }
+
+  function scheduleLiveValidate(): void {
+    clearLiveValidateTimer();
+    liveValidateTimer = setTimeout(() => {
+      liveValidateTimer = undefined;
+      void validateDocument({ silent: true });
+    }, LIVE_VALIDATE_DEBOUNCE_MS);
   }
 
   function onDocumentJsonInput(value: string): void {
     documentJson.value = value;
     const parsed = tryParseJson(value);
     jsonError.value = parsed.ok ? null : parsed.error;
+    if (parsed.ok) {
+      scheduleLiveValidate();
+    } else {
+      clearLiveValidateTimer();
+    }
   }
 
   async function refreshVersions(id: string): Promise<void> {
@@ -110,31 +140,53 @@ export function useArchitectureSession(client: ApiClient = api) {
     }
   }
 
-  async function validateDocument(): Promise<ValidateResponse | null> {
-    validateError.value = null;
-    validation.value = null;
+  async function validateDocument(options?: {
+    silent?: boolean;
+  }): Promise<ValidateResponse | null> {
+    const silent = options?.silent === true;
+    if (!silent) {
+      validateError.value = null;
+    }
     const parsed = tryParseJson(documentJson.value);
     if (!parsed.ok) {
       jsonError.value = parsed.error;
-      validateError.value = `Invalid JSON: ${parsed.error}`;
+      if (!silent) {
+        validateError.value = `Invalid JSON: ${parsed.error}`;
+      }
       return null;
     }
     jsonError.value = null;
-    validateLoading.value = true;
+    const seq = ++validateSeq;
+    if (!silent) {
+      validateLoading.value = true;
+    }
     try {
       const response = await client.validate(parsed.value);
+      if (seq !== validateSeq) {
+        return response;
+      }
       validation.value = response;
+      if (!silent) {
+        validateError.value = null;
+      }
       return response;
     } catch (err) {
-      validateError.value =
-        err instanceof ApiClientError
-          ? err.message
-          : err instanceof Error
+      if (seq !== validateSeq) {
+        return null;
+      }
+      if (!silent) {
+        validateError.value =
+          err instanceof ApiClientError
             ? err.message
-            : 'Validation request failed';
+            : err instanceof Error
+              ? err.message
+              : 'Validation request failed';
+      }
       return null;
     } finally {
-      validateLoading.value = false;
+      if (!silent && seq === validateSeq) {
+        validateLoading.value = false;
+      }
     }
   }
 
@@ -268,6 +320,11 @@ export function useArchitectureSession(client: ApiClient = api) {
 
   const findings = computed<ValidationFinding[]>(() => {
     return validation.value?.findings ?? saved.value?.findings ?? [];
+  });
+
+  onUnmounted(() => {
+    validateSeq += 1;
+    clearLiveValidateTimer();
   });
 
   return {

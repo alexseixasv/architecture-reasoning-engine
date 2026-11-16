@@ -28,7 +28,10 @@ export function emptyUsage(partial?: Partial<UsageSummary['totals']>): UsageSumm
   };
 }
 
-export function proposedExtract(document: unknown): ExtractHttpResponse {
+export function proposedExtract(
+  document: unknown,
+  extra?: Partial<ExtractHttpResponse>,
+): ExtractHttpResponse {
   return {
     status: 'PROPOSED',
     document,
@@ -39,6 +42,7 @@ export function proposedExtract(document: unknown): ExtractHttpResponse {
     canPersist: true,
     usage: emptyUsage(),
     errorClass: null,
+    ...extra,
   };
 }
 

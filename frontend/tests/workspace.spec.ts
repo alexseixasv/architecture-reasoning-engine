@@ -2,7 +2,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { ApiClientError } from '@/api/client';
 import WorkspaceView from '@/pages/WorkspaceView.vue';
-import { createMockApi, sampleDocument } from './helpers/mockApi';
+import { createMockApi, proposedExtract, sampleDocument } from './helpers/mockApi';
 
 describe('WorkspaceView core workflow', () => {
   it('extracts via the extract endpoint and never auto-persists', async () => {
@@ -28,6 +28,61 @@ describe('WorkspaceView core workflow', () => {
     expect(
       (wrapper.get('#document-json').element as HTMLTextAreaElement).value,
     ).toContain('"id": "api"');
+  });
+
+  it('shows extract findings immediately and refreshes them via live validate', async () => {
+    vi.useFakeTimers();
+    const mock = createMockApi({
+      async extract(architectureText: string) {
+        mock.calls.push(`extract:${architectureText.slice(0, 24)}`);
+        return proposedExtract(sampleDocument(), {
+          findings: [
+            {
+              code: 'SPOF',
+              severity: 'WARNING',
+              message: 'Node "postgres" appears to be a single point of failure',
+            },
+          ],
+        });
+      },
+      async validate() {
+        mock.calls.push('validate');
+        return {
+          findings: [
+            {
+              code: 'RETRY_WITHOUT_BACKOFF',
+              severity: 'WARNING',
+              message: 'retries without backoff',
+            },
+          ],
+          canPersist: true,
+        };
+      },
+    });
+    const wrapper = mount(WorkspaceView, { props: { client: mock } });
+    await wrapper.get('#architecture-text').setValue(
+      [
+        'The checkout API calls the pricing service synchronously with a 2s timeout.',
+        '',
+        "Let's suppose my PostgreSQL starts growing up the latency for 2s, what could happen to my architecture?",
+      ].join('\n'),
+    );
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text().includes('Extract architecture'))!
+      .trigger('click');
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('SPOF');
+    expect(
+      (wrapper.get('#question-text').element as HTMLTextAreaElement).value,
+    ).toMatch(/PostgreSQL/i);
+
+    await vi.advanceTimersByTimeAsync(500);
+    await flushPromises();
+    expect(mock.calls).toContain('validate');
+    expect(wrapper.text()).toContain('RETRY_WITHOUT_BACKOFF');
+    vi.useRealTimers();
   });
 
   it('blocks persistence when JSON is invalid', async () => {

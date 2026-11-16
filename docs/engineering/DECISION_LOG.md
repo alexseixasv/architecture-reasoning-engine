@@ -234,3 +234,10 @@ Append-only record of meaningful engineering decisions. Final submission also co
 - **Decision:** Keep base `docker-compose.yml` without Lab and with `${LLM_PROVIDER:-fake}`. Add `docker-compose.demo.yml` that sets `EVAL_LAB_ENABLED=1` **and** `LLM_PROVIDER=fake` so demos ignore accidental OpenAI env. Document both start commands in README/DEMO.
 - **Alternatives rejected:** Enabling Lab in the base compose file; relying on operator memory to unset OpenAI; broad Nest CORS for the Lab.
 - **Consequences:** `docker compose -f docker-compose.yml -f docker-compose.demo.yml up -d --build` is the Evaluation Lab demo path; default compose remains Lab-disabled.
+
+## D-035 — Live checkout-pricing Fake path + honest presentation note (2026-11-16)
+
+- **Context:** Live defense paste of checkout/pricing/Postgres + “Postgres latency +2s” failed under Compose Fake (hollow `api`-only extract; no live findings; question mixed into architecture text).
+- **Decision:** Extend Fake handlers for that fixture; FE peels trailing questions, seeds extract findings, debounces `POST /architectures/validate`; document the prior live failure and required Path B in `PRESENTATION.md` / `DEMO.md`. Pass `OPENAI_API_KEY` through Compose; lengthen nginx `/api` timeouts.
+- **Alternatives rejected:** Pretending the short API demo was enough for live proof; inventing availability % from “95% actual”.
+- **Consequences:** Rebuild `api` + `web` for the fix; Fake still ≠ OpenAI generalization.
