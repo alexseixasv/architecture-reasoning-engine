@@ -19,7 +19,7 @@ Availability % vs target; successful throughput; p95/p99; Monte Carlo / discrete
 
 ## Known extraction limitations (measured)
 
-On the fixed V01–V12 OpenAI set (remediation pass): field accuracy **141/244 (57.8%)** directional (denominator shifted vs baseline); Node F1 **0.86**, Dep F1 **0.84**; residual **DTO omissions** and ID slug extras; explain fallback **1/10** (V07). Fake LLM demos prove wiring, **not** generalization to panel-unseen prose.
+On the fixed V01–V12 OpenAI set (remediation pass): field accuracy **141/244 (57.8%)** directional (denominator shifted vs baseline); Node F1 **0.86**, Dep F1 **0.84**; residual **DTO omissions** and ID slug extras; explain fallback **1/10** (V07). Fake LLM demos prove wiring and the **known** checkout-pricing Path B fixture, **not** generalization to arbitrary panel-unseen prose.
 
 ## Missing production hardening
 

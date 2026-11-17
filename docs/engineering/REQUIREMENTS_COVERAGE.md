@@ -29,7 +29,7 @@
 | REQ-096 | FULL | Live field accuracy measured (baseline + remediation) |
 | REQ-097 | FULL | Golden 12/12; live simulate path when scenario OK 10/10 |
 | REQ-098 | FULL | Failure analysis in `VALIDATION.md` |
-| REQ-099 | FULL | Compose + browser demo path; Evaluation Lab deterministic 32-case path (`docker-compose.demo.yml`); service runnable on panel input (**OpenAI accuracy on unseen text is not proven by Fake demo**) |
+| REQ-099 | FULL | Compose + browser demo; **Path B** checkout-pricing Fake live case (extract + live findings + Postgres +2s analyze — `scripts/smoke-live-checkout.ts`); Evaluation Lab 32-case path (`docker-compose.demo.yml`). **OpenAI accuracy on arbitrary unseen text is not proven by Fake** |
 | REQ-100 | FULL | ADV injection fixtures; schema/SO boundary; untrusted delimiters |
 | REQ-110 | PARTIAL | Per-request `timingsMs` + `usage` in API/logs. **No** OpenTelemetry collector/spans export |
 | REQ-111 | FULL (OPTIONAL) | `LLM_PROVIDER=fake` zero-cost path |
@@ -47,5 +47,5 @@
 
 1. **REQ-003** is intentionally incomplete on availability % and quantitative blast radius — refuse rather than invent (aligns with REQ-073 / OQ-001 / OQ-002).
 2. **REQ-110** is satisfied for measured stage latency/tokens in responses, not for a full OTel pipeline.
-3. **REQ-099** readiness ≠ generalization: Fake Compose demo proves wiring; live OpenAI on V01–V12 proves measured extraction quality on a **fixed** set. Panel-unseen architectures are supported operationally; accuracy is not guaranteed.
+3. **REQ-099** readiness ≠ generalization: Fake Compose proves wiring **and** the known checkout-pricing live Path B fixture; live OpenAI on V01–V12 proves measured extraction quality on a **fixed** set. Arbitrary panel-unseen prose needs OpenAI; Fake accuracy is not claimed beyond documented fixtures.
 4. No silent feature expansion was made solely to green this checklist.

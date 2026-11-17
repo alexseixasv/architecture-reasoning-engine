@@ -92,9 +92,10 @@ Acceptance:
 npx tsx scripts/compose-frontend-acceptance.ts
 npx tsx scripts/compose-http-acceptance.ts
 npx tsx scripts/compose-evaluation-acceptance.ts   # requires demo override
+npx tsx scripts/smoke-live-checkout.ts             # Path B: checkout-pricing + Postgres +2s
 ```
 
-Defense demo script: [`docs/defense/DEMO.md`](docs/defense/DEMO.md).
+Defense demo script: [`docs/defense/DEMO.md`](docs/defense/DEMO.md) — **Path B (checkout-pricing)** is the required live multi-service case; Path A is the short API util demo.
 
 ### Local API + Vite (optional)
 
@@ -124,19 +125,20 @@ cd frontend && npm ci && npm run dev   # http://127.0.0.1:5173
 | | Fake | OpenAI |
 | --- | --- | --- |
 | Cost / network | Zero; offline | Paid; opt-in |
-| Purpose | Demo, CI, Compose acceptance | Measured extraction quality |
-| Accuracy claim | **None** for unseen prose | Measured on fixed V01–V12 only |
+| Purpose | Demo, CI, Compose acceptance; **known** fixtures (simple API + checkout-pricing live path) | Measured extraction quality |
+| Accuracy claim | **None** for arbitrary unseen prose | Measured on fixed V01–V12 only |
+| Live defense Path B | Deterministic extract of checkout→pricing→Postgres + Postgres latency scenario + live semantic findings | Use when the panel pastes truly novel prose |
 
 ## Workflow
 
-1. **Extract** `POST /architectures/extract` → `PROPOSED` document (not persisted).
-2. **Validate** `POST /architectures/validate`; edit JSON as needed.
+1. **Extract** `POST /architectures/extract` → `PROPOSED` document (not persisted). Trailing questions in a pasted blob are peeled into Analyze on the SPA.
+2. **Validate** `POST /architectures/validate` — SPA also refreshes findings live (debounced) after extract / while JSON stays valid.
 3. **Persist** `POST /architectures` → version 1; later `PUT` with `expectedVersion` → new version (HTTP **409** on stale OCC).
-4. **Analyze** `POST /architectures/:id/versions/:version/analyze` with a question.
+4. **Analyze** `POST /architectures/:id/versions/:version/analyze` with a question (e.g. Postgres latency +2s on Path B).
 5. **Diff** `GET /architectures/:id/diff?from=&to=`.
 6. Inspect **usage** / **timingsMs** on responses (Fake cost often `null`).
 
-Supported scenarios: load×N, latency degradation, component unavailable. Unsupported questions (e.g. availability %) return explicit `UNSUPPORTED` / refusals — never a plausible invented %.
+Supported scenarios: load×N, latency degradation, component unavailable. Unsupported questions (e.g. availability %) return explicit `UNSUPPORTED` / refusals — never a plausible invented %. Claimed “actual availability %” in prose is stored/ignored as a claim, not answered as an engine metric.
 
 ## Testing
 

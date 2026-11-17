@@ -1,7 +1,8 @@
 # PRESENTATION.md — 30-minute technical defense script
 
 **Audience:** senior/architect interview panel · **Mode:** screen share · **Slides:** optional (REQ-154)  
-**Runtime:** Compose Fake demo at http://127.0.0.1:8080 (see [`DEMO.md`](DEMO.md))
+**Runtime:** Compose Fake demo at http://127.0.0.1:8080 (see [`DEMO.md`](DEMO.md))  
+**Live proof of record:** Path B checkout-pricing (not only the short API util demo). Preflight: `npx tsx scripts/smoke-live-checkout.ts`
 
 ---
 

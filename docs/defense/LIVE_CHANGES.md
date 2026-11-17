@@ -2,6 +2,8 @@
 
 **Do not implement these unless the panel asks.** Prepare to execute under observation (~10–20 minutes each). Prefer small, testable diffs that respect the LLM/engine boundary.
 
+**Already shipped (do not re-do unless asked):** Fake checkout-pricing Path B, live semantic validate, peel trailing questions, Postgres +2s scenario classification (`PRESENTATION.md` §6 / D-035).
+
 ---
 
 ## Change A — Standing refusal copy / reason enrichment

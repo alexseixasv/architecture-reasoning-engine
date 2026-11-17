@@ -233,4 +233,4 @@ node --env-file=.env --import tsx scripts/live-validation-eval.ts
 | REQ-100 | B adversarial |
 | REQ-110, 112–114 | G (+ API `timingsMs`/`usage`; no OTel collector) |
 | REQ-120, 130 | H |
-| REQ-099 | H–I + [`docs/defense/DEMO.md`](docs/defense/DEMO.md) |
+| REQ-099 | H–I + [`docs/defense/DEMO.md`](docs/defense/DEMO.md) Path B + `scripts/smoke-live-checkout.ts` |

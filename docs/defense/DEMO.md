@@ -4,7 +4,13 @@
 Fake handlers: [`src/llm/provider/fake-demo-handlers.ts`](../../src/llm/provider/fake-demo-handlers.ts).  
 UI fixtures: [`frontend/src/lib/demoFixtures.ts`](../../frontend/src/lib/demoFixtures.ts).
 
-**Important:** This proves Compose wiring, OCC, refusals, and engine math on a **known** Fake architecture. It does **not** prove OpenAI extraction on unseen prose.
+**Important:** This proves Compose wiring, OCC, refusals, engine math, and the **known** multi-service live Path B (checkout-pricing + Postgres latency) under Fake. It does **not** prove OpenAI extraction on arbitrary unseen prose.
+
+**Automated Path B check (after Compose is up):**
+
+```bash
+npx tsx scripts/smoke-live-checkout.ts
+```
 
 ---
 

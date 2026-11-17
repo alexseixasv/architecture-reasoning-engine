@@ -81,3 +81,9 @@ Reduce DTO omissions/ID slugs; measure extract→scenario e2e on held-out data; 
 
 ### 26. What is the Evaluation Lab?
 Opt-in HTTP runner (`EVAL_LAB_ENABLED=1`) for allowlisted G/V/ADV fixtures via in-process adapters — **not** Vitest-as-a-service and **not** live OpenAI. Historical panel shows sanitized Phase 7 summaries excluded from run totals (`VALIDATION.md` §I).
+
+### 27. Can Fake evaluate a multi-service case live in the UI?
+Yes for the **documented Path B** fixture: checkout → pricing → Postgres (+ queue/invoicing), live semantic findings (SPOF / retry-without-backoff / missing sync timeout), and Analyze on “Postgres latency +2s” → `latency_degradation` @ 2000 ms. Smoke: `npx tsx scripts/smoke-live-checkout.ts`. Fake still does **not** generalize to arbitrary novel prose — that needs OpenAI. Claimed “actual availability 95%” is not an engine answer.
+
+### 28. Why did an earlier live paste fail, and what changed?
+Earlier Fake extracted only a single `api` node; validate was click-only; trailing questions were swallowed into Extract. Fixed via checkout-pricing Fake handlers, question peel, seeded + debounced live validate, and honest notes in `PRESENTATION.md` §6 / D-035.

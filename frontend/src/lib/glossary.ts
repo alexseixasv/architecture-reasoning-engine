@@ -136,7 +136,7 @@ export const GLOSSARY: Record<GlossaryTermId, GlossaryEntry> = {
   },
   fakeVsOpenAi: {
     title: 'Fake vs OpenAI',
-    body: 'Fake provider is deterministic offline wiring for Compose/demo/CI — not extraction accuracy on unseen prose. OpenAI accuracy is measured separately on the fixed V01–V12 historical set in VALIDATION.md / the Lab historical panel.',
+    body: 'Fake is deterministic offline wiring for Compose/demo/CI, including the known checkout-pricing live Path B fixture — not extraction accuracy on arbitrary unseen prose. OpenAI accuracy is measured separately on the fixed V01–V12 historical set in VALIDATION.md / the Lab historical panel.',
   },
   deterministicSimulation: {
     title: 'Deterministic simulation',
@@ -274,7 +274,7 @@ export const METHODOLOGICAL_LIMITATIONS: Record<
   },
   fake_llm_not_openai_accuracy: {
     title: 'Fake LLM ≠ OpenAI accuracy',
-    body: 'Fake provider demos prove contracts and Compose wiring. They do not measure extraction quality on unseen prose; OpenAI numbers live only in historical evidence.',
+    body: 'Fake demos prove contracts, Compose wiring, and known fixtures (including checkout-pricing Path B). They do not measure extraction quality on arbitrary unseen prose; OpenAI numbers live only in historical evidence.',
   },
 };
 

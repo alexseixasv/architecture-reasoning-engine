@@ -1,6 +1,7 @@
 /**
  * Deterministic Fake LLM demo fixtures.
- * Matches scripts/compose-http-acceptance.ts and fake-demo-handlers regexes.
+ * Path A (simple API) matches scripts/compose-http-acceptance.ts.
+ * Path B (checkout-pricing) matches fake-demo-handlers + scripts/smoke-live-checkout.ts.
  */
 export const DEMO_ARCHITECTURE_TEXT = [
   'The API service runs 4 replicas, each handling 80 requests per second.',

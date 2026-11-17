@@ -71,7 +71,7 @@ Immutable versions; `PUT` requires `expectedVersion`; conflict → HTTP 409 with
 
 Production path: OpenAI Responses API + JSON schema Structured Outputs (`gpt-4.1` in measured runs). Retries hardcoded to 0; timeouts configurable. Explanation packets cite engine metric IDs; validator rejects unsupported numeric claims.
 
-**Fake provider:** deterministic offline Compose/demo/CI. Demonstrates contracts and wiring — **not** extraction accuracy on unseen prose. Live OpenAI accuracy is reported separately in `VALIDATION.md` (fixed V01–V12 set; scenario scoring used formal architecture context).
+**Fake provider:** deterministic offline Compose/demo/CI. Covers known defense fixtures (simple API + **checkout-pricing live Path B** with live findings and Postgres latency scenario). Demonstrates contracts and wiring — **not** extraction accuracy on arbitrary unseen prose. Live OpenAI accuracy is reported separately in `VALIDATION.md` (fixed V01–V12 set; scenario scoring used formal architecture context). See D-035 / `docs/defense/DEMO.md` Path B.
 
 ---
 

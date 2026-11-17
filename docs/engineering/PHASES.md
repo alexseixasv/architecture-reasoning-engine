@@ -475,3 +475,17 @@ Primary REQs: demonstration/validation transparency (REQ-080–098 evidence reus
 ### Phase 9 closed
 
 Evaluation Lab is reproducible under Compose Fake + demo override. Deterministic domain evaluation is distinct from Vitest CI and from historical OpenAI evidence.
+
+---
+
+## Post-Phase 9 — Live checkout-pricing Fake path (2026-11-16)
+
+Not a new gated phase; remediation after a live-defense gap (D-035 / L-030).
+
+| Deliverable | Status |
+| --- | --- |
+| Fake checkout-pricing extract + Postgres +2s scenario | done |
+| FE live validate + peel trailing question | done |
+| `PRESENTATION.md` / `DEMO.md` Path B + honest failure note | done |
+| `scripts/smoke-live-checkout.ts` | done |
+| Unit tests (`fake-demo-handlers`, peel, workspace live findings) | done |
